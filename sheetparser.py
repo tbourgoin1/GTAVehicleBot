@@ -57,8 +57,14 @@ def main(vehicle_name):
     for i in range(0, len(vehicle_list) - 1): # BUG: will find the first string that has the vehicle name, but might select wrong one (i.e. user searches for Roosevelt, but if Roosevelt Valor is first in the spreadsheet it'll pick that)
         formatted_vehicle_list_member = re.sub("-","", str(vehicle_list[i])) # removes dashes from vehicle name of current vehicle from list
         formatted_vehicle_list_member = re.sub("\s","", formatted_vehicle_list_member) # removes spaces from vehicle name of current vehicle from list
-        if formatted_vehicle_name.lower() in str(formatted_vehicle_list_member).lower(): # if the car we want is found, set the range num to the row it's in
+        if formatted_vehicle_name.lower() == str(formatted_vehicle_list_member).lower(): # if the car we want is found as an EXACT MATCH, set the range num to the row it's in and stop
             range_num = i + 2
+            print("ELLOE")
+            break
+        if formatted_vehicle_name.lower() in str(formatted_vehicle_list_member).lower(): # if the car we want is found as a partial match, set the range num to the row it's in
+            range_num = i + 2
+            print(formatted_vehicle_name.lower())
+            print(str(formatted_vehicle_list_member).lower())
 
     if(range_num == 0):
         return "ERROR: Vehicle not found in 1st spreadsheet"
@@ -95,7 +101,10 @@ def main(vehicle_name):
         for i in range(0, len(vehicle_list) - 1): # BUG: will find the first string that has the vehicle name, but might select wrong one (i.e. user searches for Roosevelt, but if Roosevelt Valor is first in the spreadsheet it'll pick that)
             formatted_vehicle_list_member = re.sub("-","", str(vehicle_list[i])) # removes dashes from vehicle name of current vehicle from list
             formatted_vehicle_list_member = re.sub("\s","", formatted_vehicle_list_member) # removes spaces from vehicle name of current vehicle from list
-            if formatted_vehicle_name.lower() in str(formatted_vehicle_list_member).lower(): # if the car we want is found, set the range num to the row it's in
+            if formatted_vehicle_name.lower() == str(formatted_vehicle_list_member).lower(): # if the car we want is found as an EXACT MATCH, set the range num to the row it's in and stop
+                range_num = i + 4    
+                break
+            if formatted_vehicle_name.lower() in str(formatted_vehicle_list_member).lower(): # if the car we want is found as a partial match, set the range num to the row it's in
                 range_num = i + 4
 
         if(range_num == 0):
@@ -120,7 +129,10 @@ def main(vehicle_name):
         for i in range(0, len(vehicle_list) - 1): # BUG: will find the first string that has the vehicle name, but might select wrong one (i.e. user searches for Roosevelt, but if Roosevelt Valor is first in the spreadsheet it'll pick that)
             formatted_vehicle_list_member = re.sub("-","", str(vehicle_list[i])) # removes dashes from vehicle name of current vehicle from list
             formatted_vehicle_list_member = re.sub("\s","", formatted_vehicle_list_member) # removes spaces from vehicle name of current vehicle from list
-            if formatted_vehicle_name.lower() in str(formatted_vehicle_list_member).lower(): # if the car we want is found, set the range num to the row it's in
+            if formatted_vehicle_name.lower() == str(formatted_vehicle_list_member).lower(): # if the car we want is found as an EXACT MATCH, set the range num to the row it's in and stop
+                range_num = i + 4    
+                break
+            if formatted_vehicle_name.lower() in str(formatted_vehicle_list_member).lower(): # if the car we want is found as a partial match, set the range num to the row it's in
                 range_num = i + 4
 
         if(range_num == 0):
@@ -147,7 +159,10 @@ def main(vehicle_name):
         for i in range(0, len(vehicle_list) - 1): # BUG: will find the first string that has the vehicle name, but might select wrong one (i.e. user searches for Roosevelt, but if Roosevelt Valor is first in the spreadsheet it'll pick that)
             formatted_vehicle_list_member = re.sub("-","", str(vehicle_list[i])) # removes dashes from vehicle name of current vehicle from list
             formatted_vehicle_list_member = re.sub("\s","", formatted_vehicle_list_member) # removes spaces from vehicle name of current vehicle from list
-            if formatted_vehicle_name.lower() in str(formatted_vehicle_list_member).lower(): # if the car we want is found, set the range num to the row it's in
+            if formatted_vehicle_name.lower() == str(formatted_vehicle_list_member).lower(): # if the car we want is found as an EXACT MATCH, set the range num to the row it's in and stop
+                range_num = i + 4    
+                break
+            if formatted_vehicle_name.lower() in str(formatted_vehicle_list_member).lower(): # if the car we want is found as a partial match, set the range num to the row it's in
                 range_num = i + 4
 
         if(range_num == 0):

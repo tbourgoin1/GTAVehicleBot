@@ -55,7 +55,7 @@ async def give_car(ctx, arg): # main function to get GTA vehicle info from the g
             title=":mag: Searching for vehicle...",  
             color=0x7d7d7d
         )
-    await ctx.send(embed=embed_wait, delete_after=5)
+    await ctx.send(embed=embed_wait, delete_after=3)
     car_array = sheetparser.main(arg)
     if(car_array == "ERROR: Vehicle not found in 1st spreadsheet"):
         embed = discord.Embed(
@@ -95,8 +95,14 @@ async def give_car(ctx, arg): # main function to get GTA vehicle info from the g
     # add pics to sheet
 
     # BUG - 9F doesn't work? 9f = error, 9F = vehicle not found. it's when multiple vehicles have the same part of the name, it errors
+        # need to break when there's an exact match - the vehicle list member still has array formatting somehow?
+        # keep going if no exact match is found to infer on a partial match (already done)
 
     # allow users to change prefix
+
+    # combine sheetparser into a function called multiple times
+
+    # get .gitignore working
 
     # stress test
 
