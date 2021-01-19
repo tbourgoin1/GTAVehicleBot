@@ -108,4 +108,6 @@ async def give_car(ctx, arg): # main function to get GTA vehicle info from the g
 
     # get it hosted somewhere
 
+    #bruh
+
 bot.run(TOKEN)
