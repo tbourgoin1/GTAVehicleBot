@@ -70,7 +70,7 @@ async def help_func(ctx):
 
 
 @bot.command(name='vehicleinfo')
-async def give_car(ctx, arg): # main function to get GTA vehicle info from the google sheet. on_command_error handles all errors
+async def give_car(ctx, *, arg): # main function to get GTA vehicle info from the google sheet. on_command_error handles all errors
     embed_wait = discord.Embed(
             title=":mag: Searching for vehicle...",  
             color=0x7d7d7d
