@@ -38,7 +38,8 @@ async def on_command_error(ctx, error): # provides error embeds when things go w
         print(error)
         embed = discord.Embed(
             title=":x: An Error Has Occurred!",
-            color=0xff2600
+            color=0xff2600,
+            description="What happened was probably bad. Contact MrThankUvryMuch#9854 to submit a bug report."
         )
         embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
         await ctx.send(embed=embed)
@@ -102,17 +103,14 @@ async def give_car(ctx, *, arg): # main function to get GTA vehicle info from th
         embed.set_footer(text="Thanks to Broughy1322 for vehicle top speed and lap time data. Bot created by MrThankUvryMuch#9854")
         await ctx.send(embed=embed)
 
-    # need to have a catch in case data is missing in the rows
-
     # add pics to sheet
-
-    # BUG - if the argument has a space like "9f cabrio" it thinks it's 2 arguments. need to take all text in as an array of arguments and combine it into a string
-    # before passing to sheetparser
 
     # allow users to change prefix
     
     # stress test
 
     # get it hosted somewhere
+
+    # stress test 2
 
 bot.run(TOKEN)
