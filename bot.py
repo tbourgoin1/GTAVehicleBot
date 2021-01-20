@@ -25,10 +25,18 @@ async def on_command_error(ctx, error): # provides error embeds when things go w
         )
         embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
         await ctx.send(embed=embed)
-    else: # general command not found error
+    elif(isinstance(error, commands.CommandNotFound)): # general command not found error
         print(error)
         embed = discord.Embed(
             title=":x: Command Not Found!",
+            color=0xff2600
+        )
+        embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
+        await ctx.send(embed=embed)
+    else:
+        print(error)
+        embed = discord.Embed(
+            title=":x: An Error Has Occurred!",
             color=0xff2600
         )
         embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
@@ -55,21 +63,13 @@ async def give_car(ctx, arg): # main function to get GTA vehicle info from the g
             title=":mag: Searching for vehicle...",  
             color=0x7d7d7d
         )
-    await ctx.send(embed=embed_wait, delete_after=3)
+    await ctx.send(embed=embed_wait, delete_after=1)
     car_array = sheetparser.main(arg)
-    if(car_array == "ERROR: Vehicle not found in 1st spreadsheet"):
+    if("ERROR: Vehicle not found in spreadsheet" in car_array):
         embed = discord.Embed(
             title=":grey_exclamation: Vehicle Not Found!",
             color=0xffdd00,
             description="Enter a valid vehicle name."
-        )
-        embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
-        await ctx.send(embed=embed)
-    elif(car_array == "ERROR: Vehicle not found in 1st spreadsheet"):
-        embed = discord.Embed(
-            title=":x: An Error Has Occurred With the Vehicle Database!",
-            color=0xffdd00,
-            description="An error has occurred parsing the vehicle database. Please try again later."
         )
         embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
         await ctx.send(embed=embed)
@@ -101,13 +101,9 @@ async def give_car(ctx, arg): # main function to get GTA vehicle info from the g
     # allow users to change prefix
 
     # combine sheetparser into a function called multiple times
-
-    # get .gitignore working
-
+    
     # stress test
 
     # get it hosted somewhere
-
-    #bruh
 
 bot.run(TOKEN)
