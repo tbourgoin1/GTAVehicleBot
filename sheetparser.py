@@ -49,9 +49,7 @@ def find_sheet_info(vehicle_name, spreadsheet_id, initial_range, range_adjustmen
             return "FAILED AT SETTING RANGE TYPE"
         # Call the Sheets API
         sheet = service.spreadsheets()
-        print("GOT HERE!")
         result = sheet.values().get(spreadsheetId=str(spreadsheet_id), range=str(new_range)).execute()
-        print("GOT HERE AFTER!")
         temp_values = result.get('values', [])
         values = [] # final result will be put here
         if(range_type == 1):
