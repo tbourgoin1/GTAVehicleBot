@@ -106,9 +106,8 @@ async def give_car(ctx, arg): # main function to get GTA vehicle info from the g
 
     # add pics to sheet
 
-    # BUG - 9F doesn't work? 9f = error, 9F = vehicle not found. it's when multiple vehicles have the same part of the name, it errors
-        # need to break when there's an exact match - the vehicle list member still has array formatting somehow?
-        # keep going if no exact match is found to infer on a partial match (already done)
+    # BUG - if the argument has a space like "9f cabrio" it thinks it's 2 arguments. need to take all text in as an array of arguments and combine it into a string
+    # before passing to sheetparser
 
     # allow users to change prefix
     
