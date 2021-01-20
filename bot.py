@@ -19,9 +19,9 @@ async def on_ready(): # prints to the console when the bot starts
 async def on_command_error(ctx, error): # provides error embeds when things go wrong
     if(isinstance(error, commands.MissingRequiredArgument)): # if someone calls $vehicleinfo without a vehicle as an argument
         embed = discord.Embed(
-            title=":grey_exclamation: No Vehicle Given!",
+            title=":grey_exclamation: No Arguments Given!",
             color=0xffdd00,
-            description="Enter a vehicle model after the $vehicleinfo command, such as '$vehicleinfo pariah'."
+            description="This command requires an argument. Use " + bot.command_prefix + "helpme for more information."
         )
         embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
         await ctx.send(embed=embed)
@@ -29,7 +29,8 @@ async def on_command_error(ctx, error): # provides error embeds when things go w
         print(error)
         embed = discord.Embed(
             title=":x: Command Not Found!",
-            color=0xff2600
+            color=0xff2600,
+            description="This isn't a valid command. Use " + bot.command_prefix + "helpme for a list of commands."
         )
         embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
         await ctx.send(embed=embed)
@@ -42,6 +43,17 @@ async def on_command_error(ctx, error): # provides error embeds when things go w
         embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
         await ctx.send(embed=embed)
 
+
+
+@bot.command('prefix') # NOT PERMANENT, NEED JSON - https://stackoverflow.com/questions/51915962/per-server-prefixs
+async def set_prefix(ctx, arg):
+    bot.command_prefix = arg
+    embed = discord.Embed(
+            title=":white_check_mark: Prefix Set!",
+            color=0x03fc45
+        )
+    embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
+    await ctx.send(embed=embed)
 
 
 @bot.command('helpme') # general help embed
@@ -99,8 +111,6 @@ async def give_car(ctx, arg): # main function to get GTA vehicle info from the g
         # keep going if no exact match is found to infer on a partial match (already done)
 
     # allow users to change prefix
-
-    # combine sheetparser into a function called multiple times
     
     # stress test
 
