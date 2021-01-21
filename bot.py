@@ -64,7 +64,7 @@ async def help_func(ctx):
         description="**prefix is '$'**.\n Use this bot to look up information about all cars in GTA V and Online!\n\n",
         color=0x34ebae
     )
-    embed.add_field(name="Commands", value="**$vehicleinfo [carName]:** Provides information on GTA V and GTA Online vehicles\n", inline=False)
+    embed.add_field(name="Commands", value="**$vehicleinfo [carName]:** Provides information on GTA V and GTA Online vehicles\n**$prefix [new_prefix]:** Sets new prefix to use with this bot.", inline=False)
     embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
     await ctx.send(embed=embed)
 
@@ -84,7 +84,13 @@ async def give_car(ctx, *, arg): # main function to get GTA vehicle info from th
             color=0xffdd00,
             description="Enter a valid vehicle name."
         )
-        embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
+        await ctx.send(embed=embed)
+    elif("VEHICLE DATA INCOMPLETE! Spreadsheet #" in car_array):
+        embed = discord.Embed(
+            title=":grey_exclamation: Vehicle Data Incomplete!",
+            color=0x6911cf,
+            description="Some of this vehicle's info hasn't been completed yet. Check back later."
+        )
         await ctx.send(embed=embed)
     else:
         embed = discord.Embed(
@@ -103,6 +109,8 @@ async def give_car(ctx, *, arg): # main function to get GTA vehicle info from th
         embed.set_footer(text="Thanks to Broughy1322 for vehicle top speed and lap time data. Bot created by MrThankUvryMuch#9854")
         await ctx.send(embed=embed)
 
+    # case to handle rows not found - IN PROGRESS
+    
     # add pics to sheet
 
     # allow users to change prefix

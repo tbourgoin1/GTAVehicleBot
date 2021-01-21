@@ -25,12 +25,6 @@ def find_sheet_info(vehicle_name, spreadsheet_id, initial_range, range_adjustmen
 
     for i in range(0, len(vehicle_list) - 1): # BUG: will find the first string that has the vehicle name, but might select wrong one (i.e. user searches for Roosevelt, but if Roosevelt Valor is first in the spreadsheet it'll pick that)
         formatted_vehicle_list_member = re.sub("\W","", str(vehicle_list[i])) # removes dashes from vehicle name of current vehicle from list
-        # formatted_vehicle_list_member = re.sub("\s","", formatted_vehicle_list_member) # removes spaces from vehicle name of current vehicle from list
-       #  formatted_vehicle_list_member = re.sub("/'/g","", formatted_vehicle_list_member) # removes single quotes from vehicle name of current vehicle from list
-        print("FORMATTED VEHICLE LIST MEMBER:")
-        print(formatted_vehicle_list_member)
-        print("FORMATTED VEHICLE NAME:")
-        print(formatted_vehicle_name)
         if formatted_vehicle_name.lower() == str(formatted_vehicle_list_member).lower(): # if the car we want is found as an EXACT MATCH, set the range num to the row it's in and stop
             range_num = i + range_adjustment # adjusts for title rows of sheet
             print("EXACT MATCH")
@@ -42,14 +36,19 @@ def find_sheet_info(vehicle_name, spreadsheet_id, initial_range, range_adjustmen
         return "ERROR: Vehicle not found in spreadsheet #" + str(range_type)
     else: # if successful, get and save that vehicle's information
         new_range = "" # will hold range to get specific vehicle info for this sheet
+        temp_values_size = 0 # to check to see if the size of the returned array is correct - if not then vehicle data is incomplete
         if(range_type == 1):
             new_range = 'A' + str(range_num) + ':E' + str(range_num)
+            temp_values_size = 5
         elif(range_type == 2):
             new_range = 'Overall (Lap Time)!' + 'B' + str(range_num)
+            temp_values_size = 1
         elif(range_type == 3):
             new_range = 'Overall (Top Speed)!' + 'B' + str(range_num)
+            temp_values_size = 1
         elif(range_type == 4):
             new_range = 'Key Vehicle Info!' + 'C' + str(range_num) + ':L' + str(range_num)
+            temp_values_size = 3
         else:
             print("FAILED AT SETTING RANGE TYPE")
             return "FAILED AT SETTING RANGE TYPE"
@@ -58,7 +57,9 @@ def find_sheet_info(vehicle_name, spreadsheet_id, initial_range, range_adjustmen
         result = sheet.values().get(spreadsheetId=str(spreadsheet_id), range=str(new_range)).execute()
         temp_values = result.get('values', [])
         values = [] # final result will be put here
-        if(range_type == 1):
+        if(len(temp_values[0]) < temp_values_size):
+            return "VEHICLE DATA INCOMPLETE! Spreadsheet #" + str(range_type)
+        elif(range_type == 1):
             for row in temp_values: # gets the vehicle name, class, lap time, top speed, and image
                 values.append('%s' % (row[0]))
                 values.append('%s' % (row[1]))
@@ -107,14 +108,14 @@ def main(vehicle_name):
     range_adjustment = 2 # must be 2 for my sheet to accomodate for title, 4 for all Broughy sheets
     # range type 1 = my sheet. 2 = brough, overall lap time. 3 = brough, overall top speed. 4 = brough, key vehicle info.
     return_me = find_sheet_info(vehicle_name, MY_SPREADSHEET_ID, initial_range, range_adjustment, 1, service) # either set to string error, or an array of some vehicle data (my sheet)
-    if(return_me == "ERROR: Vehicle not found in spreadsheet #1"): # if failed finding vehicle in 1st sheet, stop
+    if(return_me == "ERROR: Vehicle not found in spreadsheet #1" or return_me == "VEHICLE DATA INCOMPLETE! Spreadsheet #1"): # if failed finding vehicle in 1st sheet, stop
         print(return_me)
         return return_me
     else: # if successful with first sheet, continue
         range_adjustment = 4 # 4 for Broughy's sheets
         initial_range = 'Overall (Lap Time)!D4:D1000'
         output = find_sheet_info(vehicle_name, BROUGHYS_SPREADSHEET_ID, initial_range, range_adjustment, 2, service) # find lap time position data
-        if(output == "ERROR: Vehicle not found in spreadsheet #2"): # if failed finding vehicle in 2nd sheet, stop
+        if(output == "ERROR: Vehicle not found in spreadsheet #2" or output == "VEHICLE DATA INCOMPLETE! Spreadsheet #2"): # if failed finding vehicle in 2nd sheet, stop
             print(output)
             return output
         else: # adds data to final product
@@ -123,7 +124,7 @@ def main(vehicle_name):
         
         initial_range = 'Overall (Top Speed)!D4:D1000'
         output = find_sheet_info(vehicle_name, BROUGHYS_SPREADSHEET_ID, initial_range, range_adjustment, 3, service) # find top speed poition data
-        if(output == "ERROR: Vehicle not found in spreadsheet #3"): # if failed finding vehicle in 3rd sheet, stop
+        if(output == "ERROR: Vehicle not found in spreadsheet #3" or output == "VEHICLE DATA INCOMPLETE! Spreadsheet #3"): # if failed finding vehicle in 3rd sheet, stop
             print(output)
             return output
         else: # adds data to final product
@@ -132,7 +133,7 @@ def main(vehicle_name):
         
         initial_range = 'Key Vehicle Info!B4:B1000'
         output = find_sheet_info(vehicle_name, BROUGHYS_SPREADSHEET_ID, initial_range, range_adjustment, 4, service) # find price, drivetrain, # of seats
-        if(output == "ERROR: Vehicle not found in spreadsheet #4"): # if failed finding vehicle in 4th sheet, stop
+        if(output == "ERROR: Vehicle not found in spreadsheet #4" or output == "VEHICLE DATA INCOMPLETE! Spreadsheet #4"): # if failed finding vehicle in 4th sheet, stop
             print(output)
             return output
         else: # adds data to final product
