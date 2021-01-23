@@ -72,10 +72,18 @@ async def help_func(ctx):
 
 @bot.command(name='vehicleinfo')
 async def give_car(ctx, *, arg): # main function to get GTA vehicle info from the google sheet. on_command_error handles all errors
-    embed_wait = discord.Embed(
-            title=":mag: Searching for vehicle...",  
-            color=0x7d7d7d
+    if(len(arg) < 3):
+        embed_characters = discord.Embed(
+            title=":grey_exclamation: Keyword Not Long Enough!",  
+            color=0xffdd00,
+            description="Vehicle keyword must be at least 3 characters in length."
         )
+        await ctx.send(embed=embed_characters)
+        return
+    embed_wait = discord.Embed(
+        title=":mag: Searching for vehicle...",  
+        color=0x7d7d7d
+    )
     await ctx.send(embed=embed_wait, delete_after=1)
     car_array = sheetparser.main(arg)
     if("ERROR: Vehicle not found in spreadsheet" in car_array):
@@ -100,19 +108,15 @@ async def give_car(ctx, *, arg): # main function to get GTA vehicle info from th
         embed.add_field(name="Class", value=car_array[1], inline=True)
         embed.add_field(name="Base Price", value='$' + car_array[9], inline=True)
         embed.add_field(name="Lap Time", value=car_array[2], inline=True)
-        embed.add_field(name="Lap Time Position in Class", value=car_array[5], inline=True)
+        embed.add_field(name="Lap Time Place in Class", value=car_array[5], inline=True)
         embed.add_field(name="Top Speed", value=car_array[3] + 'mph', inline=True)
-        embed.add_field(name="Top Speed Position in Class", value=car_array[6], inline=True)
+        embed.add_field(name="Top Speed Place in Class", value=car_array[6], inline=True)
         embed.add_field(name="Drivetrain", value=car_array[7], inline=True)
         embed.add_field(name="Number of Seats", value=car_array[8], inline=True)
         embed.set_thumbnail(url=car_array[4])
         embed.set_footer(text="Thanks to Broughy1322 for vehicle top speed and lap time data. Bot created by MrThankUvryMuch#9854")
         await ctx.send(embed=embed)
-
-    # case to handle rows not found - IN PROGRESS
-    
-    # add pics to sheet
-
+        
     # allow users to change prefix
     
     # stress test
