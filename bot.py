@@ -108,21 +108,23 @@ async def give_car(ctx, *, arg): # main function to get GTA vehicle info from th
         embed.add_field(name="Class", value=car_array[1], inline=True)
         embed.add_field(name="Base Price", value='$' + car_array[9], inline=True)
         embed.add_field(name="Lap Time", value=car_array[2], inline=True)
-        embed.add_field(name="Lap Time Place in Class", value=car_array[5], inline=True)
+        embed.add_field(name="Lap Time Position in Class", value=car_array[5], inline=True)
         embed.add_field(name="Top Speed", value=car_array[3] + 'mph', inline=True)
-        embed.add_field(name="Top Speed Place in Class", value=car_array[6], inline=True)
+        embed.add_field(name="Top Speed Position in Class", value=car_array[6], inline=True)
         embed.add_field(name="Drivetrain", value=car_array[7], inline=True)
         embed.add_field(name="Number of Seats", value=car_array[8], inline=True)
         embed.set_thumbnail(url=car_array[4])
         embed.set_footer(text="Thanks to Broughy1322 for vehicle top speed and lap time data. Bot created by MrThankUvryMuch#9854")
         await ctx.send(embed=embed)
-        
-    # allow users to change prefix
     
     # stress test
 
     # get it hosted somewhere
 
     # stress test 2
+
+    # deploy to DCA server
+
+    # allow users to change prefix
 
 bot.run(TOKEN)
