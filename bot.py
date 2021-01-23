@@ -72,14 +72,6 @@ async def help_func(ctx):
 
 @bot.command(name='vehicleinfo')
 async def give_car(ctx, *, arg): # main function to get GTA vehicle info from the google sheet. on_command_error handles all errors
-    if(len(arg) < 3):
-        embed_characters = discord.Embed(
-            title=":grey_exclamation: Keyword Not Long Enough!",  
-            color=0xffdd00,
-            description="Vehicle keyword must be at least 3 characters in length."
-        )
-        await ctx.send(embed=embed_characters)
-        return
     embed_wait = discord.Embed(
         title=":mag: Searching for vehicle...",  
         color=0x7d7d7d
@@ -116,6 +108,10 @@ async def give_car(ctx, *, arg): # main function to get GTA vehicle info from th
         embed.set_thumbnail(url=car_array[4])
         embed.set_footer(text="Thanks to Broughy1322 for vehicle top speed and lap time data. Bot created by MrThankUvryMuch#9854")
         await ctx.send(embed=embed)
+    
+    # ONLY can do 1 command at a time - threading
+
+    # support for vehicle makes?
     
     # stress test
 
