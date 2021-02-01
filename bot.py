@@ -63,7 +63,7 @@ async def on_command_error(ctx, error): # provides error embeds when things go w
     elif(isinstance(error, commands.MissingPermissions)):
         print(error)
         embed = discord.Embed(
-            title=":grey_exclamation: You Do Not Have Permission to Run This Command",
+            title=":grey_exclamation: Insufficient Permissions",
             color=0xffdd00,
             description="Only administrators can run this command."
         )
