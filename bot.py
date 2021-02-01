@@ -11,7 +11,6 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 def get_prefix(ctx, arg): # gets the prefix for the guild id given
     with open('prefixes.json', 'r') as my_json:
         all_prefixes = json.load(my_json)
-    print("in get_prefix returning this: " + all_prefixes[str(arg.guild.id)])
     return all_prefixes[str(arg.guild.id)]
 
 bot = commands.Bot(command_prefix=get_prefix)
