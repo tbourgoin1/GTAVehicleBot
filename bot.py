@@ -3,16 +3,43 @@ import discord
 from dotenv import load_dotenv
 from discord.ext import commands
 import sheetparser
+import json
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-bot = commands.Bot(command_prefix='$')
+def get_prefix(ctx, arg): # gets the prefix for the guild id given
+    with open('prefixes.json', 'r') as my_json:
+        all_prefixes = json.load(my_json)
+    print("in get_prefix returning this: " + all_prefixes[str(arg.guild.id)])
+    return all_prefixes[str(arg.guild.id)]
+
+bot = commands.Bot(command_prefix=get_prefix)
 
 @bot.event 
 async def on_ready(): # prints to the console when the bot starts
     print("Bot started!")
 
+
+@bot.event
+async def on_guild_join(guild):
+    with open('prefixes.json', 'r') as my_json: # read in all current prefixes
+        prefixes = json.load(my_json)
+    
+    prefixes[str(guild.id)] = '$' # add new guild to prefixes list and give it the default prefix
+
+    with open('prefixes.json', 'w') as my_json: # write new guild/prefix combo to the json file
+        json.dump(prefixes, my_json, indent=4)
+
+@bot.event
+async def on_guild_remove(guild):
+    with open('prefixes.json', 'r') as my_json: # read in all current prefixes
+        prefixes = json.load(my_json)
+    
+    prefixes.pop(str(guild.id)) # remove line in json corresponding to the guild that was removed
+
+    with open('prefixes.json', 'w') as my_json: # write new info json file - removed guild
+        json.dump(prefixes, my_json, indent=4)
 
 
 @bot.event
@@ -21,7 +48,7 @@ async def on_command_error(ctx, error): # provides error embeds when things go w
         embed = discord.Embed(
             title=":grey_exclamation: No Arguments Given!",
             color=0xffdd00,
-            description="This command requires an argument. Use " + bot.command_prefix + "helpme for more information."
+            description="This command requires an argument. Use the 'helpme' command for more information."
         )
         embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
         await ctx.send(embed=embed)
@@ -30,9 +57,17 @@ async def on_command_error(ctx, error): # provides error embeds when things go w
         embed = discord.Embed(
             title=":x: Command Not Found!",
             color=0xff2600,
-            description="This isn't a valid command. Use " + bot.command_prefix + "helpme for a list of commands."
+            description="This command requires an argument. Use the 'helpme' command for more information."
         )
         embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
+        await ctx.send(embed=embed)
+    elif(isinstance(error, commands.MissingPermissions)):
+        print(error)
+        embed = discord.Embed(
+            title=":grey_exclamation: You Do Not Have Permission to Run This Command",
+            color=0xffdd00,
+            description="Only administrators can run this command."
+        )
         await ctx.send(embed=embed)
     else:
         print(error)
@@ -45,12 +80,20 @@ async def on_command_error(ctx, error): # provides error embeds when things go w
         await ctx.send(embed=embed)
 
 
-
 @bot.command('prefix') # NOT PERMANENT, NEED JSON - https://stackoverflow.com/questions/51915962/per-server-prefixs
+@commands.has_permissions(administrator=True) # only admins can change prefixes
 async def set_prefix(ctx, arg):
-    bot.command_prefix = arg
+    with open('prefixes.json', 'r') as my_json: # read in all current prefixes
+        prefixes = json.load(my_json)
+    
+    prefixes[str(ctx.guild.id)] = arg # change current guild prefix to the arg given
+
+    with open('prefixes.json', 'w') as my_json: # write new info to json file - guild prefix changed
+        json.dump(prefixes, my_json, indent=4)
+    
     embed = discord.Embed(
             title=":white_check_mark: Prefix Set!",
+            description="Prefix is now " + arg,
             color=0x03fc45
         )
     embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
@@ -109,9 +152,9 @@ async def give_car(ctx, *, arg): # main function to get GTA vehicle info from th
         embed.set_footer(text="Thanks to Broughy1322 for vehicle top speed and lap time data. Bot created by MrThankUvryMuch#9854")
         await ctx.send(embed=embed)
     
-    # ONLY can do 1 command at a time - threading
+    # ONLY can do 1 command at a time - look into threading
 
-    # support for vehicle makes?
+    # everyone can change the prefix - restrict some commands to certain roles so only staff can do them
     
     # stress test
 
