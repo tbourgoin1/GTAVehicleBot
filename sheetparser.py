@@ -20,11 +20,10 @@ def find_sheet_info(vehicle_name, spreadsheet_id, initial_range, range_adjustmen
     vehicle_list = all_vehicle_names.get('values', []) # gets the values, or names of vehicles, from the results
 
     range_num = 0 # the (row number - row_adjustment) the vehicle will be found on
-    formatted_vehicle_name = re.sub("-","", str(vehicle_name)) # removes dashes from vehicle name
-    formatted_vehicle_name = re.sub("\s","",formatted_vehicle_name) # removes spaces from vehicle name
+    formatted_vehicle_name = re.sub("\W","", str(vehicle_name)) # removes all non letters from the specific vehicle we're looking at from query
 
     for i in range(0, len(vehicle_list) - 1): # BUG: will find the first string that has the vehicle name, but might select wrong one (i.e. user searches for Roosevelt, but if Roosevelt Valor is first in the spreadsheet it'll pick that)
-        formatted_vehicle_list_member = re.sub("\W","", str(vehicle_list[i])) # removes dashes from vehicle name of current vehicle from list
+        formatted_vehicle_list_member = re.sub("\W","", str(vehicle_list[i])) # removes all non letters from vehicle we're looking at
         if formatted_vehicle_name.lower() == str(formatted_vehicle_list_member).lower(): # if the car we want is found as an EXACT MATCH, set the range num to the row it's in and stop
             range_num = i + range_adjustment # adjusts for title rows of sheet
             print("EXACT MATCH")

@@ -152,8 +152,6 @@ async def give_car(ctx, *, arg): # main function to get GTA vehicle info from th
         await ctx.send(embed=embed)
     
     # ONLY can do 1 command at a time - look into threading
-
-    # everyone can change the prefix - restrict some commands to certain roles so only staff can do them
     
     # stress test
 
