@@ -103,10 +103,10 @@ async def set_prefix(ctx, arg):
 async def help_func(ctx):
     embed = discord.Embed(
         title="Welcome to GTABot!",
-        description="**prefix is '$'**.\n Use this bot to look up information about all cars in GTA V and Online!\n\n",
+        description="**Use this bot to look up information about all cars in GTA V and Online!**\n\n",
         color=0x34ebae
     )
-    embed.add_field(name="Commands", value="**$vehicleinfo [carName]:** Provides information on GTA V and GTA Online vehicles\n**$prefix [new_prefix]:** Sets new prefix to use with this bot.", inline=False)
+    embed.add_field(name="Commands", value="**vehicleinfo [carName]:** Provides information on GTA V and GTA Online vehicles\n**prefix [new_prefix]:** Sets new prefix to use with this bot.", inline=False)
     embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
     await ctx.send(embed=embed)
 
@@ -150,17 +150,12 @@ async def give_car(ctx, *, arg): # main function to get GTA vehicle info from th
         embed.set_thumbnail(url=car_array[4])
         embed.set_footer(text="Thanks to Broughy1322 for vehicle top speed and lap time data. Bot created by MrThankUvryMuch#9854")
         await ctx.send(embed=embed)
+
     
+    # TODO
     # ONLY can do 1 command at a time - look into threading
-    
-    # stress test
-
-    # get it hosted somewhere
-
-    # stress test 2
-
+    # get it hosted
+    # helpme command can't get prefixes accuratedly - would need to revamp entire code structure. Here: https://stackoverflow.com/questions/63495237/how-to-make-discord-py-custom-prefixes-system
     # deploy to DCA server
-
-    # allow users to change prefix
 
 bot.run(TOKEN)
