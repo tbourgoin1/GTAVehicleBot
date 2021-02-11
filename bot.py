@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from discord.ext import commands
 import sheetparser
 import json
+import keep_alive # file for server hosting
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -157,5 +158,7 @@ async def give_car(ctx, *, arg): # main function to get GTA vehicle info from th
     # get it hosted
     # helpme command can't get prefixes accuratedly - would need to revamp entire code structure. Here: https://stackoverflow.com/questions/63495237/how-to-make-discord-py-custom-prefixes-system
     # deploy to DCA server
+
+keep_alive.keep_alive() # for server hosting
 
 bot.run(TOKEN)
