@@ -106,7 +106,7 @@ async def help_func(ctx):
         description="**Use this bot to look up information about all cars in GTA V and Online!**\n\n",
         color=0x34ebae
     )
-    embed.add_field(name="Commands", value="**vehicleinfo [carName]:** Provides information on GTA V and GTA Online vehicles\n**prefix [new_prefix]:** Sets new prefix to use with this bot.", inline=False)
+    embed.add_field(name="Commands", value="**vehicleinfo [carName]:** Provides information on GTA V and GTA Online vehicles\n**prefix [new_prefix]:** Sets new prefix to use with this bot", inline=False)
     embed.set_footer(text="Bot created by MrThankUvryMuch#9854")
     await ctx.send(embed=embed)
 
@@ -142,7 +142,7 @@ async def give_car(ctx, *, arg): # main function to get GTA vehicle info from th
         embed.add_field(name="Class", value=car_array[1], inline=True)
         embed.add_field(name="Base Price", value='$' + car_array[9], inline=True)
         embed.add_field(name="Lap Time", value=car_array[2], inline=True)
-        embed.add_field(name="Lap Time Position in Class", value=car_array[5], inline=True)
+        embed.add_field(name="Lap Time Position in Class", value="#" + car_array[5], inline=True)
         embed.add_field(name="Top Speed", value=car_array[3] + 'mph', inline=True)
         embed.add_field(name="Top Speed Position in Class", value=car_array[6], inline=True)
         embed.add_field(name="Drivetrain", value=car_array[7], inline=True)
@@ -154,8 +154,9 @@ async def give_car(ctx, *, arg): # main function to get GTA vehicle info from th
     
     # TODO
     # ONLY can do 1 command at a time - look into threading
-    # get it hosted - AWS
+    # get it hosted - AWS? need to hide token.pickle, .env, cred.json, and prefixes.json
     # helpme command can't get prefixes accuratedly - would need to revamp entire code structure. Here: https://stackoverflow.com/questions/63495237/how-to-make-discord-py-custom-prefixes-system
     # deploy to DCA server
+    # new feature - future podium vehicle list?
 
 bot.run(TOKEN)
