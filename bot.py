@@ -153,7 +153,7 @@ async def give_car(ctx, *, arg): # main function to get GTA vehicle info from th
 
     
     # TODO
-    # ONLY can do 1 command at a time - look into threading
+    # ONLY can do 1 command at a time - look into threading 
     # get it hosted - heroku? need to hide token.pickle, .env, cred.json, and prefixes.json 
     # helpme command can't get prefixes accuratedly - would need to revamp entire code structure. Here: https://stackoverflow.com/questions/63495237/how-to-make-discord-py-custom-prefixes-system
     # deploy to DCA server
