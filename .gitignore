@@ -9,3 +9,5 @@ token.pickle
 credentials.json
 DEPRECATED.py
 prefixes.json
+requirements.txt
+Procfile
