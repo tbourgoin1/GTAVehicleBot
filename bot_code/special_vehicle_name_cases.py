@@ -30,7 +30,7 @@ def main(formatted_vehicle_name, command_name):
     # MISSPELLINGS ON THESE SO BEST GUESS MATCH APPEARS
         # "merryweather mesa" = "mesa (merryweather)"
     if(formatted_vehicle_name == "merryweathermesa"):
-       formatted_vehicle_name = "mesamerryweathe"
+       formatted_vehicle_name = "mesamerryweather"
     
     # "merryweather mesa" = "mesa (merryweather)"
     if(formatted_vehicle_name == "armoredkuruma" or formatted_vehicle_name == "armoredkaruma"):
@@ -54,7 +54,7 @@ def main(formatted_vehicle_name, command_name):
         formatted_vehicle_name = "fib"
 
     # arena vehicles
-    arena_vehicles = ["dominator", "impaler", "issi", "slamvan", "bruiser", "brutus", "cerberus", "deathbike", "imperator", "sasquatch", "scarab", "zr380"] # all arena war cars
+    arena_vehicles = ["dominator", "impaler", "issi", "issi classic", "slamvan", "bruiser", "brutus", "cerberus", "deathbike", "imperator", "sasquatch", "scarab", "zr380"] # all arena war cars
     arena_keywords = ["arena", "future", "future shock", "apocalypse", "nightmare"] # all arena war car types/phrases people use to look up arena war vehicles
     for keyword in arena_keywords: # find and remove the arena keyword the user used if applicable
         if keyword in formatted_vehicle_name:

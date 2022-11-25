@@ -13,7 +13,7 @@ from fastDamerauLevenshtein import damerauLevenshtein
 # USED FOR VEHICLEINFO
 
 # If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 MY_SPREADSHEET_ID = '1jjIrthDyrqKeMkXzo2HnYKIzTbmOiSMDCh6n8BkTN54'
 
@@ -27,11 +27,10 @@ def check_for_exact_partial_matches(vehicle_name, vehicle_list_member, formatted
         for cur_name_word in words_of_cur_name:
             cur_name_word = re.sub("\W","", str(cur_name_word)).lower() # format the current name
             if word == cur_name_word and cur_name_word != "custom":
-                print("EXACT PARTIAL MATCH, INPUT WORD = THIS SHEET WORD: '" + word + "' = '" + cur_name_word + "'")
                 return_this = [word, formatted_vehicle_list_member]
                 return return_this # return immediately once find a match, decide best case ratio later
 
-def find_sheet_info(vehicle_name, spreadsheet_id, initial_range, range_adjustment, service, command_name):
+def find_sheet_info(vehicle_name, spreadsheet_id, initial_range, range_adjustment, service):
     sheet = service.spreadsheets()
     all_vehicle_names = sheet.values().get(spreadsheetId=str(spreadsheet_id), range=str(initial_range)).execute() # finds all vehicle names in spreadsheet + other info
     vehicle_list = all_vehicle_names.get('values', []) # gets the values, or names of vehicles, from the results
@@ -59,7 +58,7 @@ def find_sheet_info(vehicle_name, spreadsheet_id, initial_range, range_adjustmen
     not_found_suggestions = []
 
     # SPECIAL VEHICLE NAME CASES - find any special cases and fix the name before searching
-    special_array = special_vehicle_name_cases.main(formatted_vehicle_name, command_name)
+    special_array = special_vehicle_name_cases.main(formatted_vehicle_name, 'vehicleinfo')
     formatted_vehicle_name = special_array[0]
     input_had_manufacturer = special_array[1]
 
@@ -146,7 +145,7 @@ def find_sheet_info(vehicle_name, spreadsheet_id, initial_range, range_adjustmen
     print("Suggestions: " + str(not_found_suggestions))
 
     # include was_exact_match because it may try to partial match cars before we get to the exact and add them into not_found_suggestions
-    if(range_num_is_best_guess or was_exact_match or (command_name == 'vehicleinfo' and len(not_found_suggestions) == 1)): # found one definitive vehicle, whether the singular best guess or an exact match. Get this vehicle's info.
+    if(range_num_is_best_guess or was_exact_match or len(not_found_suggestions) == 1): # found one definitive vehicle, whether the singular best guess or an exact match. Get this vehicle's info.
         return [str(range_num), was_exact_match]
     elif(len(not_found_suggestions) > 0): # didn't find one singular good exact or best guess vehicle but have at least 1 suggestion
         return ["TRY AGAIN: I have suggestions", not_found_suggestions]
@@ -156,7 +155,7 @@ def find_sheet_info(vehicle_name, spreadsheet_id, initial_range, range_adjustmen
 
 
 
-def main(vehicle_name, command_name):
+def main(vehicle_name):
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -182,7 +181,7 @@ def main(vehicle_name, command_name):
 
     range_adjustment = 2 # must be 2 for my sheet to accomodate for title
     print("INITIAL RANGE: " + initial_range)
-    returned_result_info = find_sheet_info(vehicle_name, MY_SPREADSHEET_ID, initial_range, range_adjustment, service, command_name) # either set to string error, or an array of some vehicle data
+    returned_result_info = find_sheet_info(vehicle_name, MY_SPREADSHEET_ID, initial_range, range_adjustment, service) # either set to string error, or an array of some vehicle data
     if("ERROR: Vehicle not found" in returned_result_info[0] or "TRY AGAIN: I have suggestions" in returned_result_info[0]):
         return returned_result_info # returns error msg and/or vehicle suggestions for bot.py
     final_range = 'Vehicle Data!' + 'A' + str(returned_result_info[0]) + ':O' + str(returned_result_info[0]) # construct range for sheet call

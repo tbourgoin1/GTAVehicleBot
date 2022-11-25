@@ -7,7 +7,5 @@ __pycache__/
 # other
 token.pickle
 credentials.json
-DEPRECATED.py
-prefixes.json
-requirements.txt
-Procfile
+.env
+fly.toml
