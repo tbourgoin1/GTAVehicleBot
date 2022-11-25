@@ -1,0 +1,10 @@
+# flyctl launch added from gtabot\.gitignore
+# Byte-compiled / optimized / DLL files
+gtabot\**\__pycache__
+
+# Environments
+
+# other
+gtabot\**\.vscode
+gtabot\**\.env
+gtabot\**\token.pickle
