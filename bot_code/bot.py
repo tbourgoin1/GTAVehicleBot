@@ -89,7 +89,7 @@ async def on_command_error(interaction, error): # provides error embeds when thi
         embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
         await interaction.send(embed=embed)
 
-@bot.slash_command(name='help', description="General help command. Use me if you're confused!", guild_ids=testserverid) # general help embed
+@bot.slash_command(name='help', description="General help command. Use me if you're confused!", guild_ids=productionserverids) # general help embed
 async def help_func(interaction : Interaction):
     try:
         embed = nextcord.Embed(
@@ -161,7 +161,7 @@ async def vehicleinfo_helper(car_array): # on successful vehicle find, this orga
         embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)\nThanks to Broughy1322 for much of the vehicle data!\n")
     return embed
 
-@bot.slash_command(name='vehicleinfo', description="Returns a bunch of info about a chosen GTA Online vehicles", guild_ids=testserverid)
+@bot.slash_command(name='vehicleinfo', description="Returns a bunch of info about a chosen GTA Online vehicles", guild_ids=productionserverids)
 async def give_car(interaction: Interaction, vehicle:str): # main function to get GTA vehicle info from the google sheet. on_command_error handles all errors
     try:
         print("INPUT TO VEHICLEINFO: " + vehicle)
@@ -245,7 +245,7 @@ async def give_car(interaction: Interaction, vehicle:str): # main function to ge
     except:
         await on_command_error(interaction, sys.exc_info()[0])
 
-@bot.slash_command(name='flags', description="Returns a guide on handling flags in GTA Online.", guild_ids=testserverid)
+@bot.slash_command(name='flags', description="Returns a guide on handling flags in GTA Online.", guild_ids=productionserverids)
 async def explain_handling_flags(interaction : Interaction):
     try:
         embed = nextcord.Embed( 
@@ -258,6 +258,7 @@ async def explain_handling_flags(interaction : Interaction):
         embed.add_field(name="Gear Shift Overrev", value="All vehicles with this flag also have the Lower Shift Points flag. All cars with this flag are broken - they rev at redline way too much before upshifting (caused by the Criminal Enterprises DLC flag change). Prime examples of vehicles with this flag are the Entity XXR and Jester Classic.")
         embed.add_field(name="Suspension", value="This is very simple - the lower the vehicle's suspension is, the better the grip is and the better lap times you'll get. Prime examples of vehicles with this flag are the Vectre and Sultan RS Classic.", inline=False)
         embed.add_field(name="Anti-Boost", value="This flag removes the vehicle's ability to curb boost and brake boost. It's currently only present on the Open Wheel cars (BR8, PR4, DR1, R88).", inline=False)
+        embed.add_field(name="Engine", value="This was Rockstar's attempt to combat curb boosting. When vehicles with this flag travel over a bump, their engine loses power instead of gaining it. This results in a strange sounding engine note, a slower car, and a worse driving experience overall. All cars that have this flag also have the Bouncy flag and have their mid-drive speed boost (AKA double clutch) disabled. Prime examples of vehicles with this flag are the Entity XXR and Ellie.", inline=False)
         embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
         await interaction.send(embed=embed)
     except:
@@ -265,7 +266,7 @@ async def explain_handling_flags(interaction : Interaction):
 
 
 # example: str = SlashOption(required=False, default=None)
-@bot.slash_command(name='topvehicles', description="Returns a list of vehicles and their performance statistics.", guild_ids=testserverid)
+@bot.slash_command(name='topvehicles', description="Returns a list of vehicles and their performance statistics.", guild_ids=productionserverids)
 async def find_top_vehicles(
     interaction: Interaction,
     vehicle_class:str = SlashOption(required=True, choices=['Sports Classics', 'Motorcycles', 'Boats', 'Commercial', 'Compacts', 'Coupes', 'Cycles', 'Emergency',
@@ -358,7 +359,7 @@ async def find_top_vehicles(
     except:
         await on_command_error(interaction, sys.exc_info()[0])
 
-@bot.slash_command(name='podium', description="Returns current and future podium vehicles.", guild_ids=testserverid)
+@bot.slash_command(name='podium', description="Returns current and future podium vehicles.", guild_ids=productionserverids)
 async def podium_cars(interaction: Interaction):
     try:
         embed = nextcord.Embed( 
@@ -386,7 +387,7 @@ async def podium_cars(interaction: Interaction):
     except:
         await on_command_error(interaction, sys.exc_info()[0])
 
-@bot.slash_command(name='podiumupdate', description="Used to update podium list. Only administrators can use this command.", guild_ids=testserverid)
+@bot.slash_command(name='podiumupdate', description="Used to update podium list. Only administrators can use this command.", guild_ids=productionserverids)
 async def podium_update(
     interaction: Interaction,
     vehicle_name:str,
@@ -447,7 +448,7 @@ async def podium_update(
     except:
         await on_command_error(interaction, sys.exc_info()[0])
 
-@bot.slash_command(name='prizeride', description="Returns current and future prize ride vehicles.", guild_ids=testserverid)
+@bot.slash_command(name='prizeride', description="Returns current and future prize ride vehicles.", guild_ids=productionserverids)
 async def prizeride_cars(interaction: Interaction):
     try:
         embed = nextcord.Embed( 
@@ -475,7 +476,7 @@ async def prizeride_cars(interaction: Interaction):
     except:
         await on_command_error(interaction, sys.exc_info()[0])
 
-@bot.slash_command(name='prizerideupdate', description="Used to update prize ride list. Only administrators can use this command.", guild_ids=testserverid)
+@bot.slash_command(name='prizerideupdate', description="Used to update prize ride list. Only administrators can use this command.", guild_ids=productionserverids)
 async def podium_update(
     interaction: Interaction,
     vehicle_name:str,
@@ -630,11 +631,11 @@ async def staffvehicle_multiple_exacts(car_array, staff_member, interaction):
     await second_wait_message.delete()
 
 
-@bot.slash_command(name='staffvehicle', description="Returns a vehicle from a staff members' garage", guild_ids=testserverid)
+@bot.slash_command(name='staffvehicle', description="Returns a vehicle from a staff members' garage", guild_ids=productionserverids)
 async def find_staff_vehicle(
     interaction : Interaction, 
     vehicle:str,
-    staff_member:str = SlashOption(choices=["Emperor", "Rad", "Alex"], required=True),
+    staff_member:str = SlashOption(choices=["Emperor", "Rad", "Alex", "Dornier"], required=True),
     ):
     try:
         print("INPUT TO STAFFVEHICLE. Vehicle: " + vehicle + ", staff_member: " + staff_member)
