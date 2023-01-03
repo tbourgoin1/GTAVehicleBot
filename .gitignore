@@ -10,3 +10,4 @@ credentials.json
 fly.toml
 Dockerfile
 .dockerignore
+requirements.txt
