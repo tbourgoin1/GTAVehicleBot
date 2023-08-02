@@ -8,11 +8,7 @@ import nextcord
 from nextcord.ext.commands.core import check
 from dotenv import load_dotenv
 from nextcord.ext import commands
-import sheetparser
-import sheetparser_topvehicles
 import sheetparser_searchstaffvehicles
-import sheetparser_podium
-import sheetparser_prizeride
 import json
 import re # regex
 import sys # try except error capture
@@ -98,15 +94,11 @@ async def help_func(interaction : Interaction):
             color=0x34ebae
         )
         embed.add_field(name="vehicleinfo [vehicle name]", value="Provides a bunch of information on a GTA Online or GTA V vehicle that you input.", inline=False)
-        embed.add_field(name="podium", value="Displays current podium vehicle and future podium vehicle list.", inline=False)
         embed.add_field(name="flags", value="Returns a text guide on handling flags in GTA Online that you'll see the 'vehicleinfo' command mention.", inline=False)
         embed.add_field(name="topvehicles [vehicle class] (number of vehicles) (lap time/top speed)", value="Returns a list of vehicles of a certain class sorted by either lap times or top speeds. If not entered, # of vehicles will default up to 10, and lap time/top speed will default to lap time. \n__Example:__ topvehicles Sports 3 lap time", inline=False)
         embed.add_field(name="staffvehicle [staff member] [vehicle]", value="Displays a vehicle from the chosen staff members' garage.", inline=False)
         embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
         await interaction.send(embed=embed)
-        # saving these for the future
-        #if ctx.author.guild_permissions.administrator:
-            # embed.add_field(name="Admin Only Commands", value="**prefix [new prefix]:** Sets new prefix to use with this bot.\n**podiumupdate [future/current] [add/remove] [vehicle_name/vehiclename img_link]:** Updates the future or current podium vehicle on the podium vehicle list found with the podium command.\n\nMore commands coming soon!", inline=False)
     except:
         await on_command_error(interaction, sys.exc_info()[0])
 
@@ -359,184 +351,6 @@ async def find_top_vehicles(
     except:
         await on_command_error(interaction, sys.exc_info()[0])
 
-@bot.slash_command(name='podium', description="Returns current and future podium vehicles.", guild_ids=productionserverids)
-async def podium_cars(interaction: Interaction):
-    try:
-        embed = nextcord.Embed( 
-                title="Podium Vehicles",
-                color=0x03fc45
-            )
-        podium_data = sheetparser_podium.main('podium', '', '', '')
-        current_vehicle = ""
-        current_vehicle_image = ""
-        future_vehicles = ""
-        for vehicle_arr in podium_data:
-            if vehicle_arr[2] == 'Current':
-                current_vehicle = vehicle_arr[0]
-                current_vehicle_image = vehicle_arr[1]
-            elif vehicle_arr[2] == 'Future':
-                future_vehicles += vehicle_arr[0] + '\n'
-        
-        future_vehicles = future_vehicles.rstrip() # remove trailing \n
-
-        embed.add_field(name=":hourglass: Current Podium Vehicle :hourglass:", value=current_vehicle, inline=False)
-        embed.set_image(url=current_vehicle_image)
-        embed.add_field(name=":clock5: Future Podium Vehicles :clock5:", value=future_vehicles, inline=False)
-        embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
-        await interaction.send(embed=embed)
-    except:
-        await on_command_error(interaction, sys.exc_info()[0])
-
-@bot.slash_command(name='podiumupdate', description="Used to update podium list. Only administrators can use this command.", guild_ids=productionserverids)
-async def podium_update(
-    interaction: Interaction,
-    vehicle_name:str,
-    current_or_future:str = SlashOption(required=True, choices=["Change Current", "Add Future", "Remove Future"]),
-    image_link:str = SlashOption(required=False, default=None)):
-
-    try:
-        if(not interaction.user.guild_permissions.ban_members):
-            await on_command_error(interaction, "Missing Permissions")
-        else:
-            if current_or_future == "Change Current" and image_link == None: # if current and no image, don't allow it
-                error_no_image_embed = nextcord.Embed( 
-                        title=":grey_exclamation: Updating Current Vehicle Requires Image Link!",
-                        color=0xffdd00,
-                    )
-                await interaction.send(embed=error_no_image_embed)
-                return
-
-            podium_data = sheetparser_podium.main('podiumupdate', vehicle_name, current_or_future, image_link)
-            if current_or_future == "Change Current":
-                embed = nextcord.Embed( 
-                            title=":white_check_mark: Current Podium Vehicle Updated",
-                            color=0x03fc45,
-                            description="If present, the same vehicle has been removed from the future podium vehicle list also."
-                        )
-                embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
-                await interaction.send(embed=embed)
-            elif current_or_future == "Add Future":
-                if podium_data == "VEHICLE ALREADY ADDED!":
-                    embed = nextcord.Embed( 
-                        title=":grey_exclamation: Vehicle Already In Podium List!",
-                        description="Vehicle not added. It already exists in the podium list.",
-                        color=0xffdd00
-                    )
-                    await interaction.send(embed=embed)
-                else:
-                    embed = nextcord.Embed( 
-                            title=":white_check_mark: Vehicle Added",
-                            description="Future vehicle added to podium list.",
-                            color=0x03fc45
-                    )
-                    await interaction.send(embed=embed)
-            else: # Remove Future
-                if podium_data == "VEHICLE NOT FOUND FOR REMOVAL!":
-                    embed = nextcord.Embed( 
-                        title=":grey_exclamation: Vehicle Not Found!",
-                        color=0xffdd00,
-                        description="I can't find that vehicle on the podium list. Please try again."
-                    )
-                    await interaction.send(embed=embed)
-                else:
-                    embed = nextcord.Embed( 
-                            title=":white_check_mark: Vehicle Removed",
-                            description="Future vehicle removed from podium list.",
-                            color=0x03fc45
-                        )
-                    await interaction.send(embed=embed)
-    except:
-        await on_command_error(interaction, sys.exc_info()[0])
-
-@bot.slash_command(name='prizeride', description="Returns current and future prize ride vehicles.", guild_ids=productionserverids)
-async def prizeride_cars(interaction: Interaction):
-    try:
-        embed = nextcord.Embed( 
-                title="Prize Ride Vehicles",
-                color=0x03fc45
-            )
-        prizeride_data = sheetparser_prizeride.main('prizeride', '', '', '')
-        current_vehicle = ""
-        current_vehicle_image = ""
-        future_vehicles = ""
-        for vehicle_arr in prizeride_data:
-            if vehicle_arr[2] == 'Current':
-                current_vehicle = vehicle_arr[0]
-                current_vehicle_image = vehicle_arr[1]
-            elif vehicle_arr[2] == 'Future':
-                future_vehicles += vehicle_arr[0] + '\n'
-        
-        future_vehicles = future_vehicles.rstrip() # remove trailing \n
-
-        embed.add_field(name=":hourglass: Current Prize Ride Vehicle :hourglass:", value=current_vehicle, inline=False)
-        embed.set_image(url=current_vehicle_image)
-        embed.add_field(name=":clock5: Future Prize Ride Vehicles :clock5:", value=future_vehicles, inline=False)
-        embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
-        await interaction.send(embed=embed)
-    except:
-        await on_command_error(interaction, sys.exc_info()[0])
-
-@bot.slash_command(name='prizerideupdate', description="Used to update prize ride list. Only administrators can use this command.", guild_ids=productionserverids)
-async def podium_update(
-    interaction: Interaction,
-    vehicle_name:str,
-    current_or_future:str = SlashOption(required=True, choices=["Change Current", "Add Future", "Remove Future"]),
-    image_link:str = SlashOption(required=False, default=None)):
-
-    try:
-        if(not interaction.user.guild_permissions.ban_members):
-            await on_command_error(interaction, "Missing Permissions")
-        else:
-            if current_or_future == "Change Current" and image_link == None: # if current and no image, don't allow it
-                error_no_image_embed = nextcord.Embed( 
-                        title=":grey_exclamation: Updating Current Vehicle Requires Image Link!",
-                        color=0xffdd00,
-                    )
-                await interaction.send(embed=error_no_image_embed)
-                return
-
-            prizeride_data = sheetparser_prizeride.main('prizerideupdate', vehicle_name, current_or_future, image_link)
-            if current_or_future == "Change Current":
-                embed = nextcord.Embed( 
-                            title=":white_check_mark: Current Prize Ride Vehicle Updated",
-                            color=0x03fc45,
-                            description="If present, the same vehicle has been removed from the future prize ride vehicle list also."
-                        )
-                embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
-                await interaction.send(embed=embed)
-            elif current_or_future == "Add Future":
-                if prizeride_data == "VEHICLE ALREADY ADDED!":
-                    embed = nextcord.Embed( 
-                        title=":grey_exclamation: Vehicle Already In Prize Ride List!",
-                        description="Vehicle not added. It already exists in the prize ride list.",
-                        color=0xffdd00
-                    )
-                    await interaction.send(embed=embed)
-                else:
-                    embed = nextcord.Embed( 
-                            title=":white_check_mark: Vehicle Added",
-                            description="Future vehicle added to prize ride list.",
-                            color=0x03fc45
-                    )
-                    await interaction.send(embed=embed)
-            else: # Remove Future
-                if prizeride_data == "VEHICLE NOT FOUND FOR REMOVAL!":
-                    embed = nextcord.Embed( 
-                        title=":grey_exclamation: Vehicle Not Found!",
-                        color=0xffdd00,
-                        description="I can't find that vehicle on the prize ride list. Please try again."
-                    )
-                    await interaction.send(embed=embed)
-                else:
-                    embed = nextcord.Embed( 
-                            title=":white_check_mark: Vehicle Removed",
-                            description="Future vehicle removed from prize ride list.",
-                            color=0x03fc45
-                        )
-                    await interaction.send(embed=embed)
-    except:
-        await on_command_error(interaction, sys.exc_info()[0])
-
 async def staffvehicle_send_data(car_array): # returns embed for staffvehicle
     # car array has 13 fields in it
     # format tital appropriately, remove manufacturer if needed
@@ -726,30 +540,6 @@ async def find_staff_vehicle(
             await interaction.send(embed=await staffvehicle_send_data(car_array))
     except:
         await on_command_error(interaction, sys.exc_info()[0])
-
-    
-    
-
-    
-    # TODO
-    # BUG: # add future shock, nightmare, and apocalypse versions of each arena vehicle?
-    # BUG: if two suggestion embeds are present and neither have been reacted to, reacting to one also will find the vehicle of the same reaction position
-            # on the other one
-    # HUGE BUG: heroku restarting every 24 hours removes the global commands from discord's cache. I'll need to use a database to 
-                # keep record of the guild ids the bot is in dynamically, and then use that array in guild_ids if I plan to release it publicly
-    # BUG: if podium or prize ride future vehicle list is empty, it will error. Auto-add something in this case?
-    # FEATURE: proper bug report system
-    # FEATURE: some sort of guide explaining how to access edge case stuff (min/max df on f1 cars)
-    # FEATURE: armor resistances for armored vehicles in "other notes" - or additional column
-    # FEATURE: vehicleinfo irl variants of cars
-        
-    # BIG FEATURE: future podium vehicle list
-        # BUG: MAKE IT SO ONLY DCA SERVER STAFF WITH BAN PERM GET THE HELP TEXT VISIBLE
-        # BUG: MAKE IT SO ONLY LOBO, TEST SERVER, AND DCA SERVER CAN USE PODIUMUPDATE COMMAND
-    # BIG FEATURE: query staff garages
-        # BUG: says it has suggestions but has no reactions for very far off guesses. i.e. try 'van', 'alk', 'bomb'
-        # CLEAN UP CODE JEEZ
-    # BIG FEATURE: expand to being public? need to consider cost
 
     # INVITE BOT BACK TO TEST SERVER USING https://discord.com/api/oauth2/authorize?client_id=800779921814323290&permissions=0&scope=bot%20applications.commands
 

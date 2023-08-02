@@ -47,7 +47,7 @@ def main(formatted_vehicle_name, command_name):
     
     # youga 4x4 is a common phrase, find youga classic 4x4 instead
     if(formatted_vehicle_name == "youga4x4"):
-        formatted_vehicle_name = "yougaclassic4x"
+        formatted_vehicle_name = "yougaclassic4x4"
     
     # fib buffalo means "fib" on sheets
     if(formatted_vehicle_name == "fibbuffalo"):
