@@ -2,13 +2,11 @@
 9F Cabrio
 Blista
 Asea
-Asea
+Asea (Snow)
 Boat Trailer
 Bus
+Army Tanker
 Army Trailer
-Army Trailer
-Army Trailer
-No name
 Dashound
 Airport Bus
 Asterope
@@ -16,8 +14,8 @@ Airtug
 Ambulance
 Barracks
 Barracks Semi
-Baller
-Baller
+Baller (Old)
+Baller (New)
 BeeJay XL
 Banshee
 Benson
@@ -27,11 +25,6 @@ Blazer
 Blazer Lifeguard
 Hot Rod Blazer
 Bison
-Bison
-Bison
-Boxville
-Boxville
-Boxville
 Bobcat XL
 Bodhi
 Buccaneer
@@ -40,17 +33,15 @@ Buffalo S
 Dozer
 Bullet
 Atomic Blimp
-Burrito
 Bugstars Burrito
 Burrito
-Burrito
-Burrito
-Cavalcade
-Cavalcade
+Burrito (Snow)
+Cavalcade (Old)
+Cavalcade (New)
 Police Transporter
 Gang Burrito
 Cable Car
-Caddy
+Golf Caddy
 Caddy
 Camper
 Carbonizzare
@@ -61,26 +52,25 @@ Coquette
 Cutter
 Gresley
 Dilettante
-Dilettante
+Dilettante (Security)
 Dune Buggy
 Space Docker
 Hotknife
 Duneloader
 Dubsta
-Dubsta
+Dubsta 2
 Dump
 Rubble
 Docktug
 Dominator
 Emperor
-Emperor
-Emperor
+Emperor (Snow)
 Entity XF
 Exemplar
 Elegy RH8
 F620
-FIB
-FIB
+FIB Buffalo
+FIB SUV
 Felon
 Felon GT
 Feltzer
@@ -108,15 +98,15 @@ Landstalker
 Lifeguard
 Manana
 Mesa
-Mesa
-Mesa
+Mesa (Snow)
+Merryweather Mesa
+Mesa (Merryweather)
 Crusader
 Minivan
 Mixer
-Mixer
+Mixer (8 Wheels)
 Monroe
 Lawn Mower
-Mule
 Mule
 Oracle XS
 Oracle
@@ -131,21 +121,19 @@ Picador
 Pounder
 Police Cruiser
 Unmarked Cruiser
-Police Cruiser
-Police Cruiser
+Police Cruiser (Buffalo)
+Police Cruiser (Interceptor)
 Police Rancher
 Police Roadcruiser
-Pony
 Pony
 Prairie
 Park Ranger
 Premier
 Primo
-N/A
 Rancher XL
-Rancher XL
+Rancher XL (Snow)
 Rapid GT
-Rapid GT
+Rapid GT Cabrio
 Radius
 Rat-Loader
 Rusty Rebel
@@ -154,15 +142,15 @@ Rebel
 Rental Shuttle Bus
 Ruiner
 Rumpo
-Rumpo
 Rhino Tank
 Police Riot
 Ripley
 Rocoto
 Romero Hearse
+Hearse
 Sabre Turbo
 Sadler
-Sadler
+Sadler (Snow)
 Sandking XL
 Sandking SWB
 Schafter
@@ -182,12 +170,11 @@ Stanier
 Stinger
 Stinger GT
 Stockade
-Stockade
+Stockade (Snow)
 Stratum
 Sultan
 Super Diamond
 Surano
-Surfer
 Surfer
 Surge
 Taco Van
@@ -196,21 +183,18 @@ Taxi
 Trashmaster
 Tractor
 Fieldmaster
-Fieldmaster
-N/A
+Fieldmaster (Snow)
 Baletrailer
 Tipper
-Tipper
+Tipper (6 Wheels)
 Tornado
-Tornado
-Tornado
-Tornado
+Mariachi Tornado
 Tourbus
 Towtruck
-Towtruck
+Towtruck (Small)
+Cherry Picker
 Utility Truck
-Utility Truck
-Utility Truck
+Sadler Utility Truck
 Voodoo
 Washington
 Stretch
@@ -224,7 +208,7 @@ Endurex Race Bike
 Tri-Cycles Race Bike
 Fixter
 Cruiser
-
+BMX
 Police Bike
 Akuma
 Carbon RS
@@ -232,7 +216,6 @@ Bagger
 Bati 801
 Bati 801RR
 Ruffian
-Daemon
 Double-T
 PCJ 600
 Vader
@@ -243,13 +226,11 @@ Annihilator
 Buzzard Attack Chopper
 Buzzard
 Cargobob
-Cargobob
-Cargobob
+Cargobob (Jetsam)
 Skylift
 Police Maverick
 Maverick
 Nemesis
-Frogger
 Frogger
 Cuban 800
 Duster
@@ -260,36 +241,19 @@ Shamal
 Luxor
 Titan
 P-996 LAZER
+Laser
+Lazer
 Cargo Plane
 Squalo
 Marquis
 Dinghy
-Dinghy
+Dinghy (2 Seater)
 Jetmax
 Police Predator
 Tropic
 Seashark
-Seashark
 Submersible
-Freight Train
-Freight Train
-Freight Train
-Freight Train
-Freight Train
-Freight Train
-Freight Train
-N/A
-Trailer
-Trailer
-Trailer
-Trailer
-Trailer
-Trailer
-Trailer
-Trailer
-Trailer
-Trailer
-Trailer
+Train
 Trailer
 Velum
 Adder
@@ -342,25 +306,20 @@ Jester (Racecar)
 Massacro (Racecar)
 Rat-Truck
 Slamvan
-Mule
 Velum 5-Seater
-N/A
 Casco
 Boxville
 Hydra
 Insurgent Pick-Up
 Insurgent
-Gang Burrito
 Technical
-Dinghy
 Savage
 Enduro
 Guardian
 Lectro
 Kuruma
 Kuruma (Armored)
-Trashmaster
-Barracks
+Armored Kuruma
 Valkyrie
 Lost Slamvan
 Swift Deluxe
@@ -383,7 +342,7 @@ Primo Custom
 Chino Custom
 Buccaneer Custom
 Voodoo Custom
-
+Lurcher
 Fränken Stange
 Verlierer
 Nightshade
@@ -401,12 +360,6 @@ Baller LE
 Baller LE LWB
 Baller LE (Armored)
 Baller LE LWB (Armored)
-Toro
-Seashark
-Dinghy
-Tropic
-Speeder
-Cargobob
 SuperVolito
 SuperVolito Carbon
 Valkyrie MOD.0
@@ -484,7 +437,6 @@ Diabolus Custom
 Blazer Aqua
 Ruiner 2000
 Ramp Buggy
-Ramp Buggy
 Phantom Wedge
 Rocket Voltic
 Penetrator
@@ -494,14 +446,13 @@ Technical Aqua
 FCR 1000
 FCR 1000 Custom
 Comet Retro Custom
-Ruiner
+Ruiner 3
 Turismo Classic
 Infernus Classic
 GP1
 Ruston
-Trailer
 XA-21
-Caddy
+Bunker Caddy
 Vagner
 Phantom Custom
 Nightshark
@@ -509,6 +460,7 @@ Cheetah Classic
 Torero
 Hauler Custom
 Mobile Operations Center
+MOC
 Technical Custom
 Insurgent Pick-Up Custom
 APC
@@ -558,7 +510,6 @@ Stromberg
 Chernobog
 RCV
 Avenger
-Avenger
 Thruster
 Yosemite
 Hermes
@@ -586,61 +537,73 @@ Taipan
 Blimp
 Mule Custom
 Pounder Custom
-Speedo Custom
 Festival Bus
 Patriot Stretch
 Swinger
 Terrorbyte
 Oppressor Mk II
+mk2
 B-11 Strikeforce
 Menacer
 Scramjet
 Freecrawler
 Stafford
 Apocalypse Bruiser
+Bruiser
 Future Shock Bruiser
 Nightmare Bruiser
 Apocalypse Brutus
+Brutus
 Future Shock Brutus
 Nightmare Brutus
 Apocalypse Cerberus
+Cerberus
 Future Shock Cerberus
 Nightmare Cerberus
 Clique
 Apocalypse Deathbike
+Deathbike
 Future Shock Deathbike
 Nightmare Deathbike
 Deveste Eight
 Deviant
 Apocalypse Dominator
+Arena Dominator
 Future Shock Dominator
 Nightmare Dominator
 Impaler
 Apocalypse Impaler
+Arena Impaler
 Future Shock Impaler
 Nightmare Impaler
 Apocalypse Imperator
+Imperator
 Future Shock Imperator
 Nightmare Imperator
 Apocalypse Issi
+Arena Issi
 Future Shock Issi
 Nightmare Issi
 Itali GTO
 Apocalypse Sasquatch
+Sasquatch
 Future Shock Sasquatch
 Nightmare Sasquatch
 RC Bandito
 Apocalypse Scarab
+Scarab
 Future Shock Scarab
 Nightmare Scarab
 Schlagen GT
 Apocalypse Slamvan
+Arena Slamvan
 Future Shock Slamvan
 Nightmare Slamvan
 Toros
 Tulip
 Vamos
 Apocalypse ZR380
+ZR380
 Future Shock ZR380
 Nightmare ZR380
 Caracara 4x4
@@ -674,6 +637,7 @@ JB 700W
 Blista Kanjo
 Komoda
 Invade and Persuade Tank
+RC Tank
 Outlaw
 Rebla GTS
 Retinue Mk II
@@ -699,6 +663,7 @@ Seminole Frontier
 Tigon
 Yosemite Rancher
 Youga Classic 4x4
+Youga 4x4
 Veto Modern
 Squaddie
 Weaponized Dinghy
@@ -715,7 +680,6 @@ Avisa
 Brioso 300
 Verus
 Longfin
-Sparrow
 Sparrow
 Winky
 Manchez Scout
@@ -743,6 +707,19 @@ Reever
 Champion
 Cinquemila
 I-Wagen
+Weaponized Ignus
+Weaponized Ignus (HSW)
+S95
+S95 (HSW)
+Cyclone II
+Cyclone II (HSW)
+Astron Custom
+Astron Custom (HSW)
+Arbiter GT
+Arbiter GT (HSW)
+Banshee (HSW)
+Brioso R/A (HSW)
+Deveste Eight (HSW)
 Astron
 Baller ST
 Buffalo STX
@@ -754,7 +731,6 @@ Patriot Mil-Spec
 Zeno
 Granger 3600LX
 Youga Custom
-Mule
 Omnis e-GT
 Sentinel Classic Widebody
 Ruiner ZZ-8
@@ -773,14 +749,11 @@ Conada
 Greenwood
 SM722
 Weevil Custom
-10F Widebody
-Sentinel Classic Widebody
 Tulip M-100
 Surfer Custom
 Manchez Scout C
 Journey II
 Entity MT
-Cargo Plane
 Brickade 6x6
 300R
 Tahoma Coupe
@@ -792,6 +765,17 @@ Hotring Everon
 Virtue
 Eudora
 Boor
+Entity MT (HSW)
+Stirling GT (HSW)
+Hakuchou Drag (HSW)
+Issi Rally (HSW)
+Sentinel XS (HSW)
+Turismo Classic (HSW)
+Vigero ZX (HSW)
+Buffalo EVX (HSW)
+La Coureuse (HSW)
+MonstroCiti (HSW)
+Itali GTO Stinger TT (HSW)
 Walton L35
 Streamer216
 Speedo Custom
@@ -800,8 +784,6 @@ MonstroCiti
 Itali GTO Stinger TT
 F-160 Raiju
 Clique Wagon
-Avenger
-Avenger
 Buffalo EVX
 Weaponized Conada
 Junk Energy Inductor
