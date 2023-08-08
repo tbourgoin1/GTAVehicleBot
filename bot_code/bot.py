@@ -128,15 +128,10 @@ async def create_error_embed():
     return embed
 
 async def vehicleinfo_createvehicleembed(vehicle, was_guess):
-    modelids_to_names_lines = open('txt_files/modelid_to_dictionary_carnames.txt', 'r')
     print('create embed vehicle: ', vehicle, 'guess: ', was_guess)
-    vehicle_id = ""
-    vehicle = vehicle.replace('(', '').replace(')', '').lower().strip() # format vehicle again in case coming from suggestions, which skips the helper
+    vehicle_id = vehicle[0]
+    vehicle = re.sub(r"[^a-z0-9 ]","", vehicle[1].lower().strip()) # format vehicle again for use searching - if it's a guess it'll be unformatted
     print('formatted vehicle: ', vehicle)
-    for line in modelids_to_names_lines:
-        line = line.strip().split('$')
-        if vehicle == line[1]:
-            vehicle_id = line[0]
     # query for vehicle and return
     print('vehicle id: ', vehicle_id)
     sql = "SELECT * FROM vehicleinfo WHERE modelid = %s LIMIT 1"
@@ -224,7 +219,14 @@ async def vehicleinfo_createvehicleembed(vehicle, was_guess):
 @bot.slash_command(name='vehicleinfo', description="Returns a bunch of info about a chosen GTA Online vehicle", guild_ids=testserverid)
 async def vehicleinfo_findvehicle(interaction: Interaction, input:str): # main function to get GTA vehicle info from the google sheet. on_command_error handles all errors
     
-    result_arr = vehicleinfo_helper.find_vehicle(input)
+    # pull names from DB -> remove everything but spaces and alphanumeric like the helper from whole list, make a list of strings
+    cursor.execute("SELECT modelid, name FROM vehicleinfo")
+    vehicles_db_list = cursor.fetchall()
+    vehicles_list = {} # dict
+    for veh in vehicles_db_list:
+        vehicles_list[veh['modelid']] = veh['name']
+    
+    result_arr = vehicleinfo_helper.find_vehicle(input, vehicles_list)
     vehicle = result_arr[0]
     was_exact = result_arr[1]
     was_guess = result_arr[2]
@@ -252,7 +254,7 @@ async def vehicleinfo_findvehicle(interaction: Interaction, input:str): # main f
         iterator = 0
         for i in range(0, len(vehicle_suggestions)): # put together the suggestions for the embed
             if(iterator < 5):
-                suggestions_string += emojis[i] + ": " + str(vehicle_suggestions[i]) + "\n"
+                suggestions_string += emojis[i] + ": " + str(vehicle_suggestions[i][1]) + "\n"
                 iterator += 1
             else:
                 break
@@ -271,16 +273,22 @@ async def vehicleinfo_findvehicle(interaction: Interaction, input:str): # main f
             return str(reaction.emoji) in emojis and user == interaction.user
         confirmation = await bot.wait_for("reaction_add", check=check)
         car_to_use = '' # set below, used in call to helper for newfound vehicle
+        car_modelid = '' # set below, used in call to helper for newfound vehicle
         if "1️⃣" in str(confirmation):
-            car_to_use = vehicle_suggestions[0]
+            car_modelid = vehicle_suggestions[0][0]
+            car_to_use = vehicle_suggestions[0][1]
         elif "2️⃣" in str(confirmation):
-            car_to_use = vehicle_suggestions[1]
+            car_modelid = vehicle_suggestions[1][0]
+            car_to_use = vehicle_suggestions[1][1]
         elif "3️⃣" in str(confirmation):
-            car_to_use = vehicle_suggestions[2]
+            car_modelid = vehicle_suggestions[2][0]
+            car_to_use = vehicle_suggestions[2][1]
         elif "4️⃣" in str(confirmation):
-            car_to_use = vehicle_suggestions[3]
+            car_modelid = vehicle_suggestions[3][0]
+            car_to_use = vehicle_suggestions[3][1]
         elif "5️⃣" in str(confirmation):
-            car_to_use = vehicle_suggestions[4]
+            car_modelid = vehicle_suggestions[4][0]
+            car_to_use = vehicle_suggestions[4][1]
         # send second wait embed, this one gets deleted.
         embed_wait_2 = nextcord.Embed(
         title=":mag: Searching for " + car_to_use + "...",  
@@ -288,7 +296,7 @@ async def vehicleinfo_findvehicle(interaction: Interaction, input:str): # main f
         )
         second_wait_message = await interaction.send(embed=embed_wait_2)
         # send message
-        embed = await vehicleinfo_createvehicleembed(car_to_use, False)
+        embed = await vehicleinfo_createvehicleembed([car_modelid, car_to_use], False)
         await interaction.send(embed=embed)
         await second_wait_message.delete()
 
