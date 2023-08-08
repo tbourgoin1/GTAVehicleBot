@@ -38,6 +38,16 @@ def copy_ingame_names():
         write_str += line_arr[1].strip() + "\n"
     f2.write(write_str)
 
+def dedupe():
+    f = open('nodupes_modelid_to_carnames.txt', 'r')
+    lines = f.readlines()
+    ids_arr = []
+    for line in lines:
+        line = line.split('$')
+        if line[0] in ids_arr:
+            print(line)
+        else:
+            ids_arr.append(line[0])
 
 if __name__ == "__main__":
     inp = input("enter method:\n")
@@ -47,3 +57,5 @@ if __name__ == "__main__":
         detect_dupes()
     elif inp == "copynames":
         copy_ingame_names()
+    elif inp == 'dedupe':
+        dedupe()

@@ -14,10 +14,17 @@ import re # regex
 import sys # try except error capture
 import logging
 import logging.handlers
+import psycopg2 # db connection
+from psycopg2.extras import RealDictCursor, execute_values
+from urllib.parse import urlparse
+import vehicleinfo_helper
+import updatevehicledata_helper
 
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
+DEV_TOKEN = os.getenv("DEV_DISCORD_TOKEN")
+DB_URL = os.getenv("DATABASE_URL")
 
 testserverid = [851239396689707078] # testing only
 productionserverids = [715583253289107588, 696800707919085638]
@@ -25,7 +32,7 @@ productionserverids = [715583253289107588, 696800707919085638]
 bot = commands.Bot(command_prefix=',', case_insensitive=True)
 bot.remove_command('help') # get rid of default help command and use mine instead
 
-# create email logger to send to me on error
+# create email logger for errors
 smtp_handler = logging.handlers.SMTPHandler(mailhost=("smtp.gmail.com", 587),
                                             fromaddr="GTAVehicleBot@gmail.com", 
                                             toaddrs="mrthankuvrymuch@gmail.com",
@@ -35,6 +42,15 @@ smtp_handler = logging.handlers.SMTPHandler(mailhost=("smtp.gmail.com", 587),
 logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
 logger = logging.getLogger()
 logger.addHandler(smtp_handler)
+
+# connect to postgres DB
+dbc = urlparse(DB_URL)
+HOST_NAME = 'localhost' # change between localhost and dbc.hostname depending on if dev or prod, respectively
+con = psycopg2.connect(
+    dbname=dbc.path.lstrip('/'), user=dbc.username, password=dbc.password, host=HOST_NAME, port=dbc.port, sslmode='disable', cursor_factory=RealDictCursor
+)
+cursor = con.cursor()
+con.autocommit = True
 
 @bot.event 
 async def on_ready():
@@ -85,7 +101,7 @@ async def on_command_error(interaction, error): # provides error embeds when thi
         embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
         await interaction.send(embed=embed)
 
-@bot.slash_command(name='help', description="General help command. Use me if you're confused!", guild_ids=productionserverids) # general help embed
+@bot.slash_command(name='help', description="General help command. Use me if you're confused!", guild_ids=testserverid) # general help embed
 async def help_func(interaction : Interaction):
     try:
         embed = nextcord.Embed(
@@ -102,142 +118,181 @@ async def help_func(interaction : Interaction):
     except:
         await on_command_error(interaction, sys.exc_info()[0])
 
-async def vehicleinfo_helper(car_array): # on successful vehicle find, this organizes the embed
-    # emojis for 1st, 2nd, 3rd in lap time/top speed position
-    times_in_class = [car_array[8], car_array[9]]
-    for i in range(0, len(times_in_class)):
-        if(times_in_class[i] == "#1"):
-            times_in_class[i] = ":first_place: 1st"
-        elif("#1 in" in times_in_class[i]):
-            times_in_class[i] = times_in_class[i].replace("#1 in", ":first_place: 1st in")
-        elif(times_in_class[i] == "#2"):
-            times_in_class[i] = ":second_place: 2nd"
-        elif("#2 in" in times_in_class[i]):
-            times_in_class[i] = times_in_class[i].replace("#2 in", ":second_place: 2nd in")
-        elif(times_in_class[i] == "#3"):
-            times_in_class[i] = ":third_place: 3rd"
-        elif("#3 in" in times_in_class[i]):
-            times_in_class[i] = times_in_class[i].replace("#3 in", ":third_place: 3rd in")
-    car_array[8] = times_in_class[0]
-    car_array[9] = times_in_class[1]
-
-    no_drivetrain = ["Boats", "Cycles", "Helicopters", "Anti-Aircraft Trailer", "Thruster", "Oppressor Mk II", "Planes"]
-    if(car_array[0] in no_drivetrain or car_array[1] in no_drivetrain):
-        car_array[10] = "N/A"
-
-    embed_title = "" # changes depending on if the vehicle has a manufacturer or not
-    if(car_array[12] == "-"):
-            embed_title=car_array[0]
-    else:
-        embed_title=car_array[12] + " " + car_array[0]
-    
-    embed = nextcord.Embed( 
-        title=embed_title,
-        color=0x03fc45
-    )
-    if car_array[7] != "N/A": # display DCA customization video if it exists/vehicle can be customized
-        embed.description = "Customization Video: " + car_array[7]
-    embed.add_field(name="Class", value=car_array[1], inline=True)
-    embed.add_field(name="Base Price", value=car_array[13], inline=True)
-    embed.add_field(name="Drivetrain", value=car_array[10], inline=True)
-    embed.add_field(name="Lap Time / Lap Time Position in Class", value=car_array[2] + " / " + car_array[8], inline=True)
-    embed.add_field(name="Top Speed / Top Speed Position in Class", value=car_array[3] + 'mph / ' + car_array[9], inline=True)
-    embed.add_field(name="Number of Seats", value=car_array[11], inline=True)
-    embed.add_field(name="Handling Flags?", value=car_array[5], inline=True)
-    embed.add_field(name="DLC", value=car_array[14], inline=True)
-    embed.add_field(name="Other Notes", value=car_array[15], inline=True)
-    embed.set_image(url=car_array[4])
-    if(car_array[6] == "Not Exact Match"):
-        embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)\nThanks to Broughy1322 for much of the vehicle data!\nBest Guess Match")
-    else:
-        embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)\nThanks to Broughy1322 for much of the vehicle data!\n")
+async def create_error_embed():
+    embed = nextcord.Embed(
+            title=":x: Database Error!",
+            color=0xff2600,
+            description="An unexpected database error occurred. <@339817929577332747> has been notified."
+        )
+    embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
     return embed
 
-@bot.slash_command(name='vehicleinfo', description="Returns a bunch of info about a chosen GTA Online vehicles", guild_ids=productionserverids)
-async def give_car(interaction: Interaction, vehicle:str): # main function to get GTA vehicle info from the google sheet. on_command_error handles all errors
-    try:
-        print("INPUT TO VEHICLEINFO: " + vehicle)
-        car_array = sheetparser.main(vehicle)
-        if("ERROR: Vehicle not found" in car_array): # didn't find anything
+async def vehicleinfo_createvehicleembed(vehicle, was_guess):
+    modelids_to_names_lines = open('txt_files/modelid_to_dictionary_carnames.txt', 'r')
+    print('create embed vehicle: ', vehicle, 'guess: ', was_guess)
+    vehicle_id = ""
+    vehicle = vehicle.replace('(', '').replace(')', '').lower().strip() # format vehicle again in case coming from suggestions, which skips the helper
+    print('formatted vehicle: ', vehicle)
+    for line in modelids_to_names_lines:
+        line = line.strip().split('$')
+        if vehicle == line[1]:
+            vehicle_id = line[0]
+    # query for vehicle and return
+    print('vehicle id: ', vehicle_id)
+    sql = "SELECT * FROM vehicleinfo WHERE modelid = %s LIMIT 1"
+    cursor.execute(sql, [vehicle_id])
+    car = cursor.fetchone()
+    if car:
+        if not car['name']: # if the name is blank that's the cutoff for not enough info
             embed = nextcord.Embed(
+                    title=":grey_exclamation: Vehicle Data Incomplete!",
+                    color=0xffdd00,
+                    description="This vehicle needs more information filled in before it can be viewed"
+            )
+            return embed
+        embed_title = "" # changes depending on if the vehicle has a manufacturer or not
+        if not car['manufacturer'] or 'Unknown' in car['manufacturer']:
+                embed_title=car['name']
+        else:
+            embed_title=car['manufacturer'] + " " + car['name']
+        embed = nextcord.Embed( 
+            title=embed_title,
+            color=0x03fc45
+        )
+        default_blank_string = "Unknown!"
+        if car['custvideo']: # display DCA customization video if it exists/vehicle can be customized
+            embed.description = "Customization Video: " + car['custvideo']
+
+        if car['class']:
+            class_title = "Class"
+            if "Not Raceable" not in car['class'] and "," in car['class']: # multiple race classes
+                class_title = "Race Classes"
+            elif car['laptime_byclass']: # we know it's a race class if this exists, but only one
+                class_title = 'Race Class'
+            embed.add_field(name=class_title, value=car['class'], inline=True)
+        else:
+            embed.add_field(name="Class", value=default_blank_string, inline=True)
+
+        if car['price'] or car['price'] == 0:
+            embed.add_field(name="Base Price", value='${:,}'.format(car['price']), inline=True)
+        else:
+            embed.add_field(name="Base Price", value=default_blank_string, inline=True)
+
+        embed.add_field(name="Drivetrain", value=car['drivetrain'], inline=True) # no worries about blanks, handled elsewhere
+
+        if not car['laptime']:
+            embed.add_field(name="Lap Time", value='No Lap Time Set', inline=True)
+        elif 'Not Raceable' in car['class']:
+            embed.add_field(name="Lap Time / Lap Time Position in Class", value=car['laptime'], inline=True)
+        else:
+            embed.add_field(name="Lap Time / Lap Time Position in Class", value=car['laptime'] + " / " + car['laptime_byclass'], inline=True)
+
+        if not car["topspeed"]:
+            embed.add_field(name="Top Speed", value="No Top Speed Set", inline=True)
+        elif 'Not Raceable' in car['class']:
+            embed.add_field(name="Top Speed / Top Speed Position in Class", value=car['topspeed'] + 'mph', inline=True)
+        else:
+            embed.add_field(name="Top Speed / Top Speed Position in Class", value=car['topspeed'] + 'mph / ' + car['topspeed_byclass'], inline=True)
+        
+        if car["numseats"]:
+            embed.add_field(name="Number of Seats", value=car['numseats'], inline=True)
+        else:
+            embed.add_field(name="Number of Seats", value=default_blank_string, inline=True)
+        
+        embed.add_field(name="Handling Flags", value=car['flags'], inline=True) # no worries about blanks, handled elsewhere
+        
+        if not car['dlc']:
+            embed.add_field(name="DLC", value=default_blank_string, inline=True)
+        else:
+            embed.add_field(name="DLC", value=car['dlc'], inline=True)
+        
+        embed.add_field(name="Other Notes", value=car['othernotes'], inline=True) # no worries about blanks, None is good
+        
+        if car['image']:
+            embed.set_image(url=car['image'])
+        
+        if was_guess:
+            embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)\nThanks to Broughy1322 for much of the vehicle data!\nBest Guess Match")
+        else:
+            embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)\nThanks to Broughy1322 for much of the vehicle data!\n")
+    
+    else:
+        embed = await create_error_embed()
+    
+    return embed
+
+@bot.slash_command(name='vehicleinfo', description="Returns a bunch of info about a chosen GTA Online vehicle", guild_ids=testserverid)
+async def vehicleinfo_findvehicle(interaction: Interaction, input:str): # main function to get GTA vehicle info from the google sheet. on_command_error handles all errors
+    
+    result_arr = vehicleinfo_helper.find_vehicle(input)
+    vehicle = result_arr[0]
+    was_exact = result_arr[1]
+    was_guess = result_arr[2]
+    
+    # if no results, return idk embed
+    if vehicle == 'not found':
+        embed = nextcord.Embed(
                     title=":grey_exclamation: Vehicle Not Found!",
                     color=0xffdd00,
-                    description="I couldn't find the exact vehicle name you submitted and I have no suggestions."
+                    description="Couldn't find that vehicle, please try another search"
             )
-            await interaction.send(embed=embed)
-        elif("TRY AGAIN: I have suggestions" in car_array): # didn't find singular vehicle but has multiple suggestions
-            embed = nextcord.Embed( # may need to send as-is depending on how bad the suggestions are. Could end up with 0.
-                    title=":grey_exclamation: Vehicle Not Found!",
-                    color=0xffdd00,
-                    description="I couldn't find the exact vehicle name you submitted. Here's the closest I could come up with."
-            )
-            vehicle_suggestions = sorted(car_array[1], key=lambda x: x[1], reverse=True) # sorts suggestions, using this from now on
-            print("NOT FOUND, SUGGESTIONS SORTED: ", vehicle_suggestions)
-            # check, if our highest ratio is decent then send off the suggestion list
-            final_veh_suggs = []
-            for i in range(0, len(vehicle_suggestions)): # remove all really bad suggestions
-                if not(vehicle_suggestions[i][1] < 0.5 and vehicle_suggestions[i][2] != "EP"):
-                    final_veh_suggs.append(vehicle_suggestions[i])
-            if(len(final_veh_suggs) == 0): # all suggestions were bad :/ send stock vehicle not found embed
-                await interaction.send(embed=embed)
-            elif(len(final_veh_suggs) == 1): # 1 decent suggestion, run with it
-                embed = await vehicleinfo_helper(sheetparser.main(final_veh_suggs[0][0]))
-                await interaction.send(embed=embed)
-            else: # still at least two good suggestions left, so show them
-                not_found_suggestions_string = ""
-                emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
-                iterator = 0
-                for i in range(0, len(final_veh_suggs)): # put together the suggestions for the embed
-                    if(iterator < 5):
-                        not_found_suggestions_string += emojis[i] + ": " + str(final_veh_suggs[i][0]) + "\n"
-                        iterator += 1
-                    else:
-                        break
-                embed.add_field(name="Did You Mean...", value=not_found_suggestions_string, inline=False) # add it to the embed and send it
-                await interaction.send(embed=embed)
-                message = await interaction.original_message() # grab message we just sent to add reactions to it
-                for i in range(0, iterator):
-                    await message.add_reaction(emojis[i])
-                
-                def check(reaction, user):
-                    return str(reaction.emoji) in emojis and user == interaction.user
-                confirmation = await bot.wait_for("reaction_add", check=check)
-                car_to_use = '' # set below, used in call to sheetparser for newfound vehicle
-                if "1️⃣" in str(confirmation):
-                    car_to_use = final_veh_suggs[0][0]
-                elif "2️⃣" in str(confirmation):
-                    car_to_use = final_veh_suggs[1][0]
-                elif "3️⃣" in str(confirmation):
-                    car_to_use = final_veh_suggs[2][0]
-                elif "4️⃣" in str(confirmation):
-                    car_to_use = final_veh_suggs[3][0]
-                elif "5️⃣" in str(confirmation):
-                    car_to_use = final_veh_suggs[4][0]
-                # send second wait embed, this one gets deleted.
-                embed_wait_2 = nextcord.Embed(
-                title=":mag: Searching for " + car_to_use + "...",  
-                color=0x7d7d7d
+        await interaction.send(embed=embed)
+
+    # if single result, need to convert the exact match of the ingame name to the model id for a query and run query
+    elif was_guess == True or was_exact == True:
+        embed = await vehicleinfo_createvehicleembed(vehicle, was_guess)
+        await interaction.send(embed=embed)
+
+    # if multiple results, return suggestions embed with first 5 array members
+    else:
+        print('multi suggs')
+        vehicle_suggestions = vehicle # for ease of reading
+        suggestions_string = ""
+        emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
+        iterator = 0
+        for i in range(0, len(vehicle_suggestions)): # put together the suggestions for the embed
+            if(iterator < 5):
+                suggestions_string += emojis[i] + ": " + str(vehicle_suggestions[i]) + "\n"
+                iterator += 1
+            else:
+                break
+        embed = nextcord.Embed( # may need to send as-is depending on how bad the suggestions are. Could end up with 0.
+                title=":grey_exclamation: Vehicle Not Found!",
+                color=0xffdd00,
+                description="I couldn't find the exact vehicle name you submitted. Here's the closest I could come up with."
                 )
-                second_wait_message = await interaction.send(embed=embed_wait_2)
-                # send message
-                embed = await vehicleinfo_helper(sheetparser.main(car_to_use))
-                await interaction.send(embed=embed)
-                await second_wait_message.delete()
+        embed.add_field(name="Did You Mean...", value=suggestions_string, inline=False) # add it to the embed and send it
+        await interaction.send(embed=embed)
+        message = await interaction.original_message() # grab message we just sent to add reactions to it
+        for i in range(0, iterator):
+            await message.add_reaction(emojis[i])
+        
+        def check(reaction, user):
+            return str(reaction.emoji) in emojis and user == interaction.user
+        confirmation = await bot.wait_for("reaction_add", check=check)
+        car_to_use = '' # set below, used in call to helper for newfound vehicle
+        if "1️⃣" in str(confirmation):
+            car_to_use = vehicle_suggestions[0]
+        elif "2️⃣" in str(confirmation):
+            car_to_use = vehicle_suggestions[1]
+        elif "3️⃣" in str(confirmation):
+            car_to_use = vehicle_suggestions[2]
+        elif "4️⃣" in str(confirmation):
+            car_to_use = vehicle_suggestions[3]
+        elif "5️⃣" in str(confirmation):
+            car_to_use = vehicle_suggestions[4]
+        # send second wait embed, this one gets deleted.
+        embed_wait_2 = nextcord.Embed(
+        title=":mag: Searching for " + car_to_use + "...",  
+        color=0x7d7d7d
+        )
+        second_wait_message = await interaction.send(embed=embed_wait_2)
+        # send message
+        embed = await vehicleinfo_createvehicleembed(car_to_use, False)
+        await interaction.send(embed=embed)
+        await second_wait_message.delete()
 
-        elif("VEHICLE DATA INCOMPLETE!" in car_array):
-            embed = nextcord.Embed(
-                title=":grey_exclamation: Vehicle Data Incomplete!",
-                color=0x6911cf,
-                description="Some of this vehicle's info hasn't been completed yet. Check back later."
-            )
-            await interaction.send(embed=embed)
-        else: # successfully found vehicle off the bat
-            embed = await vehicleinfo_helper(car_array)
-            await interaction.send(embed=embed)
-    except:
-        await on_command_error(interaction, sys.exc_info()[0])
-
-@bot.slash_command(name='flags', description="Returns a guide on handling flags in GTA Online.", guild_ids=productionserverids)
+@bot.slash_command(name='flags', description="Returns a guide on handling flags in GTA Online.", guild_ids=testserverid)
 async def explain_handling_flags(interaction : Interaction):
     try:
         embed = nextcord.Embed( 
@@ -256,9 +311,8 @@ async def explain_handling_flags(interaction : Interaction):
     except:
         await on_command_error(interaction, sys.exc_info()[0])
 
-
 # example: str = SlashOption(required=False, default=None)
-@bot.slash_command(name='topvehicles', description="Returns a list of vehicles and their performance statistics.", guild_ids=productionserverids)
+@bot.slash_command(name='topvehicles', description="Returns a list of vehicles and their performance statistics.", guild_ids=testserverid)
 async def find_top_vehicles(
     interaction: Interaction,
     vehicle_class:str = SlashOption(required=True, choices=['Sports Classics', 'Motorcycles', 'Boats', 'Commercial', 'Compacts', 'Coupes', 'Cycles', 'Emergency',
@@ -445,7 +499,7 @@ async def staffvehicle_multiple_exacts(car_array, staff_member, interaction):
     await second_wait_message.delete()
 
 
-@bot.slash_command(name='staffvehicle', description="Returns a vehicle from a staff members' garage", guild_ids=productionserverids)
+@bot.slash_command(name='staffvehicle', description="Returns a vehicle from a staff members' garage", guild_ids=testserverid)
 async def find_staff_vehicle(
     interaction : Interaction, 
     vehicle:str,
@@ -479,23 +533,23 @@ async def find_staff_vehicle(
             vehicle_suggestions = sorted(car_array[1], key=lambda x: x[1], reverse=True) # sorts suggestions, using this from now on
             print("NOT FOUND, SUGGESTIONS SORTED: ", vehicle_suggestions)
             # check, if our highest ratio is decent then send off the suggestion list
-            final_veh_suggs = []
+            vehicle_suggestions = []
             for i in range(0, len(vehicle_suggestions)): # remove all really bad suggestions
                 if not(vehicle_suggestions[i][1] < 0.5 and vehicle_suggestions[i][2] != "EP"):
-                    final_veh_suggs.append(vehicle_suggestions[i])
+                    vehicle_suggestions.append(vehicle_suggestions[i])
             if(len(vehicle_suggestions) == 0): # no suggestions left, they were all bad :/ send stock vehicle not found embed
                 await interaction.send(embed=embed)
             else: # still at least one good suggestion left, so show it/them
-                not_found_suggestions_string = ""
+                suggestions_string = ""
                 emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
                 iterator = 0
-                for i in range(0, len(final_veh_suggs)): # put together the suggestions for the embed
+                for i in range(0, len(vehicle_suggestions)): # put together the suggestions for the embed
                     if(iterator < 5):
-                        not_found_suggestions_string += emojis[i] + ": " + str(final_veh_suggs[i][0]) + "\n"
+                        suggestions_string += emojis[i] + ": " + str(vehicle_suggestions[i][0]) + "\n"
                         iterator += 1
                     else:
                         break
-                embed.add_field(name="Did You Mean...", value=not_found_suggestions_string, inline=False) # add it to the embed and send it
+                embed.add_field(name="Did You Mean...", value=suggestions_string, inline=False) # add it to the embed and send it
                 await interaction.send(embed=embed)
                 message = await interaction.original_message() # grab message we just sent to add reactions to it
                 for i in range(0, iterator):
@@ -506,15 +560,15 @@ async def find_staff_vehicle(
                 confirmation = await bot.wait_for("reaction_add", check=check)
                 car_to_use = '' # set below, used in call to sheetparser for newfound vehicle
                 if "1️⃣" in str(confirmation):
-                    car_to_use = final_veh_suggs[0][0]
+                    car_to_use = vehicle_suggestions[0][0]
                 elif "2️⃣" in str(confirmation):
-                    car_to_use = final_veh_suggs[1][0]
+                    car_to_use = vehicle_suggestions[1][0]
                 elif "3️⃣" in str(confirmation):
-                    car_to_use = final_veh_suggs[2][0]
+                    car_to_use = vehicle_suggestions[2][0]
                 elif "4️⃣" in str(confirmation):
-                    car_to_use = final_veh_suggs[3][0]
+                    car_to_use = vehicle_suggestions[3][0]
                 elif "5️⃣" in str(confirmation):
-                    car_to_use = final_veh_suggs[4][0]
+                    car_to_use = vehicle_suggestions[4][0]
                 # send second wait embed, this one gets deleted.
                 embed_wait_2 = nextcord.Embed(
                 title=":mag: Searching for " + staff_member + "'s " + car_to_use + "...",  
@@ -541,6 +595,207 @@ async def find_staff_vehicle(
     except:
         await on_command_error(interaction, sys.exc_info()[0])
 
-    # INVITE BOT BACK TO TEST SERVER USING https://discord.com/api/oauth2/authorize?client_id=800779921814323290&permissions=0&scope=bot%20applications.commands
 
-bot.run(TOKEN)
+@bot.slash_command(name='updatevehicledata', description="Scrapes gtacars.net and puts all updated info in the bot DB", guild_ids=testserverid)
+async def update_data(interaction : Interaction):
+    in_progress_embed = nextcord.Embed(
+    title=":jigsaw: Updating data...",
+    color=0x7d7d7d,
+    description="Sit back, relax. This will take a few minutes."
+    )
+    await interaction.send(embed=in_progress_embed)
+
+    #modelids_lines = open("testing/testmodelnames.txt", 'r').readlines()
+    modelids_lines = open("txt_files/nodupes_modelid_to_carnames.txt", 'r').readlines()
+    updated_vehicle_info_arr = []
+    to_insert_vehicle_info_arr = []
+    cursor.execute("SELECT * FROM vehicleinfo;")
+    old_vehicleinfo = cursor.fetchall()
+
+    # create vehicleinfo backup table
+    cursor.execute('''SELECT EXISTS (
+                SELECT FROM pg_tables
+                WHERE tablename = 'vehicleinfo_bak'
+    );''')
+    if cursor.fetchone()['exists']:
+        cursor.execute("DROP TABLE vehicleinfo_bak;")
+    print('creating backup table...')
+    cursor.execute('''CREATE TABLE vehicleinfo_bak (
+                    modelid varchar(50),
+                    manufacturer varchar(50),
+                    name varchar(75),
+                    class varchar(50),
+                    laptime varchar(25),
+                    topspeed varchar(25),
+                    image varchar(150),
+                    flags varchar(50),
+                    custvideo varchar(50),
+                    laptime_byclass VARCHAR(150),
+                    topspeed_byclass VARCHAR(150),
+                    drivetrain varchar(5),
+                    numseats varchar(10),
+                    price INT,
+                    dlc varchar(100),
+                    othernotes varchar(500)
+                    );''')
+        
+    # arrange columns and values for insert to backup table
+    columns = []
+    first_vehicle = old_vehicleinfo[0]
+    for column in first_vehicle:
+        columns.append(column)
+
+    query = "INSERT INTO vehicleinfo_bak ({}) VALUES %s".format(','.join(columns))
+
+    # puts dict values (car info) for each car into a list for insertion into another list, which is a list of lists
+    values = []
+    for tuple in old_vehicleinfo:
+        vehicle_arr = []
+        for column in tuple:
+            vehicle_arr.append(tuple[column])
+        values.append(vehicle_arr)
+    
+    print('inserting into backup table...')
+    execute_values(cursor, query, values)
+    
+    print("collecting vehicles to insert/modify...")
+    for vehicle in modelids_lines:
+        modelid = vehicle.split('$')[0].strip()
+        url = "https://gtacars.net/gta5/" + modelid
+        new_vehicleinfo = updatevehicledata_helper.get_new_vehicle_data(url, modelid)
+        #print(new_vehicleinfo) # dictionary
+        # find the member of old_vehicleinfo with a modelid that matches the modelid of the current new vehicle
+        old_vehicle_to_compare = []
+        vehicle_found = False
+        for old_vehicle in old_vehicleinfo:
+            if old_vehicle['modelid'] == new_vehicleinfo['modelid']:
+                old_vehicle_to_compare = old_vehicle
+                vehicle_found = True
+                break
+        if vehicle_found: # vehicle exists to inspect to potentially update
+            # loop through every field in the new vehicle, if one differs compared to the old one, add the new vehicle to the updated arr
+            for new_field in new_vehicleinfo:
+                if str(new_vehicleinfo[new_field]).strip() != str(old_vehicle_to_compare[new_field]).strip():
+                    updated_vehicle_info_arr.append(new_vehicleinfo)
+                    break
+        else: # vehicle model id not found, must be new. add to insert array
+            to_insert_vehicle_info_arr.append(new_vehicleinfo)
+    
+    if len(updated_vehicle_info_arr) > 0:
+        # check for update temp table in case, delete if so
+        cursor.execute('''SELECT EXISTS (
+                    SELECT FROM pg_tables
+                    WHERE tablename = 'vehicleinfo_tempupdate'
+        );''')
+        var = cursor.fetchone()['exists']
+        if var:
+            cursor.execute("DROP TABLE vehicleinfo_tempupdate;")
+
+        print("creating temp update table...")
+        temptable_update = '''CREATE TABLE vehicleinfo_tempupdate (
+                            modelid varchar(50),
+                            manufacturer varchar(50),
+                            name varchar(75),
+                            class varchar(50),
+                            laptime varchar(25),
+                            topspeed varchar(25),
+                            image varchar(150),
+                            flags varchar(50),
+                            laptime_byclass VARCHAR(150),
+                            topspeed_byclass VARCHAR(150),
+                            drivetrain varchar(5),
+                            numseats varchar(10),
+                            price INT);'''
+        print("creating temp update table")
+        cursor.execute(temptable_update)
+
+        # put updated vehicles into temp update table
+        columns = updated_vehicle_info_arr[0].keys()
+        query = "INSERT INTO vehicleinfo_tempupdate ({}) VALUES %s".format(','.join(columns))
+        # puts dict values (car info) into a list of lists as a list
+        values = [[value for value in veh.values()] for veh in updated_vehicle_info_arr]
+        print("inserting into update table...")
+        execute_values(cursor, query, values)
+
+        print("inserting updated values into update table...")
+        cursor.execute('''UPDATE vehicleinfo v
+                            SET manufacturer = vtempu.manufacturer,
+                                name = vtempu.name,
+                                class = vtempu.class,
+                                laptime = vtempu.laptime,
+                                topspeed = vtempu.topspeed,
+                                image = vtempu.image,
+                                flags = vtempu.flags,
+                                laptime_byclass = vtempu.laptime_byclass,
+                                topspeed_byclass = vtempu.topspeed_byclass,
+                                drivetrain = vtempu.drivetrain,
+                                numseats = vtempu.numseats,
+                                price = vtempu.price
+                            FROM vehicleinfo_tempupdate vtempu
+                            WHERE v.modelid = vtempu.modelid;''')
+
+        # delete update temp table now that we're finished
+        print("dropping tempupdate table...")
+        cursor.execute("DROP TABLE vehicleinfo_tempupdate;")
+
+    
+    if len(to_insert_vehicle_info_arr) > 0:
+        # check for insert temp table in case, delete if so
+        cursor.execute('''SELECT EXISTS (
+                    SELECT FROM pg_tables
+                    WHERE tablename = 'vehicleinfo_tempinsert'
+        );''')
+        if cursor.fetchone()['exists']:
+            cursor.execute("DROP TABLE vehicleinfo_tempinsert;")
+        
+        print("creating temp insert table...")
+        temptable_insert = '''CREATE TABLE vehicleinfo_tempinsert (
+                            modelid varchar(50),
+                            manufacturer varchar(50),
+                            name varchar(75),
+                            class varchar(50),
+                            laptime varchar(25),
+                            topspeed varchar(25),
+                            image varchar(150),
+                            flags varchar(50),
+                            laptime_byclass VARCHAR(150),
+                            topspeed_byclass VARCHAR(150),
+                            drivetrain varchar(5),
+                            numseats varchar(10),
+                            price INT);'''
+        cursor.execute(temptable_insert)
+
+        # put new vehicles into temp insert table
+        columns = to_insert_vehicle_info_arr[0].keys()
+        query = "INSERT INTO vehicleinfo_tempinsert ({}) VALUES %s".format(','.join(columns))
+        # puts dict values (car info) into a list of lists as a list
+        values = [[value for value in veh.values()] for veh in to_insert_vehicle_info_arr]
+        print("inserting new vehicles into temp insert table")
+        execute_values(cursor, query, values)
+
+        print("inserting new vehicles into vehicleinfo...")
+        cursor.execute('''INSERT INTO vehicleinfo 
+                    (modelid, manufacturer, name, class, laptime, topspeed, image, flags, laptime_byclass, topspeed_byclass, drivetrain, numseats, price)
+                        SELECT modelid, manufacturer, name, class, laptime, topspeed, image, flags, laptime_byclass, topspeed_byclass, drivetrain, numseats, price
+                        FROM vehicleinfo_tempinsert;''')
+
+        # delete insert temp table now that we're finished
+        print("dropping temp insert table...")
+        cursor.execute("DROP TABLE vehicleinfo_tempinsert;")
+    
+    finished_embed = nextcord.Embed(
+    title=":white_check_mark: Data Update Complete",  
+    color=0x7d7d7d
+    )
+    finished_embed.add_field(name="Existing Vehicles Updated", value=len(updated_vehicle_info_arr), inline=False)
+    finished_embed.add_field(name="New Vehicles Inserted", value=len(to_insert_vehicle_info_arr), inline=False)
+    await interaction.send(embed=finished_embed)
+    
+    
+
+
+    # INVITE BOT BACK TO TEST SERVER USING
+    #   MAIN BOT: https://discord.com/api/oauth2/authorize?client_id=800779921814323290&permissions=0&scope=bot%20applications.commands
+    # DEV: https://discord.com/oauth2/authorize?client_id=1136704389780873359&permissions=0&scope=bot%20applications.commands
+
+bot.run(DEV_TOKEN)
