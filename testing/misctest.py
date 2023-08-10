@@ -1,12 +1,3 @@
-import re
-
-
-
-dict = {
-            'aaaa' : 'bbbb'
-        }
-rar = {}
-for thing in dict:
-    rar[thing] = dict[thing]
-
-print(rar)
+laptime = None
+laptime_re = laptime.replace("*", "")
+print(laptime_re)

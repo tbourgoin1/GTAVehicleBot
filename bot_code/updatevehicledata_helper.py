@@ -68,8 +68,16 @@ def get_new_vehicle_data(url, modelid):
             else:
                 top_speed = lt_ts_arr[i+1].text
             break
-    vehicle_info["laptime"] = lap_time # None or set by site
-    vehicle_info["topspeed"] = top_speed.replace('mph', '').strip()
+    
+    # None or set by site, accomodate
+    if lap_time:
+        vehicle_info["laptime"] = lap_time.replace("*", "")
+    else:
+        vehicle_info["laptime"] = lap_time
+    if top_speed:
+        vehicle_info["topspeed"] = top_speed.replace('mph', '').replace("*","").strip()
+    else:
+        vehicle_info["topspeed"] = top_speed
     
     # GETTING IMAGE
     # will always be the 1st image that appears when you open the car page

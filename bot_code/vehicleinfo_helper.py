@@ -14,7 +14,7 @@ def find_vehicle(input, vehicles_list):
             if formatted_input != 'emperor' and formatted_input != 'bf400' and formatted_input != 'emperor snow': 
                 formatted_input = formatted_input.replace(mfr, "").strip()
 
-    # format DB names for use in finding matches
+    # format DB names for use in finding matches, retain unformatted names for the suggestions embed
     # vehicles_list is a dict with all vehicles -> modelid : unformatted vehicle name
     # formatted_vehicles is a dict with all vehicles -> modelid : formatted vehicle name
     formatted_vehicles = {}
@@ -38,11 +38,17 @@ def find_vehicle(input, vehicles_list):
                 dict_words = veh_name.split()
                 for dict_word in dict_words:
                     if word == dict_word:
-                        misspell_suggestions.append([veh_modelid, vehicles_list[veh_modelid]]) # unformatted name good for use in suggestions embed
+                        already_suggested = False
+                        for sugg in misspell_suggestions:
+                            if sugg[0] == veh_modelid:
+                                already_suggested = True
+                        if not already_suggested:
+                            misspell_suggestions.append([veh_modelid, vehicles_list[veh_modelid]]) # unformatted name good for use in suggestions embed
                         break
         if exact_match:
             break
 
+    print("misspell suggestions after exact partial: ", misspell_suggestions)
     # create dictionary txt file and run enchant misspell algo for more complex spelling errors
     if not exact_match:
         temp_dict_path = "txt_files/temp_dictionary.txt"
@@ -57,7 +63,11 @@ def find_vehicle(input, vehicles_list):
         # checking whether the words are in the new dictionary and adding the unformatted version for the embed
         for sugg in d.suggest(formatted_input):
             sugg_modelid = [i for i in formatted_vehicles if formatted_vehicles[i] == sugg][0]
-            if sugg not in misspell_suggestions:
+            already_suggested = False
+            for sugg_arr in misspell_suggestions:
+                if sugg_modelid == sugg_arr[0]:
+                    already_suggested = True
+            if not already_suggested:
                 misspell_suggestions.append([sugg_modelid, vehicles_list[sugg_modelid]])
 
         # decide based on spellcheck output what to do
@@ -67,6 +77,7 @@ def find_vehicle(input, vehicles_list):
             result = misspell_suggestions[0] # array, one vehicle [modelid, unformatted name]
             return [result, False, True]
         else: # multiple members of array, multiple suggestions. return 2darray [[modelid, unformatted name], [modelid, unformatted name]...]
+            print("misspell suggestions final: ", misspell_suggestions)
             # reformat the suggestions array to be 'correct looking' for the suggestions embed the user will see
             return [misspell_suggestions, False, False]
     else: # exact match

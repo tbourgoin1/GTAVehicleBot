@@ -3,7 +3,7 @@ from logging import error
 import os
 from time import time
 from typing import Iterable
-from nextcord import ApplicationSubcommand, Interaction, SlashOption
+from nextcord import Interaction, SlashOption
 import nextcord
 from nextcord.ext.commands.core import check
 from dotenv import load_dotenv
@@ -222,7 +222,7 @@ async def vehicleinfo_findvehicle(interaction: Interaction, input:str): # main f
     # pull names from DB -> remove everything but spaces and alphanumeric like the helper from whole list, make a list of strings
     cursor.execute("SELECT modelid, name FROM vehicleinfo")
     vehicles_db_list = cursor.fetchall()
-    vehicles_list = {} # dict
+    vehicles_list = {} # dict of all vehicles we currently have, from DB
     for veh in vehicles_db_list:
         vehicles_list[veh['modelid']] = veh['name']
     
@@ -613,8 +613,6 @@ async def update_data(interaction : Interaction):
     )
     await interaction.send(embed=in_progress_embed)
 
-    #modelids_lines = open("testing/testmodelnames.txt", 'r').readlines()
-    modelids_lines = open("txt_files/nodupes_modelid_to_carnames.txt", 'r').readlines()
     updated_vehicle_info_arr = []
     to_insert_vehicle_info_arr = []
     cursor.execute("SELECT * FROM vehicleinfo;")
@@ -667,11 +665,13 @@ async def update_data(interaction : Interaction):
     execute_values(cursor, query, values)
     
     print("collecting vehicles to insert/modify...")
-    for vehicle in modelids_lines:
-        modelid = vehicle.split('$')[0].strip()
+    cursor.execute("SELECT modelid FROM vehicleinfo")
+    modelids_db_list = cursor.fetchall()
+
+    for veh in modelids_db_list:
+        modelid = veh['modelid']
         url = "https://gtacars.net/gta5/" + modelid
         new_vehicleinfo = updatevehicledata_helper.get_new_vehicle_data(url, modelid)
-        #print(new_vehicleinfo) # dictionary
         # find the member of old_vehicleinfo with a modelid that matches the modelid of the current new vehicle
         old_vehicle_to_compare = []
         vehicle_found = False
@@ -799,11 +799,33 @@ async def update_data(interaction : Interaction):
     finished_embed.add_field(name="New Vehicles Inserted", value=len(to_insert_vehicle_info_arr), inline=False)
     await interaction.send(embed=finished_embed)
     
-    
+
+@bot.slash_command(name='upsertvehicle', description="Update or insert a single vehicle. Only modelid is required", guild_ids=testserverid)
+async def upsert_vehicle(
+    interaction: Interaction,
+    insert_or_update:str = SlashOption(description="Inserting a new vehicle or updating an existing vehicle?", options=["Insert", "Update"], required=True),
+    modelid:str = SlashOption(description="Vehicle model ID - Something like 'formula' for the PR4, for example", required=True),
+    manufacturer:str = SlashOption(description="Vehicle manufacturer - Truffade, for example", required=False),
+    name:str = SlashOption(description="Vehicle name - Ardent, for example.", required=False),
+    race_class:str = SlashOption(description="Vehicle race class(es). Enter in a comma separated list like: SUVs, Sports", required=False),
+    laptime:str = SlashOption(description="Vehicle lap time around Broughy's track. 1:00.293 for example.", required=False),
+    topspeed:str = SlashOption(description="Vehicle top speed under Broughy's testing. 160.25 for example"),
+    image:str = SlashOption(description="Image link to the vehicle (must be a DIRECT link)"),
+    flags:str = SlashOption(description="Vehicle handling flags", options=["None", "Engine", "Bouncy", "Suspension", "Engine, Bouncy", "Bouncy, Suspension", "Engine, Suspension", "Engine, Bouncy, Suspension"], required=False),
+    custvideo:str = SlashOption(description="DCA customization video for the vehicle in question", required=False),
+    laptime_byclass:str = SlashOption(description="Lap time position in its class(es). Enter in comma separated list like: 4th out of 52 in Motorcycles, 2nd out of 53 in Off-Road", required=False),
+    topspeed_byclass:str = SlashOption(description="Top speed position in its class(es). Enter in comma separated list like: 4th out of 52 in Motorcycles, 2nd out of 53 in Off-Road", required=False),
+    drivetrain:str = SlashOption(description="Vehicle drivetrain, if applicable", options=["N/A", "RWD", "FWD", "AWD"], required=False),
+    numseats:str = SlashOption(description="Number of seats in the vehicle. Enter only the number", required=False),
+    price:str = SlashOption(description="Base price of the vehicle. Enter only the number", required=False),
+    dlc:str = SlashOption(description="DLC the vehicle was released in. DLC name + year in parenthesis, like Base Game (2013)", required=False),
+    othernotes:str = SlashOption(description="The other notes section. This will overwrite them, so add any in you want to keep here as well.", required=False)
+):
+    print('a')
 
 
-    # INVITE BOT BACK TO TEST SERVER USING
-    #   MAIN BOT: https://discord.com/api/oauth2/authorize?client_id=800779921814323290&permissions=0&scope=bot%20applications.commands
-    # DEV: https://discord.com/oauth2/authorize?client_id=1136704389780873359&permissions=0&scope=bot%20applications.commands
+# INVITE BOT BACK TO TEST SERVER USING
+# MAIN BOT: https://discord.com/api/oauth2/authorize?client_id=800779921814323290&permissions=0&scope=bot%20applications.commands
+# DEV: https://discord.com/oauth2/authorize?client_id=1136704389780873359&permissions=0&scope=bot%20applications.commands
 
 bot.run(DEV_TOKEN)

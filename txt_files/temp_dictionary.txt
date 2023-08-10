@@ -115,6 +115,8 @@ ratloader
 rusty rebel
 regina
 rubble
+squaddie
+manchez scout
 surfer
 surge
 taco van
@@ -127,6 +129,8 @@ washington
 youga
 ztype
 sanchez
+mobile operations center
+antiaircraft trailer
 sanchez livery
 whippet race bike
 endurex race bike
@@ -569,7 +573,6 @@ youga classic 4x4
 fieldmaster snow
 baletrailer
 veto modern
-squaddie
 itali rsx
 verus
 towtruck small
@@ -577,7 +580,6 @@ utility truck cherry picker crane
 utility truck cargo truck
 sparrow
 winky
-manchez scout
 forklift
 cargobob jetsam
 dinghy 4seater
@@ -734,13 +736,11 @@ submersible
 kraken
 dodo
 brickade
-antiaircraft trailer
 phantom wedge
 wastelander
 caddy bunker
 phantom custom
 hauler custom
-mobile operations center
 weaponized tampa
 rm10 bombushka
 lf22 starling
@@ -764,9 +764,9 @@ kurtz 31 patrol boat
 avisa
 kosatka
 brickade 6x6
-weaponized conada
 junk energy inductor
 inductor
 la coureuse
 hotring hellfire
 brigham
+weaponized conada
