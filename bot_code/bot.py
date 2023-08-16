@@ -15,10 +15,13 @@ import sys # try except error capture
 import logging
 import logging.handlers
 import psycopg2 # db connection
+import psycopg2.pool
 from psycopg2.extras import RealDictCursor, execute_values
 from urllib.parse import urlparse
 import vehicleinfo_helper
 import updatevehicledata_helper
+import upsertvehicle_helper
+import topvehicles_helper
 
 
 load_dotenv()
@@ -46,11 +49,54 @@ logger.addHandler(smtp_handler)
 # connect to postgres DB
 dbc = urlparse(DB_URL)
 HOST_NAME = 'localhost' # change between localhost and dbc.hostname depending on if dev or prod, respectively
-con = psycopg2.connect(
-    dbname=dbc.path.lstrip('/'), user=dbc.username, password=dbc.password, host=HOST_NAME, port=dbc.port, sslmode='disable', cursor_factory=RealDictCursor
+pool = psycopg2.pool.SimpleConnectionPool(
+    2, # min num of connections
+    3, # max num of connections
+    dbname=dbc.path.lstrip('/'),
+    user=dbc.username,
+    password=dbc.password,
+    host=HOST_NAME,
+    port=dbc.port,
+    sslmode='disable',
+    cursor_factory=RealDictCursor,
+    connect_timeout=3,
+    # https://www.postgresql.org/docs/9.3/libpq-connect.html
+    keepalives=1,
+    keepalives_idle=5,
+    keepalives_interval=2,
+    keepalives_count=2
 )
-cursor = con.cursor()
-con.autocommit = True
+c1 = pool.getconn()
+c2 = None
+cursor = c1.cursor()
+c1.autocommit = True
+
+async def check_db_connection():
+    global c1, c2, cursor, pool
+    print('in check db connection')
+    try:
+        cursor.execute("select 1")
+    except psycopg2.OperationalError: # db connection closed
+        print('DB connection closed! Switching connections...')
+        if c1:
+            if c1.closed != 0:
+                c2 = pool.getconn()
+                cursor = c2.cursor()
+                c2.autocommit = True
+                pool.putconn(c1)
+                c1 = None
+                print('Switched to c2 -> c1, c2', c1, c2)
+        else:
+            if c2.closed != 0:
+                c1 = pool.getconn()
+                cursor = c1.cursor()
+                c1.autocommit = True
+                pool.putconn(c2)
+                c2 = None
+                print('Switched to c2 -> c1, c2', c1, c2)
+
+
+
 
 @bot.event 
 async def on_ready():
@@ -59,21 +105,18 @@ async def on_ready():
 @bot.event
 async def on_command_error(interaction, error): # provides error embeds when things go wrong
     if(isinstance(error, commands.CommandNotFound)): # general command not found error
-        print(error)
         embed = nextcord.Embed(
             title=":x: Please Use Slash Commands!",
             color=0xff2600,
             description="GTAVehicleBot is no longer using legacy commands as a result of Discord's push towards slash commands. Type / to get started."
         )
         embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
-        await interaction.send(embed=embed)
     elif(isinstance(error, commands.MissingPermissions) or error == "Missing Permissions"):
         embed = nextcord.Embed(
             title=":grey_exclamation: Insufficient Permissions",
             color=0xffdd00,
             description="You don't have permission to run this command."
         )
-        await interaction.send(embed=embed)
     elif("http" in str(error) and "429" in str(error)):
         embed = nextcord.Embed(
             title=":x: Too Many Requests!",
@@ -81,7 +124,6 @@ async def on_command_error(interaction, error): # provides error embeds when thi
             description="You're submitting too many requests to the bot! Wait a little bit before using it again."
         )
         embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
-        await interaction.send(embed=embed)
     elif("http" in str(error) and "503" in str(error)):
         embed = nextcord.Embed(
             title=":x: Sheets API Unavailable!",
@@ -89,7 +131,20 @@ async def on_command_error(interaction, error): # provides error embeds when thi
             description="This bot uses the Google Sheets API, which seems to be unavailable right now for unknown reasons. Check back later and try again."
         )
         embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
-        await interaction.send(embed=embed)
+    elif 'UniqueViolation' in str(error):
+        embed = nextcord.Embed(
+            title=":x: Vehicle Already Exists!",
+            color=0xff2600,
+            description="The vehicle being inserted into the DB already exists."
+        )
+        embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
+    elif 'psycopg2.errors' in str(error):
+        embed = nextcord.Embed(
+            title=":x: Database Error!",
+            color=0xff2600,
+            description="An unexpected database error occurred. <@339817929577332747> has been notified."
+        )
+        embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
     else:
         print(error)
         logger.exception('Unhandled Exception. Error: ' + str(error))
@@ -99,7 +154,7 @@ async def on_command_error(interaction, error): # provides error embeds when thi
             description="An unexpected error occurred. <@339817929577332747> has been notified."
         )
         embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
-        await interaction.send(embed=embed)
+    await interaction.send(embed=embed)
 
 @bot.slash_command(name='help', description="General help command. Use me if you're confused!", guild_ids=testserverid) # general help embed
 async def help_func(interaction : Interaction):
@@ -116,18 +171,9 @@ async def help_func(interaction : Interaction):
         embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
         await interaction.send(embed=embed)
     except:
-        await on_command_error(interaction, sys.exc_info()[0])
+        await on_command_error(interaction, sys.exc_info()[0])    
 
-async def create_error_embed():
-    embed = nextcord.Embed(
-            title=":x: Database Error!",
-            color=0xff2600,
-            description="An unexpected database error occurred. <@339817929577332747> has been notified."
-        )
-    embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
-    return embed
-
-async def vehicleinfo_createvehicleembed(vehicle, was_guess):
+async def vehicleinfo_createvehicleembed(vehicle, was_guess, interaction):
     print('create embed vehicle: ', vehicle, 'guess: ', was_guess)
     vehicle_id = vehicle[0]
     vehicle = re.sub(r"[^a-z0-9 ]","", vehicle[1].lower().strip()) # format vehicle again for use searching - if it's a guess it'll be unformatted
@@ -194,7 +240,10 @@ async def vehicleinfo_createvehicleembed(vehicle, was_guess):
         else:
             embed.add_field(name="Number of Seats", value=default_blank_string, inline=True)
         
-        embed.add_field(name="Handling Flags", value=car['flags'], inline=True) # no worries about blanks, handled elsewhere
+        if car['flags']:
+            embed.add_field(name="Handling Flags", value=car['flags'], inline=True)
+        else:
+            embed.add_field(name="Handling Flags", value=default_blank_string, inline=True)
         
         if not car['dlc']:
             embed.add_field(name="DLC", value=default_blank_string, inline=True)
@@ -212,19 +261,21 @@ async def vehicleinfo_createvehicleembed(vehicle, was_guess):
             embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)\nThanks to Broughy1322 for much of the vehicle data!\n")
     
     else:
-        embed = await create_error_embed()
+        await on_command_error(interaction, "psycopg2.errors.DatabaseError")
     
     return embed
 
 @bot.slash_command(name='vehicleinfo', description="Returns a bunch of info about a chosen GTA Online vehicle", guild_ids=testserverid)
 async def vehicleinfo_findvehicle(interaction: Interaction, input:str): # main function to get GTA vehicle info from the google sheet. on_command_error handles all errors
+    await check_db_connection()
     
     # pull names from DB -> remove everything but spaces and alphanumeric like the helper from whole list, make a list of strings
     cursor.execute("SELECT modelid, name FROM vehicleinfo")
     vehicles_db_list = cursor.fetchall()
     vehicles_list = {} # dict of all vehicles we currently have, from DB
     for veh in vehicles_db_list:
-        vehicles_list[veh['modelid']] = veh['name']
+        if veh['name']: # no name from upsert or another method of adding, don't use it for search
+            vehicles_list[veh['modelid']] = veh['name']
     
     result_arr = vehicleinfo_helper.find_vehicle(input, vehicles_list)
     vehicle = result_arr[0]
@@ -242,8 +293,9 @@ async def vehicleinfo_findvehicle(interaction: Interaction, input:str): # main f
 
     # if single result, need to convert the exact match of the ingame name to the model id for a query and run query
     elif was_guess == True or was_exact == True:
-        embed = await vehicleinfo_createvehicleembed(vehicle, was_guess)
-        await interaction.send(embed=embed)
+        embed = await vehicleinfo_createvehicleembed(vehicle, was_guess, interaction)
+        if embed:
+            await interaction.send(embed=embed)
 
     # if multiple results, return suggestions embed with first 5 array members
     else:
@@ -296,7 +348,7 @@ async def vehicleinfo_findvehicle(interaction: Interaction, input:str): # main f
         )
         second_wait_message = await interaction.send(embed=embed_wait_2)
         # send message
-        embed = await vehicleinfo_createvehicleembed([car_modelid, car_to_use], False)
+        embed = await vehicleinfo_createvehicleembed([car_modelid, car_to_use], False, interaction)
         await interaction.send(embed=embed)
         await second_wait_message.delete()
 
@@ -308,11 +360,8 @@ async def explain_handling_flags(interaction : Interaction):
                 color=0x03fc45,
                 description="Advanced Handling Flags are certain values Rockstar places on GTA vehicles in the code to make them handle differently. Here's an explanation:"
             )
-        embed.add_field(name="Bouncy", value="This gives the vehicle very bouncy suspension, which can lead to it being hard to control. But, it can also make it much faster. In GTA, when any vehicle without the Lower Shift Points flag goes over a bump, it gains speed. This is called 'curb boosting'. This is made much more significant on vehicles with this flag because of the bouncy suspension, hence why they accelerate faster over roads that aren't perfectly flat. Prime examples of vehicles with this flag are the Itali GTO and Toros.", inline=False)
-        embed.add_field(name="Lower Shift Points", value="Rockstar nerfed this flag with Criminal Enterprises DLC, making it nearly ineffective in order to fix the Tuner cars' nerf. Cars with this flag are now only slightly slower than if they were non-flagged. It used to disable curb boosting, handbrake boosting, and make vehicles upshift sooner, but does none of these anymore. Prime examples of vehicles with this flag are the Calico GTF and ZR350.", inline=False)
-        embed.add_field(name="Gear Shift Overrev", value="All vehicles with this flag also have the Lower Shift Points flag. All cars with this flag are broken - they rev at redline way too much before upshifting (caused by the Criminal Enterprises DLC flag change). Prime examples of vehicles with this flag are the Entity XXR and Jester Classic.")
+        embed.add_field(name="Bouncy", value="This gives the vehicle very bouncy suspension, which can lead to it being hard to control. But, it can also make it much faster. In GTA, when any vehicle without the Engine flag goes over a bump, it gains speed. This is called 'curb boosting'. This is made much more significant on vehicles with this flag because of the bouncy suspension, hence why they accelerate faster over roads that aren't perfectly flat. Prime examples of vehicles with this flag are the Itali GTO and Toros.", inline=False)
         embed.add_field(name="Suspension", value="This is very simple - the lower the vehicle's suspension is, the better the grip is and the better lap times you'll get. Prime examples of vehicles with this flag are the Vectre and Sultan RS Classic.", inline=False)
-        embed.add_field(name="Anti-Boost", value="This flag removes the vehicle's ability to curb boost and brake boost. It's currently only present on the Open Wheel cars (BR8, PR4, DR1, R88).", inline=False)
         embed.add_field(name="Engine", value="This was Rockstar's attempt to combat curb boosting. When vehicles with this flag travel over a bump, their engine loses power instead of gaining it. This results in a strange sounding engine note, a slower car, and a worse driving experience overall. All cars that have this flag also have the Bouncy flag and have their mid-drive speed boost (AKA double clutch) disabled. Prime examples of vehicles with this flag are the Entity XXR and Ellie.", inline=False)
         embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
         await interaction.send(embed=embed)
@@ -320,89 +369,93 @@ async def explain_handling_flags(interaction : Interaction):
         await on_command_error(interaction, sys.exc_info()[0])
 
 # example: str = SlashOption(required=False, default=None)
-@bot.slash_command(name='topvehicles', description="Returns a list of vehicles and their performance statistics.", guild_ids=testserverid)
+@bot.slash_command(name='topvehicles', description="Gets a list of vehicles and their stats. Only shows raceable members of the class if applicable", guild_ids=testserverid)
 async def find_top_vehicles(
     interaction: Interaction,
-    vehicle_class:str = SlashOption(required=True, choices=['Sports Classics', 'Motorcycles', 'Boats', 'Commercial', 'Compacts', 'Coupes', 'Cycles', 'Emergency',
-                                                            'Helicopters', 'Industrial', 'Military', 'Muscle', 'Off-Road', 'Open Wheel', 'Planes', 'Sedans',
-                                                            'Service', 'Sports', 'Supers', 'SUVs', 'Tuners', 'Utility', 'Vans'
+    vehicle_class:str = SlashOption(required=True, choices=['Boats', 'Compacts', 'Coupes', 'Cycles', 'Helicopters', 'Motorcycles', 'Muscle',
+                                                             'Off-Road', 'Open Wheel', 'Planes', 'Sedans', 'Service (Not Raceable)', 'Sports', 'Sports Classics',
+                                                             'Supers', 'SUVs', 'Tuner', 'Utility', 'Vans'
                                                             ]),
     number_of_vehicles:int = SlashOption(required=False, default=10), 
     metric:str = SlashOption(required=False, default='Lap Time', choices=['Lap Time', 'Top Speed'])
 ):
     try:
+        await check_db_connection()
         print("INPUT TO TOPVEHICLES. Class: " + vehicle_class + ", number: " + str(number_of_vehicles) + ", metric: " + metric)
-        number_of_vehicles = abs(number_of_vehicles) # in case of negative input
-        if number_of_vehicles == 0: # stop here if user inputs 0 vehicles
+        # validate input
+        error_embed = None
+        if not str(number_of_vehicles).isnumeric():
+            error_embed = nextcord.Embed(
+                    title=":grey_exclamation: Bad input!",
+                    color=0xffdd00,
+                    description='Number of vehicles must be only a number'
+            ) 
+        elif number_of_vehicles == 0: # stop here if user inputs 0 vehicles
             error_embed = nextcord.Embed(
                     title=":grey_exclamation: You Cannot Search for Zero Vehicles",
                     color=0xffdd00
             )
+        if error_embed:
             await interaction.send(embed=error_embed)
-            return     
+            return 
         # otherwise, look for the data
-        result = sheetparser_topvehicles.main(number_of_vehicles, vehicle_class, metric) # find what we need on sheet, returns array
+        number_of_vehicles = abs(number_of_vehicles) # in case of negative input
+        result = topvehicles_helper.get_top_vehicles(cursor, vehicle_class, metric, number_of_vehicles) # find what we need in DB, returns 2darray
 
         vehicle_string = ""
-        i = 1
-        for vehicle in result: # create columns for embeds
-            if i == 1:
+        for vehicle in result:
+            if vehicle[0] == '1':
                 vehicle_string += ":first_place: **__1st:__** "
-            elif i == 2:
+            elif vehicle[0] == '2':
                 vehicle_string += ":second_place: **__2nd:__** "
-            elif i == 3:
+            elif vehicle[0] == '3':
                 vehicle_string += ":third_place: **__3rd:__** "
             else:
-                vehicle_string += "**__#" + str(i) + ":__** "
-            
-            if vehicle[11] == "-": # no manufacturer = don't include
-                vehicle_string += "**" + vehicle[0] + ": **"
+                vehicle_string += "**__#" + vehicle[0] + ":__** "
+        
+            if vehicle[1] == "": # no manufacturer = don't include
+                vehicle_string += "**" + vehicle[2] + ": **"
             else:
-                vehicle_string += "**" + vehicle[11] + " " + vehicle[0] + ": **"
+                vehicle_string += "**" + vehicle[1] + " " + vehicle[2] + ": **"
             if(metric == "Lap Time"):
-                vehicle_string += vehicle[2] + " / " + vehicle[3] + "mph\n"
+                vehicle_string += vehicle[3] + " / " + vehicle[4] + "mph\n"
             else: # top speed
-                vehicle_string += vehicle[3] + "mph / " + vehicle[2] + "\n"
-            i += 1
-                
-        title_string = "" # used later if embed > 1024 characters
-        if vehicle_class == "Tuners": # for title string if tuners
-            result[0][1] = "Tuners"
+                vehicle_string += vehicle[3] + "mph / " + vehicle[4] + "\n"
+        
         if(metric == "Lap Time"):
-            title_string = "Top " + str(len(result)) + " " + str(result[0][1]) + " (Lap Time)"
-            embed = nextcord.Embed(
-                title="Top " + str(len(result)) + " " + str(result[0][1]) + " (Lap Time)",
+            title_string = "Top " + str(number_of_vehicles) + " " + vehicle_class + " (Lap Time)"
+            embed = nextcord.Embed(   
+                title=title_string,
                 color=0x03fc45
             )
         else: # top speed
-            title_string = "Top " + str(len(result)) + " " + str(result[0][1]) + " (Top Speed)"
+            title_string = "Top " + str(number_of_vehicles) + " " + vehicle_class + " (Top Speed)"
             embed = nextcord.Embed(
-                title="Top " + str(len(result)) + " " + str(result[0][1]) + " (Top Speed)",
+                title=title_string,
                 color=0x03fc45
             )
-        
         if len(vehicle_string) > 1024:
-            statistics_array = vehicle_string.splitlines()
-            use_these_in_embeds = [] # strings of max of 1024 in length, one per embed used
+            stats_rows = vehicle_string.splitlines()
+            embed_strings = [] # strings of max of 1024 in length, one per embed used
             current_embed_string = ""
             non_statistics_strings_length = len(title_string + "Bot created by MrThankUvryMuch#9854. Thanks to Broughy1322 for much of the vehicle data!" + "Performance Statistics" + " Cont.")
-            for vehicle in statistics_array:
+            for vehicle in stats_rows:
                 if len(current_embed_string + vehicle + "\n") <= (1024 - non_statistics_strings_length): # accomodates title etc in embed aside from actual data
                     current_embed_string += str(vehicle) + "\n"
                 else:
-                    use_these_in_embeds.append(current_embed_string)
+                    embed_strings.append(current_embed_string)
                     current_embed_string = str(vehicle) + "\n"
             if len(current_embed_string) > 0: # adds last of vehicles to the embed string
-                use_these_in_embeds.append(current_embed_string)
-            embed.add_field(name="Performance Statistics", value=use_these_in_embeds[0], inline=True)
+                embed_strings.append(current_embed_string)
+            embed.add_field(name="Performance Statistics", value=embed_strings[0], inline=True)
             embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854). Thanks to Broughy1322 for much of the vehicle data!")
             await interaction.send(embed=embed)
-            for i in range(1, len(use_these_in_embeds)):
+            for i in range(1, len(embed_strings)):
                 new_embed = nextcord.Embed(
                     title=title_string + " Cont.",
                     color=0x03fc45
                 )
-                new_embed.add_field(name="Performance Statistics", value=use_these_in_embeds[i], inline=True)
+                new_embed.add_field(name="Performance Statistics", value=embed_strings[i], inline=True)
                 embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854). Thanks to Broughy1322 for much of the vehicle data!")
                 await interaction.send(embed=new_embed)
 
@@ -606,222 +659,307 @@ async def find_staff_vehicle(
 
 @bot.slash_command(name='updatevehicledata', description="Scrapes gtacars.net and puts all updated info in the bot DB", guild_ids=testserverid)
 async def update_data(interaction : Interaction):
-    in_progress_embed = nextcord.Embed(
-    title=":jigsaw: Updating data...",
-    color=0x7d7d7d,
-    description="Sit back, relax. This will take a few minutes."
-    )
-    await interaction.send(embed=in_progress_embed)
+        await check_db_connection()
+    #if(not interaction.user.guild_permissions.ban_members):
+        #await on_command_error(interaction, "Missing Permissions")
+    #else:
+        in_progress_embed = nextcord.Embed(
+        title=":jigsaw: Updating data...",
+        color=0x7d7d7d,
+        description="Sit back, relax. This will take a few minutes."
+        )
+        await interaction.send(embed=in_progress_embed)
 
-    updated_vehicle_info_arr = []
-    to_insert_vehicle_info_arr = []
-    cursor.execute("SELECT * FROM vehicleinfo;")
-    old_vehicleinfo = cursor.fetchall()
+        updated_vehicle_info_arr = []
+        to_insert_vehicle_info_arr = []
+        cursor.execute("SELECT * FROM vehicleinfo;")
+        old_vehicleinfo = cursor.fetchall()
 
-    # create vehicleinfo backup table
-    cursor.execute('''SELECT EXISTS (
-                SELECT FROM pg_tables
-                WHERE tablename = 'vehicleinfo_bak'
-    );''')
-    if cursor.fetchone()['exists']:
-        cursor.execute("DROP TABLE vehicleinfo_bak;")
-    print('creating backup table...')
-    cursor.execute('''CREATE TABLE vehicleinfo_bak (
-                    modelid varchar(50),
-                    manufacturer varchar(50),
-                    name varchar(75),
-                    class varchar(50),
-                    laptime varchar(25),
-                    topspeed varchar(25),
-                    image varchar(150),
-                    flags varchar(50),
-                    custvideo varchar(50),
-                    laptime_byclass VARCHAR(150),
-                    topspeed_byclass VARCHAR(150),
-                    drivetrain varchar(5),
-                    numseats varchar(10),
-                    price INT,
-                    dlc varchar(100),
-                    othernotes varchar(500)
-                    );''')
-        
-    # arrange columns and values for insert to backup table
-    columns = []
-    first_vehicle = old_vehicleinfo[0]
-    for column in first_vehicle:
-        columns.append(column)
-
-    query = "INSERT INTO vehicleinfo_bak ({}) VALUES %s".format(','.join(columns))
-
-    # puts dict values (car info) for each car into a list for insertion into another list, which is a list of lists
-    values = []
-    for tuple in old_vehicleinfo:
-        vehicle_arr = []
-        for column in tuple:
-            vehicle_arr.append(tuple[column])
-        values.append(vehicle_arr)
-    
-    print('inserting into backup table...')
-    execute_values(cursor, query, values)
-    
-    print("collecting vehicles to insert/modify...")
-    cursor.execute("SELECT modelid FROM vehicleinfo")
-    modelids_db_list = cursor.fetchall()
-
-    for veh in modelids_db_list:
-        modelid = veh['modelid']
-        url = "https://gtacars.net/gta5/" + modelid
-        new_vehicleinfo = updatevehicledata_helper.get_new_vehicle_data(url, modelid)
-        # find the member of old_vehicleinfo with a modelid that matches the modelid of the current new vehicle
-        old_vehicle_to_compare = []
-        vehicle_found = False
-        for old_vehicle in old_vehicleinfo:
-            if old_vehicle['modelid'] == new_vehicleinfo['modelid']:
-                old_vehicle_to_compare = old_vehicle
-                vehicle_found = True
-                break
-        if vehicle_found: # vehicle exists to inspect to potentially update
-            # loop through every field in the new vehicle, if one differs compared to the old one, add the new vehicle to the updated arr
-            for new_field in new_vehicleinfo:
-                if str(new_vehicleinfo[new_field]).strip() != str(old_vehicle_to_compare[new_field]).strip():
-                    updated_vehicle_info_arr.append(new_vehicleinfo)
-                    break
-        else: # vehicle model id not found, must be new. add to insert array
-            to_insert_vehicle_info_arr.append(new_vehicleinfo)
-    
-    if len(updated_vehicle_info_arr) > 0:
-        # check for update temp table in case, delete if so
+        # create vehicleinfo backup table
         cursor.execute('''SELECT EXISTS (
                     SELECT FROM pg_tables
-                    WHERE tablename = 'vehicleinfo_tempupdate'
-        );''')
-        var = cursor.fetchone()['exists']
-        if var:
-            cursor.execute("DROP TABLE vehicleinfo_tempupdate;")
-
-        print("creating temp update table...")
-        temptable_update = '''CREATE TABLE vehicleinfo_tempupdate (
-                            modelid varchar(50),
-                            manufacturer varchar(50),
-                            name varchar(75),
-                            class varchar(50),
-                            laptime varchar(25),
-                            topspeed varchar(25),
-                            image varchar(150),
-                            flags varchar(50),
-                            laptime_byclass VARCHAR(150),
-                            topspeed_byclass VARCHAR(150),
-                            drivetrain varchar(5),
-                            numseats varchar(10),
-                            price INT);'''
-        print("creating temp update table")
-        cursor.execute(temptable_update)
-
-        # put updated vehicles into temp update table
-        columns = updated_vehicle_info_arr[0].keys()
-        query = "INSERT INTO vehicleinfo_tempupdate ({}) VALUES %s".format(','.join(columns))
-        # puts dict values (car info) into a list of lists as a list
-        values = [[value for value in veh.values()] for veh in updated_vehicle_info_arr]
-        print("inserting into update table...")
-        execute_values(cursor, query, values)
-
-        print("inserting updated values into update table...")
-        cursor.execute('''UPDATE vehicleinfo v
-                            SET manufacturer = vtempu.manufacturer,
-                                name = vtempu.name,
-                                class = vtempu.class,
-                                laptime = vtempu.laptime,
-                                topspeed = vtempu.topspeed,
-                                image = vtempu.image,
-                                flags = vtempu.flags,
-                                laptime_byclass = vtempu.laptime_byclass,
-                                topspeed_byclass = vtempu.topspeed_byclass,
-                                drivetrain = vtempu.drivetrain,
-                                numseats = vtempu.numseats,
-                                price = vtempu.price
-                            FROM vehicleinfo_tempupdate vtempu
-                            WHERE v.modelid = vtempu.modelid;''')
-
-        # delete update temp table now that we're finished
-        print("dropping tempupdate table...")
-        cursor.execute("DROP TABLE vehicleinfo_tempupdate;")
-
-    
-    if len(to_insert_vehicle_info_arr) > 0:
-        # check for insert temp table in case, delete if so
-        cursor.execute('''SELECT EXISTS (
-                    SELECT FROM pg_tables
-                    WHERE tablename = 'vehicleinfo_tempinsert'
+                    WHERE tablename = 'vehicleinfo_bak'
         );''')
         if cursor.fetchone()['exists']:
+            cursor.execute("DROP TABLE vehicleinfo_bak;")
+        print('creating backup table...')
+        cursor.execute('''CREATE TABLE vehicleinfo_bak (
+                        modelid varchar(50),
+                        manufacturer varchar(50),
+                        name varchar(75),
+                        class varchar(50),
+                        laptime varchar(25),
+                        topspeed varchar(25),
+                        image varchar(150),
+                        flags varchar(50),
+                        custvideo varchar(50),
+                        laptime_byclass VARCHAR(150),
+                        topspeed_byclass VARCHAR(150),
+                        drivetrain varchar(5),
+                        numseats varchar(10),
+                        price INT,
+                        dlc varchar(100),
+                        othernotes varchar(500)
+                        );''')
+            
+        # arrange columns and values for insert to backup table
+        columns = []
+        first_vehicle = old_vehicleinfo[0]
+        for column in first_vehicle:
+            columns.append(column)
+
+        query = "INSERT INTO vehicleinfo_bak ({}) VALUES %s".format(','.join(columns))
+
+        # puts dict values (car info) for each car into a list for insertion into another list, which is a list of lists
+        values = []
+        for tuple in old_vehicleinfo:
+            vehicle_arr = []
+            for column in tuple:
+                vehicle_arr.append(tuple[column])
+            values.append(vehicle_arr)
+        
+        print('inserting into backup table...')
+        execute_values(cursor, query, values)
+        
+        print("collecting vehicles to insert/modify...")
+        cursor.execute("SELECT modelid FROM vehicleinfo")
+        modelids_db_list = cursor.fetchall()
+
+        for veh in modelids_db_list:
+            modelid = veh['modelid']
+            url = "https://gtacars.net/gta5/" + modelid
+            new_vehicleinfo = updatevehicledata_helper.get_new_vehicle_data(url, modelid)
+            if new_vehicleinfo:
+                # find the member of old_vehicleinfo with a modelid that matches the modelid of the current new vehicle
+                old_vehicle_to_compare = []
+                vehicle_found = False
+                for old_vehicle in old_vehicleinfo:
+                    if old_vehicle['modelid'] == new_vehicleinfo['modelid']:
+                        old_vehicle_to_compare = old_vehicle
+                        vehicle_found = True
+                        break
+                if vehicle_found: # vehicle exists to inspect to potentially update
+                    # loop through every field in the new vehicle, if one differs compared to the old one, add the new vehicle to the updated arr
+                    for new_field in new_vehicleinfo:
+                        if str(new_vehicleinfo[new_field]).strip() != str(old_vehicle_to_compare[new_field]).strip():
+                            updated_vehicle_info_arr.append(new_vehicleinfo)
+                            break
+                else: # vehicle model id not found, must be new. add to insert array
+                    to_insert_vehicle_info_arr.append(new_vehicleinfo)
+        
+        if len(updated_vehicle_info_arr) > 0:
+            # check for update temp table in case, delete if so
+            cursor.execute('''SELECT EXISTS (
+                        SELECT FROM pg_tables
+                        WHERE tablename = 'vehicleinfo_tempupdate'
+            );''')
+            var = cursor.fetchone()['exists']
+            if var:
+                cursor.execute("DROP TABLE vehicleinfo_tempupdate;")
+
+            print("creating temp update table...")
+            temptable_update = '''CREATE TABLE vehicleinfo_tempupdate (
+                                modelid varchar(50),
+                                manufacturer varchar(50),
+                                name varchar(75),
+                                class varchar(50),
+                                laptime varchar(25),
+                                topspeed varchar(25),
+                                image varchar(150),
+                                flags varchar(50),
+                                laptime_byclass VARCHAR(150),
+                                topspeed_byclass VARCHAR(150),
+                                drivetrain varchar(5),
+                                numseats varchar(10),
+                                price INT);'''
+            print("creating temp update table")
+            cursor.execute(temptable_update)
+
+            # put updated vehicles into temp update table
+            columns = updated_vehicle_info_arr[0].keys()
+            query = "INSERT INTO vehicleinfo_tempupdate ({}) VALUES %s".format(','.join(columns))
+            # puts dict values (car info) into a list of lists as a list
+            values = [[value for value in veh.values()] for veh in updated_vehicle_info_arr]
+            print("inserting into update table...")
+            execute_values(cursor, query, values)
+
+            print("inserting updated values into update table...")
+            cursor.execute('''UPDATE vehicleinfo v
+                                SET manufacturer = vtempu.manufacturer,
+                                    name = vtempu.name,
+                                    class = vtempu.class,
+                                    laptime = vtempu.laptime,
+                                    topspeed = vtempu.topspeed,
+                                    image = vtempu.image,
+                                    flags = vtempu.flags,
+                                    laptime_byclass = vtempu.laptime_byclass,
+                                    topspeed_byclass = vtempu.topspeed_byclass,
+                                    drivetrain = vtempu.drivetrain,
+                                    numseats = vtempu.numseats,
+                                    price = vtempu.price
+                                FROM vehicleinfo_tempupdate vtempu
+                                WHERE v.modelid = vtempu.modelid;''')
+
+            # delete update temp table now that we're finished
+            print("dropping tempupdate table...")
+            cursor.execute("DROP TABLE vehicleinfo_tempupdate;")
+
+        
+        if len(to_insert_vehicle_info_arr) > 0:
+            # check for insert temp table in case, delete if so
+            cursor.execute('''SELECT EXISTS (
+                        SELECT FROM pg_tables
+                        WHERE tablename = 'vehicleinfo_tempinsert'
+            );''')
+            if cursor.fetchone()['exists']:
+                cursor.execute("DROP TABLE vehicleinfo_tempinsert;")
+            
+            print("creating temp insert table...")
+            temptable_insert = '''CREATE TABLE vehicleinfo_tempinsert (
+                                modelid varchar(50),
+                                manufacturer varchar(50),
+                                name varchar(75),
+                                class varchar(50),
+                                laptime varchar(25),
+                                topspeed varchar(25),
+                                image varchar(150),
+                                flags varchar(50),
+                                laptime_byclass VARCHAR(150),
+                                topspeed_byclass VARCHAR(150),
+                                drivetrain varchar(5),
+                                numseats varchar(10),
+                                price INT);'''
+            cursor.execute(temptable_insert)
+
+            # put new vehicles into temp insert table
+            columns = to_insert_vehicle_info_arr[0].keys()
+            query = "INSERT INTO vehicleinfo_tempinsert ({}) VALUES %s".format(','.join(columns))
+            # puts dict values (car info) into a list of lists as a list
+            values = [[value for value in veh.values()] for veh in to_insert_vehicle_info_arr]
+            print("inserting new vehicles into temp insert table")
+            execute_values(cursor, query, values)
+
+            print("inserting new vehicles into vehicleinfo...")
+            cursor.execute('''INSERT INTO vehicleinfo 
+                        (modelid, manufacturer, name, class, laptime, topspeed, image, flags, laptime_byclass, topspeed_byclass, drivetrain, numseats, price)
+                            SELECT modelid, manufacturer, name, class, laptime, topspeed, image, flags, laptime_byclass, topspeed_byclass, drivetrain, numseats, price
+                            FROM vehicleinfo_tempinsert;''')
+
+            # delete insert temp table now that we're finished
+            print("dropping temp insert table...")
             cursor.execute("DROP TABLE vehicleinfo_tempinsert;")
         
-        print("creating temp insert table...")
-        temptable_insert = '''CREATE TABLE vehicleinfo_tempinsert (
-                            modelid varchar(50),
-                            manufacturer varchar(50),
-                            name varchar(75),
-                            class varchar(50),
-                            laptime varchar(25),
-                            topspeed varchar(25),
-                            image varchar(150),
-                            flags varchar(50),
-                            laptime_byclass VARCHAR(150),
-                            topspeed_byclass VARCHAR(150),
-                            drivetrain varchar(5),
-                            numseats varchar(10),
-                            price INT);'''
-        cursor.execute(temptable_insert)
-
-        # put new vehicles into temp insert table
-        columns = to_insert_vehicle_info_arr[0].keys()
-        query = "INSERT INTO vehicleinfo_tempinsert ({}) VALUES %s".format(','.join(columns))
-        # puts dict values (car info) into a list of lists as a list
-        values = [[value for value in veh.values()] for veh in to_insert_vehicle_info_arr]
-        print("inserting new vehicles into temp insert table")
-        execute_values(cursor, query, values)
-
-        print("inserting new vehicles into vehicleinfo...")
-        cursor.execute('''INSERT INTO vehicleinfo 
-                    (modelid, manufacturer, name, class, laptime, topspeed, image, flags, laptime_byclass, topspeed_byclass, drivetrain, numseats, price)
-                        SELECT modelid, manufacturer, name, class, laptime, topspeed, image, flags, laptime_byclass, topspeed_byclass, drivetrain, numseats, price
-                        FROM vehicleinfo_tempinsert;''')
-
-        # delete insert temp table now that we're finished
-        print("dropping temp insert table...")
-        cursor.execute("DROP TABLE vehicleinfo_tempinsert;")
-    
-    finished_embed = nextcord.Embed(
-    title=":white_check_mark: Data Update Complete",  
-    color=0x7d7d7d
-    )
-    finished_embed.add_field(name="Existing Vehicles Updated", value=len(updated_vehicle_info_arr), inline=False)
-    finished_embed.add_field(name="New Vehicles Inserted", value=len(to_insert_vehicle_info_arr), inline=False)
-    await interaction.send(embed=finished_embed)
+        finished_embed = nextcord.Embed(
+        title=":white_check_mark: Data Update Complete",  
+        color=0x03fc45
+        )
+        finished_embed.add_field(name="Existing Vehicles Updated", value=len(updated_vehicle_info_arr), inline=False)
+        finished_embed.add_field(name="New Vehicles Inserted", value=len(to_insert_vehicle_info_arr), inline=False)
+        await interaction.send(embed=finished_embed)
     
 
 @bot.slash_command(name='upsertvehicle', description="Update or insert a single vehicle. Only modelid is required", guild_ids=testserverid)
 async def upsert_vehicle(
     interaction: Interaction,
-    insert_or_update:str = SlashOption(description="Inserting a new vehicle or updating an existing vehicle?", options=["Insert", "Update"], required=True),
+    insert_or_update:str = SlashOption(description="Updating an existing vehicle or inserting a new vehicle?", choices=["Update", "Insert"], required=True),
     modelid:str = SlashOption(description="Vehicle model ID - Something like 'formula' for the PR4, for example", required=True),
     manufacturer:str = SlashOption(description="Vehicle manufacturer - Truffade, for example", required=False),
-    name:str = SlashOption(description="Vehicle name - Ardent, for example.", required=False),
+    name:str = SlashOption(description="Vehicle name - Ardent, for example", required=False),
     race_class:str = SlashOption(description="Vehicle race class(es). Enter in a comma separated list like: SUVs, Sports", required=False),
-    laptime:str = SlashOption(description="Vehicle lap time around Broughy's track. 1:00.293 for example.", required=False),
-    topspeed:str = SlashOption(description="Vehicle top speed under Broughy's testing. 160.25 for example"),
-    image:str = SlashOption(description="Image link to the vehicle (must be a DIRECT link)"),
-    flags:str = SlashOption(description="Vehicle handling flags", options=["None", "Engine", "Bouncy", "Suspension", "Engine, Bouncy", "Bouncy, Suspension", "Engine, Suspension", "Engine, Bouncy, Suspension"], required=False),
-    custvideo:str = SlashOption(description="DCA customization video for the vehicle in question", required=False),
-    laptime_byclass:str = SlashOption(description="Lap time position in its class(es). Enter in comma separated list like: 4th out of 52 in Motorcycles, 2nd out of 53 in Off-Road", required=False),
-    topspeed_byclass:str = SlashOption(description="Top speed position in its class(es). Enter in comma separated list like: 4th out of 52 in Motorcycles, 2nd out of 53 in Off-Road", required=False),
-    drivetrain:str = SlashOption(description="Vehicle drivetrain, if applicable", options=["N/A", "RWD", "FWD", "AWD"], required=False),
+    laptime:str = SlashOption(description="Vehicle lap time around Broughy's track. 0:59.293 for example.", required=False),
+    topspeed:str = SlashOption(description="Vehicle top speed under Broughy's testing. 160.25 for example", required=False),
+    image:str = SlashOption(description="Image link to the vehicle (must be a DIRECT link)", required=False),
+    flags:str = SlashOption(description="Vehicle handling flags", choices=["None", "Engine", "Bouncy", "Suspension", "Engine, Bouncy", "Bouncy, Suspension", "Engine, Suspension", "Engine, Bouncy, Suspension"], required=False),
+    customization_video:str = SlashOption(description="DCA customization video for the vehicle in question", required=False),
+    laptime_byclass:str = SlashOption(description="Lap time position in class(es). Enter in list like: 4th out of 9 in SUVs, 2nd out of 9 in Sports", required=False),
+    topspeed_byclass:str = SlashOption(description="Top speed position in class(es). Enter in list like: 4th out of 9 in SUVs, 2nd out of 9 in Sports", required=False),
+    drivetrain:str = SlashOption(description="Vehicle drivetrain, if applicable", choices=["N/A", "RWD", "FWD", "AWD"], required=False),
     numseats:str = SlashOption(description="Number of seats in the vehicle. Enter only the number", required=False),
     price:str = SlashOption(description="Base price of the vehicle. Enter only the number", required=False),
     dlc:str = SlashOption(description="DLC the vehicle was released in. DLC name + year in parenthesis, like Base Game (2013)", required=False),
-    othernotes:str = SlashOption(description="The other notes section. This will overwrite them, so add any in you want to keep here as well.", required=False)
+    othernotes:str = SlashOption(description="Other notes section. This will overwrite them, so add the existing ones you want to keep as well", required=False)
 ):
-    print('a')
+        await check_db_connection()
+    #if(not interaction.user.guild_permissions.ban_members):
+        #await on_command_error(interaction, "Missing Permissions")
+    #else:
+        # put input values into dictionary for use later
+        input_dict = locals()
+        input_dict.pop('interaction')
+        # input validation
+        bad_fields, vehicle, input_dict = upsertvehicle_helper.validate_input(input_dict, cursor)
+        if len(bad_fields) > 0:
+            bad_fields_str = ""
+            for field in bad_fields:
+                bad_fields_str += field + "\n\n"
+            bad_fields_str.strip()
+            bad_input_embed = nextcord.Embed(
+                title=":x: Bad Input!", 
+                description="**The input had the following issues:**\n\n" + bad_fields_str,
+                color=0xff2600
+                )
+            await interaction.send(embed=bad_input_embed)
+        else: # data is good
+            # make keys of input match DB
+            input_dict.pop('insert_or_update')
+            input_dict['class'] = input_dict['race_class']
+            input_dict['custvideo'] = input_dict['customization_video']
+            input_dict.pop('race_class')
+            input_dict.pop('customization_video')
+            columns = list(input_dict.keys())
+
+            if insert_or_update == 'Update':
+                in_progress_embed = nextcord.Embed(
+                    title=":jigsaw: Updating vehicle...",
+                    color=0x7d7d7d,
+                    )
+                await interaction.send(embed=in_progress_embed)
+
+                query_str = "UPDATE vehicleinfo SET "
+                are_changes = False
+                for col in columns: # set which fields to update and construct query
+                    if input_dict[col] and input_dict[col] != vehicle[col]:
+                        query_str += col + " = '" + input_dict[col] + "',"
+                        are_changes = True
+                if are_changes:
+                    query_str = query_str.rstrip(',') + " WHERE modelid = '" + vehicle['modelid'] + "'"
+                    print(query_str)
+                    try:
+                        cursor.execute(query_str)
+                    except:
+                        await on_command_error(interaction, sys.exc_info()[0])
+                    complete_embed = nextcord.Embed(
+                        title=":white_check_mark: Vehicle Updated!",
+                        color=0x03fc45,
+                        )
+                    await interaction.send(embed=complete_embed)
+                else:
+                    embed = nextcord.Embed(
+                        title=":grey_exclamation: No Changes!",
+                        color=0xffdd00,
+                        description="Your input did not differ from the DB data, update not executed."
+                    )
+                    await interaction.send(embed=embed)
+            
+            elif insert_or_update == "Insert":
+                in_progress_embed = nextcord.Embed(
+                    title=":jigsaw: Inserting vehicle...",
+                    color=0x7d7d7d,
+                    )
+                await interaction.send(embed=in_progress_embed)
+
+                query = "INSERT INTO vehicleinfo ({}) VALUES %s".format(','.join(columns))
+                # puts dict values (car info) into a list of lists as a list
+                values = tuple(value for value in input_dict.values())
+                try:
+                    cursor.execute(query, [values])
+                except:
+                    await on_command_error(interaction, sys.exc_info()[0])
+                complete_embed = nextcord.Embed(
+                    title=":white_check_mark: Vehicle Added!",
+                    color=0x03fc45,
+                    )
+                await interaction.send(embed=complete_embed)
 
 
 # INVITE BOT BACK TO TEST SERVER USING

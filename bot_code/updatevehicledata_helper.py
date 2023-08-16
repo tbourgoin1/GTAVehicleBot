@@ -1,9 +1,14 @@
 from bs4 import BeautifulSoup # beautiful soup 4
+import urllib
 from urllib.request import urlopen
 import re
 
 def get_new_vehicle_data(url, modelid):
-    page = urlopen(url)
+    try:
+        page = urlopen(url)
+    except urllib.error.HTTPError: # 404, in case there's a vehicle we've inserted into the DB that the site doesn't have yet
+        return
+
     html = page.read().decode("utf-8")
     soup = BeautifulSoup(html, "html.parser")
      #print(soup.get_text()) # gets all webpage text, no HTML. 
