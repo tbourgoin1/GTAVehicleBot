@@ -15,13 +15,13 @@ import sys # try except error capture
 import logging
 import logging.handlers
 import psycopg2 # db connection
-import psycopg2.pool
 from psycopg2.extras import RealDictCursor, execute_values
 from urllib.parse import urlparse
 import vehicleinfo_helper
 import updatevehicledata_helper
 import upsertvehicle_helper
 import topvehicles_helper
+from keep_db_alive import KeepDBAlive
 
 
 load_dotenv()
@@ -49,9 +49,7 @@ logger.addHandler(smtp_handler)
 # connect to postgres DB
 dbc = urlparse(DB_URL)
 HOST_NAME = 'localhost' # change between localhost and dbc.hostname depending on if dev or prod, respectively
-pool = psycopg2.pool.SimpleConnectionPool(
-    2, # min num of connections
-    3, # max num of connections
+conn = psycopg2.connect(
     dbname=dbc.path.lstrip('/'),
     user=dbc.username,
     password=dbc.password,
@@ -59,47 +57,20 @@ pool = psycopg2.pool.SimpleConnectionPool(
     port=dbc.port,
     sslmode='disable',
     cursor_factory=RealDictCursor,
-    connect_timeout=3,
-    # https://www.postgresql.org/docs/9.3/libpq-connect.html
-    keepalives=1,
-    keepalives_idle=5,
-    keepalives_interval=2,
-    keepalives_count=2
+    keepalives = 1,
+    keepalives_idle = 900
 )
-c1 = pool.getconn()
-c2 = None
-cursor = c1.cursor()
-c1.autocommit = True
+conn.autocommit = True
+cursor = conn.cursor()
 
-async def check_db_connection():
-    global c1, c2, cursor, pool
-    print('in check db connection')
-    try:
-        cursor.execute("select 1")
-    except psycopg2.OperationalError: # db connection closed
-        print('DB connection closed! Switching connections...')
-        if c1:
-            if c1.closed != 0:
-                c2 = pool.getconn()
-                cursor = c2.cursor()
-                c2.autocommit = True
-                pool.putconn(c1)
-                c1 = None
-                print('Switched to c2 -> c1, c2', c1, c2)
-        else:
-            if c2.closed != 0:
-                c1 = pool.getconn()
-                cursor = c1.cursor()
-                c1.autocommit = True
-                pool.putconn(c2)
-                c2 = None
-                print('Switched to c2 -> c1, c2', c1, c2)
-
-
-
+def ping_db():
+    print('pinging db...')
+    cursor.execute('SELECT 1')
+    print(cursor.fetchall())
 
 @bot.event 
 async def on_ready():
+    KeepDBAlive(1500, ping_db) # pings DB every 25 minutes to keep connection alive
     print("Bot started!") # prints to the console when the bot starts
 
 @bot.event
@@ -192,7 +163,7 @@ async def vehicleinfo_createvehicleembed(vehicle, was_guess, interaction):
             )
             return embed
         embed_title = "" # changes depending on if the vehicle has a manufacturer or not
-        if not car['manufacturer'] or 'Unknown' in car['manufacturer']:
+        if not car['manufacturer']:
                 embed_title=car['name']
         else:
             embed_title=car['manufacturer'] + " " + car['name']
@@ -267,8 +238,6 @@ async def vehicleinfo_createvehicleembed(vehicle, was_guess, interaction):
 
 @bot.slash_command(name='vehicleinfo', description="Returns a bunch of info about a chosen GTA Online vehicle", guild_ids=testserverid)
 async def vehicleinfo_findvehicle(interaction: Interaction, input:str): # main function to get GTA vehicle info from the google sheet. on_command_error handles all errors
-    await check_db_connection()
-    
     # pull names from DB -> remove everything but spaces and alphanumeric like the helper from whole list, make a list of strings
     cursor.execute("SELECT modelid, name FROM vehicleinfo")
     vehicles_db_list = cursor.fetchall()
@@ -369,18 +338,18 @@ async def explain_handling_flags(interaction : Interaction):
         await on_command_error(interaction, sys.exc_info()[0])
 
 # example: str = SlashOption(required=False, default=None)
-@bot.slash_command(name='topvehicles', description="Gets a list of vehicles and their stats. Only shows raceable members of the class if applicable", guild_ids=testserverid)
+@bot.slash_command(name='topvehicles', description="Gets a list of vehicles and their stats. Only shows raceable classes", guild_ids=testserverid)
 async def find_top_vehicles(
     interaction: Interaction,
-    vehicle_class:str = SlashOption(required=True, choices=['Boats', 'Compacts', 'Coupes', 'Cycles', 'Helicopters', 'Motorcycles', 'Muscle',
-                                                             'Off-Road', 'Open Wheel', 'Planes', 'Sedans', 'Service (Not Raceable)', 'Sports', 'Sports Classics',
-                                                             'Supers', 'SUVs', 'Tuner', 'Utility', 'Vans'
+    vehicle_class:str = SlashOption(required=True, choices=['Arena', 'Boats', 'Compacts', 'Coupes', 'Cycles', 'Fighter Jets', 'Go-Kart',
+                                                             'Helicopters', 'Motorcycles', 'Muscle', 'Off-Road', 'Open Wheel', 'Planes', 
+                                                             'Sedans', 'Special', 'Sports', 'Sports Classics', 'Supers', 'SUVs', 'Tuner', 
+                                                             'Utility', 'Vans'
                                                             ]),
     number_of_vehicles:int = SlashOption(required=False, default=10), 
     metric:str = SlashOption(required=False, default='Lap Time', choices=['Lap Time', 'Top Speed'])
 ):
     try:
-        await check_db_connection()
         print("INPUT TO TOPVEHICLES. Class: " + vehicle_class + ", number: " + str(number_of_vehicles) + ", metric: " + metric)
         # validate input
         error_embed = None
@@ -423,13 +392,13 @@ async def find_top_vehicles(
                 vehicle_string += vehicle[3] + "mph / " + vehicle[4] + "\n"
         
         if(metric == "Lap Time"):
-            title_string = "Top " + str(number_of_vehicles) + " " + vehicle_class + " (Lap Time)"
+            title_string = "Top " + str(len(result)) + " " + vehicle_class + " (Lap Time)"
             embed = nextcord.Embed(   
                 title=title_string,
                 color=0x03fc45
             )
         else: # top speed
-            title_string = "Top " + str(number_of_vehicles) + " " + vehicle_class + " (Top Speed)"
+            title_string = "Top " + str(len(result)) + " " + vehicle_class + " (Top Speed)"
             embed = nextcord.Embed(
                 title=title_string,
                 color=0x03fc45
@@ -659,7 +628,6 @@ async def find_staff_vehicle(
 
 @bot.slash_command(name='updatevehicledata', description="Scrapes gtacars.net and puts all updated info in the bot DB", guild_ids=testserverid)
 async def update_data(interaction : Interaction):
-        await check_db_connection()
     #if(not interaction.user.guild_permissions.ban_members):
         #await on_command_error(interaction, "Missing Permissions")
     #else:
@@ -879,7 +847,6 @@ async def upsert_vehicle(
     dlc:str = SlashOption(description="DLC the vehicle was released in. DLC name + year in parenthesis, like Base Game (2013)", required=False),
     othernotes:str = SlashOption(description="Other notes section. This will overwrite them, so add the existing ones you want to keep as well", required=False)
 ):
-        await check_db_connection()
     #if(not interaction.user.guild_permissions.ban_members):
         #await on_command_error(interaction, "Missing Permissions")
     #else:

@@ -3,7 +3,7 @@ from psycopg2.extras import RealDictCursor, execute_values
 import re
 
 def get_top_vehicles(cursor, vehicle_class, metric, number_of_vehicles):
-    sql = "SELECT manufacturer, name, class, laptime, topspeed, laptime_byclass, topspeed_byclass FROM vehicleinfo"
+    sql = "SELECT manufacturer, name, class, laptime, topspeed, laptime_byclass, topspeed_byclass FROM vehicleinfo WHERE class LIKE %s"
     cursor.execute(sql, [vehicle_class])
     vehicles = cursor.fetchall()
     vehicles_to_use = []
@@ -27,12 +27,17 @@ def get_top_vehicles(cursor, vehicle_class, metric, number_of_vehicles):
             if pos_class_str: # if it doesn't exist it's a Sports Classics car in a Sports search
                 pos_in_class = pos_class_str.split()[0]
                 pos_in_class = re.sub("[^0-9]", "", pos_in_class) # only take numbers from pos in class for sorting later
-                if not veh['manufacturer']:
-                    veh['manufacturer'] = ''
                 vehicles_to_use.append([pos_in_class, veh['manufacturer'], veh['name'], veh[metric_str], veh[other_metric_str]])
                 
-    # works for boats only, sports index out of range
-    sorted_vehicles = sorted(vehicles_to_use, key=lambda veh: int(veh[0])) # problem with this, uses only 1st digit
+    sorted_vehicles = sorted(vehicles_to_use, key=lambda veh: int(veh[0]))
+    position_arr = [] # keeps track of positions in sorted_vehicles to detect dupes
+    dupes_arr = [] # remove these after the loop
+    for i in range(0, len(sorted_vehicles)): # clear out duplicate lap times/top speeds
+        if sorted_vehicles[i][0] not in position_arr:
+            position_arr.append(sorted_vehicles[i][0])
+        else:
+            dupes_arr.append(sorted_vehicles[i])
+    sorted_vehicles = [v for v in sorted_vehicles if v not in dupes_arr]
     if len(sorted_vehicles) > number_of_vehicles:
         sorted_vehicles = sorted_vehicles[:number_of_vehicles]
     return sorted_vehicles
