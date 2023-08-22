@@ -1,11 +1,12 @@
 import re
-import enchant
+from spellchecker import SpellChecker
 import os
 
 def find_vehicle(input, vehicles_list):
     result = input
     # eliminate manufacturer from input if it exists
-    formatted_input = re.sub(r"[^a-z0-9 ]","", input.lower().strip()) # remove everything but spaces and alphanumeric   
+    formatted_input = re.sub(r"[^a-z0-9 ]","", input.lower().strip()) # remove everything but spaces and alphanumeric
+    print('formatted input: ', formatted_input)
     manufacturers = open("txt_files/car_makes.txt", "r")
     for mfr in manufacturers:
         mfr = mfr.lower().strip()
@@ -49,27 +50,37 @@ def find_vehicle(input, vehicles_list):
             break
 
     print("misspell suggestions after exact partial: ", misspell_suggestions)
-    # create dictionary txt file and run enchant misspell algo for more complex spelling errors
+    # create dictionary txt file and run misspell algo for more complex spelling errors
     if not exact_match:
         temp_dict_path = "txt_files/temp_dictionary.txt"
         temp_dict = open(temp_dict_path, 'w')
         write_str = ""
         for veh in formatted_vehicles:
-            write_str += formatted_vehicles[veh] + "\n"
+            write_str += formatted_vehicles[veh].replace(" ", "") + "\n"
         temp_dict.write(write_str)
-        # instantiating the enchant dictionary with request_pwl_dict(), requires txt file
-        d = enchant.request_pwl_dict(temp_dict_path)
+        spelling = SpellChecker(language=None) # don't use any default dictionary
+        spelling.word_frequency.load_text_file(temp_dict_path) # use custom dict
 
-        # checking whether the words are in the new dictionary and adding the unformatted version for the embed
-        for sugg in d.suggest(formatted_input):
-            sugg_modelid = [i for i in formatted_vehicles if formatted_vehicles[i] == sugg][0]
-            already_suggested = False
-            for sugg_arr in misspell_suggestions:
-                if sugg_modelid == sugg_arr[0]:
-                    already_suggested = True
-            if not already_suggested:
-                misspell_suggestions.append([sugg_modelid, vehicles_list[sugg_modelid]])
+        algo_suggs = spelling.candidates(formatted_input.replace(" ", ""))
+        print('algo candidates: ', algo_suggs)
+        if algo_suggs: # may not have found anything
+            # checking whether the words are in the new dictionary and adding the unformatted version for the embed
+            for sugg in algo_suggs:
+                print('sugg', sugg)
+                sugg_modelid = None
+                for key in formatted_vehicles.keys():
+                    if formatted_vehicles[key].replace(" ", "") == sugg:
+                        print('key', key)
+                        sugg_modelid = key
+                        break
+                already_suggested = False
+                for sugg_arr in misspell_suggestions:
+                    if sugg_modelid == sugg_arr[0]:
+                        already_suggested = True
+                if not already_suggested and sugg_modelid:
+                    misspell_suggestions.append([sugg_modelid, vehicles_list[sugg_modelid]])
 
+        print('misspell suggestions after misspell algo: ', misspell_suggestions)
         # decide based on spellcheck output what to do
         if len(misspell_suggestions) == 0: # car not found, no suggestions
             return ['not found', False, False]

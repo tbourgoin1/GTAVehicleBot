@@ -1,58 +1,58 @@
+turismoclassic
 casco
-turismo classic
 blista
 asea
 asterope
 airtug
-baller old
-beejay xl
-baller new
+ballerold
+beejayxl
+ballernew
 injection
 blazer
-blazer lifeguard
-hot rod blazer
+blazerlifeguard
+hotrodblazer
 bison
-bobcat xl
-apocalypse cerberus
-future shock cerberus
-nightmare cerberus
-nightmare issi
+bobcatxl
+apocalypsecerberus
+futureshockcerberus
+nightmarecerberus
+nightmareissi
 pr4
-boat trailer
+boattrailer
 banshee
 9f
 bullet
-bugstars burrito
-cavalcade old
-cavalcade new
+bugstarsburrito
+cavalcadeold
+cavalcadenew
 camper
 cheetah
-caddy golf
-cognoscenti cabrio
+caddygolf
+cognoscenticabrio
 gresley
 bodhi
 buccaneer
 dilettante
-dubsta dubsta2
-dune buggy
-nightmare deathbike
-nightmare impaler
-nightmare imperator
-nightmare dominator
-nightmare slamvan
-future shock sasquatch
-nightmare sasquatch
-nightmare bruiser
+dubstadubsta2
+dunebuggy
+nightmaredeathbike
+nightmareimpaler
+nightmareimperator
+nightmaredominator
+nightmareslamvan
+futureshocksasquatch
+nightmaresasquatch
+nightmarebruiser
 f620
 felon
-felon gt
-fq 2
+felongt
+fq2
 hotknife
 duneloader
 dubsta
 dominator
 emperor
-entity xf
+entityxf
 exemplar
 fugitive
 granger
@@ -60,16 +60,16 @@ gauntlet
 habanero
 infernus
 ingot
-future shock zr380
-nightmare zr380
-elegy rh8
+futureshockzr380
+nightmarezr380
+elegyrh8
 feltzer
 fusilade
 futo
 monroe
-mule civilian
-lawn mower
-oracle xs
+mulecivilian
+lawnmower
+oraclexs
 oracle
 patriot
 peyote
@@ -79,97 +79,97 @@ intruder
 issi
 jackal
 journey
-jb 700
+jb700
 landstalker
 manana
 dr1
 bus
-cable car
-cargo plane
+cablecar
+cargoplane
 fixter
-freight train flatbed trailer variant 2
+freighttrainflatbedtrailervariant2
 jet
-tm02 khanjali
-invade and persuade tank
-police cruiser stanier
+tm02khanjali
+invadeandpersuadetank
+policecruiserstanier
 ruiner
 rumpo
 rocoto
-romero hearse
-sabre turbo
+romerohearse
+sabreturbo
 sadler
-sandking xl
+sandkingxl
 mesa
-mesa merryweather
+mesamerryweather
 crusader
 minivan
 pony
 prairie
-park ranger
+parkranger
 premier
 primo
-rancher xl
+rancherxl
 radius
 ratloader
-rusty rebel
+rustyrebel
 regina
 rubble
 squaddie
-manchez scout
-police cruiser buffalo
-police cruiser interceptor
-unmarked cruiser stanier
+manchezscout
+policecruiserbuffalo
+policecruiserinterceptor
+unmarkedcruiserstanier
 surfer
 surge
-taco van
+tacovan
 tailgater
 fieldmaster
 tornado
-tornado mariachi
+tornadomariachi
 voodoo
 washington
 youga
 ztype
 sanchez
-mobile operations center
-antiaircraft trailer
-sanchez livery
-police bike
-police roadcruiser snow
-police predator
-rc bandito
-rhino tank
-police riot
+mobileoperationscenter
+antiaircrafttrailer
+sanchezlivery
+policebike
+policeroadcruisersnow
+policepredator
+rcbandito
+rhinotank
+policeriot
 ripley
-scrap truck
-sea sparrow
+scraptruck
+seasparrow
 sparrow
-sheriff cruiser
+sheriffcruiser
 skylift
 akuma
-carbon rs
+carbonrs
 bagger
-bati 801
+bati801
 rebel
-sandking swb
+sandkingswb
 schafter
 seminole
 roosevelt
-sentinel xs
+sentinelxs
 sentinel
 zion
-zion cabrio
+zioncabrio
 serrano
 speedo
-clown van
+clownvan
 stanier
 stinger
-stinger gt
+stingergt
 stratum
-super diamond
+superdiamond
 docktug
-lf22 starling
-b11 strikeforce
+lf22starling
+b11strikeforce
 titan
 tourbus
 jetmax
@@ -179,18 +179,18 @@ velum
 adder
 voltic
 vacca
-bati 801rr
+bati801rr
 doublet
-pcj 600
+pcj600
 vader
 vigero
 faggio
 hexer
 annihilator
-buzzard attack chopper
-rental shuttle bus
-towtruck large
-trailer car carrier pack man
+buzzardattackchopper
+rentalshuttlebus
+towtrucklarge
+trailercarcarrierpackman
 bmx
 cruiser
 jester
@@ -199,68 +199,68 @@ vestra
 zentorno
 buzzard
 cargobob
-police maverick
+policemaverick
 maverick
 nemesis
 frogger
-cuban 800
+cuban800
 duster
 mallard
 mammatus
 shamal
 luxor
-p996 lazer
+p996lazer
 squalo
 suntrap
 dukes
-duke odeath
-pisswasser dominator
+dukeodeath
+pisswasserdominator
 marshall
-redwood gauntlet
+redwoodgauntlet
 stallion
-burger shot stallion
+burgershotstallion
 bifta
 speeder
 kalahari
 paradise
-turismo r
-huntley s
+turismor
+huntleys
 thrust
 rhapsody
 warrener
 blade
 glendale
 panto
-dubsta 6x6
+dubsta6x6
 pigalle
 liberator
 innovation
 hakuchou
 miljet
 besra
-coquette classic
+coquetteclassic
 swift
-frnken stange
+frnkenstange
 rattruck
 slamvan
 hydra
-insurgent pickup
+insurgentpickup
 insurgent
 technical
 enduro
 guardian
-supervolito carbon
+supervolitocarbon
 lectro
 valkyrie
-lost slamvan
-swift deluxe
-luxor deluxe
+lostslamvan
+swiftdeluxe
+luxordeluxe
 osiris
 virgo
 windsor
-coquette blackfin
+coquetteblackfin
 vindicator
-fib suv
+fibsuv
 savage
 kuruma
 t20
@@ -268,60 +268,60 @@ brawler
 toro
 chino
 faction
-faction custom
+factioncustom
 moonbeam
-moonbeam custom
-primo custom
-chino custom
-buccaneer custom
-voodoo custom
+moonbeamcustom
+primocustom
+chinocustom
+buccaneercustom
+voodoocustom
 lurcher
 nightshade
 mamba
-turreted limo
-schafter v12 armored
-schafter lwb armored
-cognoscenti 55
-cognoscenti 55 armored
+turretedlimo
+schafterv12armored
+schafterlwbarmored
+cognoscenti55
+cognoscenti55armored
 cognoscenti
-cognoscenti armored
-baller le
-baller le lwb
+cognoscentiarmored
+ballerle
+ballerlelwb
 wolfsbane
-zombie bobber
-daemon regular
-rat bike
-baller le armored
-baller le lwb armored
+zombiebobber
+daemonregular
+ratbike
+ballerlearmored
+ballerlelwbarmored
 supervolito
 tampa
-sultan rs
-banshee 900r
-roosevelt valor
-faction custom donk
-minivan custom
-sabre turbo custom
-slamvan custom
-tornado custom
-virgo classic custom
-virgo classic
+sultanrs
+banshee900r
+rooseveltvalor
+factioncustomdonk
+minivancustom
+sabreturbocustom
+slamvancustom
+tornadocustom
+virgoclassiccustom
+virgoclassic
 nimbus
 xls
-xls armored
+xlsarmored
 volatol
-utility truck cargo truck
-utility truck van
-ramp buggy spoilerless
-infernus classic
+utilitytruckcargotruck
+utilitytruckvan
+rampbuggyspoilerless
+infernusclassic
 gp1
 xa21
 fmj
 811
-rumpo custom
+rumpocustom
 volatus
-x80 proto
+x80proto
 reaper
-windsor drop
+windsordrop
 gargoyle
 tyrus
 etr1
@@ -329,102 +329,102 @@ re7b
 contender
 omnis
 ruston
-bestia gts
+bestiagts
 lynx
-rapid gt classic
+rapidgtclassic
 retinue
-trophy truck
-desert raid
+trophytruck
+desertraid
 dune
 cliffhanger
 bf400
-brioso ra
-tornado rat rod
-faggio mod
-faggio sport
+briosora
+tornadoratrod
+faggiomod
+faggiosport
 vortex
 avarus
 sanctus
-youga classic
-hakuchou drag
+yougaclassic
+hakuchoudrag
 nightblade
-fire truck
-v65 molotok
+firetruck
+v65molotok
 alpha
-banshee hsw
-entity xxr
+bansheehsw
+entityxxr
 cheburek
 chimera
 esskey
 tug
-zombie chopper
+zombiechopper
 defiler
 shotaro
 manchez
-street blazer
+streetblazer
 tempesta
-itali gtb
-itali gtb custom
+italigtb
+italigtbcustom
 nero
-nero custom
-apocalypse brutus
-future shock brutus
-apocalypse bruiser
-future shock bruiser
-blista compact
-go go monkey blista
+nerocustom
+apocalypsebrutus
+futureshockbrutus
+apocalypsebruiser
+futureshockbruiser
+blistacompact
+gogomonkeyblista
 diabolus
-diabolus custom
-blazer aqua
-ruiner 2000
-rocket voltic
-apocalypse issi
-future shock issi
-apocalypse scarab
-future shock scarab
-nightmare scarab
-apocalypse deathbike
-future shock deathbike
-apocalypse impaler
-future shock impaler
-apocalypse imperator
-future shock imperator
-apocalypse dominator
-future shock dominator
-apocalypse slamvan
-future shock slamvan
-nightmare brutus
-apocalypse sasquatch
+diaboluscustom
+blazeraqua
+ruiner2000
+rocketvoltic
+apocalypseissi
+futureshockissi
+apocalypsescarab
+futureshockscarab
+nightmarescarab
+apocalypsedeathbike
+futureshockdeathbike
+apocalypseimpaler
+futureshockimpaler
+apocalypseimperator
+futureshockimperator
+apocalypsedominator
+futureshockdominator
+apocalypseslamvan
+futureshockslamvan
+nightmarebrutus
+apocalypsesasquatch
 penetrator
-armored boxville
-technical aqua
-fcr 1000
-fcr 1000 custom
+armoredboxville
+technicalaqua
+fcr1000
+fcr1000custom
 vagner
 nightshark
-cheetah classic
+cheetahclassic
 torero
-technical custom
-insurgent pickup custom
+technicalcustom
+insurgentpickupcustom
 apc
-dune fav
+dunefav
 halftrack
 ardent
 oppressor
 vigilante
 alphaz1
 seabreeze
-apocalypse zr380
+apocalypsezr380
 r88
-comet retro custom
-blista kanjo
+cometretrocustom
+blistakanjo
 outlaw
 tula
 havok
 ultralight
 rogue
 pyro
-howard nx25
+howardnx25
 mogul
 cyclone
 visione
@@ -433,17 +433,17 @@ viseris
 riata
 sc1
 autarch
-fh1 hunter
+fh1hunter
 br8
-p45 nokota
-boxville lsdwp
+p45nokota
+boxvillelsdwp
 buffalo
-buffalo s
-sprunk buffalo
-veto classic
+buffalos
+sprunkbuffalo
+vetoclassic
 slamtruck
 weevil
-brioso 300
+brioso300
 longfin
 savestra
 gt500
@@ -455,323 +455,323 @@ yosemite
 hermes
 hustler
 dashound
-calico gtf
+calicogtf
 carbonizzare
 comet
-comet safari
+cometsafari
 neon
 kamacho
 caracara
 ellie
-michelli gt
+michelligt
 fagaloa
-dominator gtx
+dominatorgtx
 tyrant
 tezeract
-issi classic
+issiclassic
 taipan
-mule custom
-patriot stretch
+mulecustom
+patriotstretch
 swinger
-oppressor mk ii
+oppressormkii
 menacer
 scramjet
 flatbed
-flash gt
+flashgt
 gb200
 freecrawler
 stafford
 clique
-deveste eight
+devesteeight
 deviant
 impaler
 toros
 tulip
 vamos
-caracara 4x4
+caracara4x4
 dynasty
 emerus
-gauntlet classic
-gauntlet hellfire
+gauntletclassic
+gauntlethellfire
 hellion
 krieger
-paragon r armored
-8f drafter
-issi rally hsw
-sentinel xs hsw
-turismo classic hsw
-peyote gasser
-nebula turbo
+paragonrarmored
+8fdrafter
+issirallyhsw
+sentinelxshsw
+turismoclassichsw
+peyotegasser
+nebulaturbo
 novak
-speedo custom personal
-rampant rocket
+speedocustompersonal
+rampantrocket
 s80rr
 thrax
-zion classic
+zionclassic
 zorrusso
 asbo
 furia
-airport bus
+airportbus
 ambulance
-asea snow
-army trailer tanker
-army trailer military
-atomic blimp
-comet sr
-comet s2
-comet s2 cabrio
-burrito civilian
-burrito snow
-jb 700w
-gang burrito lost mc
-caddy civilian
-rebla gts
-dilettante security
-retinue mk ii
+aseasnow
+armytrailertanker
+armytrailermilitary
+atomicblimp
+cometsr
+comets2
+comets2cabrio
+burritocivilian
+burritosnow
+jb700w
+gangburritolostmc
+caddycivilian
+reblagts
+dilettantesecurity
+retinuemkii
 stryder
-emperor snow
-fib buffalo
+emperorsnow
+fibbuffalo
 vagrant
-drift yosemite
+driftyosemite
 zhaba
 club
-beater dukes
-mesa snow
-gauntlet classic custom
-glendale custom
-landstalker xl
-coquette d10
+beaterdukes
+mesasnow
+gauntletclassiccustom
+glendalecustom
+landstalkerxl
+coquetted10
 vstr
-police rancher snow
-rancher xl snow
-sadler snow
-manana custom
-peyote custom
-seminole frontier
-stockade bobcat securitysnow
+policeranchersnow
+rancherxlsnow
+sadlersnow
+mananacustom
+peyotecustom
+seminolefrontier
+stockadebobcatsecuritysnow
 tigon
-yosemite rancher
-youga classic 4x4
-fieldmaster snow
-veto modern
+yosemiterancher
+yougaclassic4x4
+fieldmastersnow
+vetomodern
 verus
 winky
 forklift
-cargobob jetsam
+cargobobjetsam
 baletrailer
-xero blimp
-freight train locomotive
-towtruck small
-itali rsx
-dinghy 4seater
-dinghy 2seater
-penumbra ff
-velum 5seater
-boxville post op
-valkyrie mod0
-dominator asp
-dominator gtt
-ruiner wrecked
-tailgater s
+xeroblimp
+freighttrainlocomotive
+towtrucksmall
+italirsx
+dinghy4seater
+dinghy2seater
+penumbraff
+velum5seater
+boxvillepostop
+valkyriemod0
+dominatorasp
+dominatorgtt
+ruinerwrecked
+tailgaters
 draugur
 coquette
 corsita
-la coureuse hsw
+lacoureusehsw
 cypher
-daemon lost mc
-elegy retro custom
+daemonlostmc
+elegyretrocustom
 euros
 everon
-hotring everon
-stirling gt
-stirling gt hsw
-furore gt
-futo gtx
-gang burrito standard
+hotringeveron
+stirlinggt
+stirlinggthsw
+furoregt
+futogtx
+gangburritostandard
 growler
-hotring sabre
+hotringsabre
 imorgon
-issi sport
-itali gto
-jester racecar
-jester classic
-jester rr
+issisport
+italigto
+jesterracecar
+jesterclassic
+jesterrr
 jugular
 khamelion
 komoda
-kuruma armored
+kurumaarmored
 locust
 massacro
-massacro racecar
+massacroracecar
 neo
-9f cabrio
-omnis egt
+9fcabrio
+omnisegt
 panthere
-paragon r
+paragonr
 pariah
 penumbra
 300r
 raiden
-rapid gt
-rapid gt convertiblecabrio
+rapidgt
+rapidgtconvertiblecabrio
 raptor
 remus
 revolter
 rt3000
 s95
-s95 hsw
-schafter v12
-schafter lwb
-schlagen gt
+s95hsw
+schafterv12
+schafterlwb
+schlagengt
 schwartzer
 scorcher
-sentinel classic
-sentinel classic widebody
+sentinelclassic
+sentinelclassicwidebody
 seven70
 sm722
 sovereign
 specter
-specter custom
-itali gto stinger tt
-itali gto stinger tt hsw
+spectercustom
+italigtostingertt
+italigtostingertthsw
 streiter
 sugoi
 sultan
-sultan classic
-sultan rs classic
+sultanclassic
+sultanrsclassic
 surano
-drift tampa
+drifttampa
 10f
-10f widebody
-tornado convertible
-whippet race bike
-endurex race bike
-tricycles race bike
-tropos rallye
-utility truck cherry picker crane
+10fwidebody
+tornadoconvertible
+whippetracebike
+endurexracebike
+tricyclesracebike
+troposrallye
+utilitytruckcherrypickercrane
 vectre
 verlierer
 zr350
 previon
-warrener hkr
+warrenerhkr
 reever
 champion
 cinquemila
 iwagen
-weaponized ignus
-weaponized ignus hsw
-cyclone ii
-cyclone ii hsw
-astron custom
-astron custom hsw
-arbiter gt
-arbiter gt hsw
-brioso ra hsw
-deveste eight hsw
+weaponizedignus
+weaponizedignushsw
+cycloneii
+cycloneiihsw
+astroncustom
+astroncustomhsw
+arbitergt
+arbitergthsw
+briosorahsw
+devesteeighthsw
 astron
 shinobi
-baller st
-buffalo stx
+ballerst
+buffalostx
 deity
 ignus
 jubilee
-patriot milspec
+patriotmilspec
 zeno
-granger 3600lx
-youga custom
-ruiner zz8
-brioso 300 widebody
-kanjo sj
+granger3600lx
+yougacustom
+ruinerzz8
+brioso300widebody
+kanjosj
 postlude
-torero xo
-vigero zx
+toreroxo
+vigerozx
 lm87
 rhinehart
 conada
 greenwood
-weevil custom
-tulip m100
-surfer custom
-journey ii
-entity mt
-tahoma coupe
+weevilcustom
+tulipm100
+surfercustom
+journeyii
+entitymt
+tahomacoupe
 powersurge
-issi rally
+issirally
 broadway
 virtue
 eudora
 boor
-entity mt hsw
-hakuchou drag hsw
-vigero zx hsw
-buffalo evx hsw
-monstrociti hsw
-walton l35
+entitymthsw
+hakuchoudraghsw
+vigerozxhsw
+buffaloevxhsw
+monstrocitihsw
+waltonl35
 streamer216
 ratel
 monstrociti
-f160 raiju
-clique wagon
-buffalo evx
+f160raiju
+cliquewagon
+buffaloevx
 barracks
-barracks semi
+barrackssemi
 benson
 biff
 dozer
-police transporter
+policetransporter
 cutter
-space docker
+spacedocker
 dump
 hauler
-dock handler
+dockhandler
 lifeguard
-mixer 6 wheels
-mixer 8 wheels
+mixer6wheels
+mixer8wheels
 packer
-prison bus
+prisonbus
 phantom
 pounder
-sheriff suv
+sheriffsuv
 stockade
 taxi
 trashmaster
 tractor
-tipper 4 wheels
-tipper 6 wheels
+tipper4wheels
+tipper6wheels
 stretch
 marquis
 submersible
 kraken
 dodo
 brickade
-phantom wedge
+phantomwedge
 wastelander
-caddy bunker
-phantom custom
-hauler custom
-weaponized tampa
+caddybunker
+phantomcustom
+haulercustom
+weaponizedtampa
 akula
 chernobog
 rcv
 avenger
-pounder custom
-festival bus
+poundercustom
+festivalbus
 terrorbyte
-manchez scout c
-weaponized dinghy
-annihilator stealth
+manchezscoutc
+weaponizeddinghy
+annihilatorstealth
 toreador
-blimp nightclub
-rm10 bombushka
+blimpnightclub
+rm10bombushka
 vetir
 avisa
 kosatka
-brickade 6x6
-hotring hellfire
+brickade6x6
+hotringhellfire
 brigham
-ro86 alkonost
-kurtz 31 patrol boat
-weaponized conada
-la coureuse
+ro86alkonost
+kurtz31patrolboat
+weaponizedconada
+lacoureuse
 inductor
-junk energy inductor
+junkenergyinductor
