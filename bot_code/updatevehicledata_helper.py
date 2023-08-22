@@ -33,11 +33,9 @@ def get_new_vehicle_data(url, modelid):
 
     # GETTING MANUFACTURER - # gets the table item for manufacturer and its text value for use
     manufacturer = soup.find('a', href=re.compile(r'manufacturer='))
-    print(manufacturer)
     if manufacturer: # Unknown may as well be treated as blank
         if manufacturer.text != 'Unknown':
             vehicle_info['manufacturer'] = manufacturer.text
-    print(vehicle_info['manufacturer'])
 
     # GETTING NAME -  # get title tag's text, take the text before the first '—'. That's the name + special like HSW
     name = soup.find('title')

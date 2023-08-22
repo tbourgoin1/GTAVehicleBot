@@ -3,7 +3,7 @@ from psycopg2.extras import RealDictCursor, execute_values
 import re
 
 def get_top_vehicles(cursor, vehicle_class, metric, number_of_vehicles):
-    sql = "SELECT manufacturer, name, class, laptime, topspeed, laptime_byclass, topspeed_byclass FROM vehicleinfo WHERE class LIKE %s"
+    sql = "SELECT manufacturer, name, class, laptime, topspeed, laptime_byclass, topspeed_byclass FROM vehicleinfo WHERE class LIKE '%%' || %s || '%%'"
     cursor.execute(sql, [vehicle_class])
     vehicles = cursor.fetchall()
     vehicles_to_use = []
@@ -14,7 +14,7 @@ def get_top_vehicles(cursor, vehicle_class, metric, number_of_vehicles):
         metric_str = 'topspeed'
         other_metric_str = 'laptime'
     for veh in vehicles:
-        if vehicle_class in veh['class'] and veh[metric_str + '_byclass']: # make sure info we need exists on top of it being the right class
+        if vehicle_class in veh['class'] and veh[metric_str + '_byclass'] and veh['topspeed'] and veh['laptime']: # make sure info we need exists on top of it being the right class
             pos_class_arr = veh[metric_str + '_byclass'].split(',') # pos in classes separated by comma in DB
             pos_class_str = None
             for cl in pos_class_arr:

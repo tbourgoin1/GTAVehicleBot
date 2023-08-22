@@ -190,19 +190,22 @@ async def vehicleinfo_createvehicleembed(vehicle, was_guess, interaction):
         else:
             embed.add_field(name="Base Price", value=default_blank_string, inline=True)
 
-        embed.add_field(name="Drivetrain", value=car['drivetrain'], inline=True) # no worries about blanks, handled elsewhere
+        if car['drivetrain']:
+            embed.add_field(name="Drivetrain", value=car['drivetrain'], inline=True)
+        else:
+            embed.add_field(name="Drivetrain", value=default_blank_string, inline=True)
 
         if not car['laptime']:
             embed.add_field(name="Lap Time", value='No Lap Time Set', inline=True)
-        elif 'Not Raceable' in car['class']:
-            embed.add_field(name="Lap Time / Lap Time Position in Class", value=car['laptime'], inline=True)
+        elif not car['laptime_byclass']:
+            embed.add_field(name="Lap Time", value=car['laptime'], inline=True)
         else:
             embed.add_field(name="Lap Time / Lap Time Position in Class", value=car['laptime'] + " / " + car['laptime_byclass'], inline=True)
 
         if not car["topspeed"]:
             embed.add_field(name="Top Speed", value="No Top Speed Set", inline=True)
-        elif 'Not Raceable' in car['class']:
-            embed.add_field(name="Top Speed / Top Speed Position in Class", value=car['topspeed'] + 'mph', inline=True)
+        elif not car['topspeed_byclass']:
+            embed.add_field(name="Top Speed", value=car['topspeed'] + 'mph', inline=True)
         else:
             embed.add_field(name="Top Speed / Top Speed Position in Class", value=car['topspeed'] + 'mph / ' + car['topspeed_byclass'], inline=True)
         
@@ -233,7 +236,6 @@ async def vehicleinfo_createvehicleembed(vehicle, was_guess, interaction):
     
     else:
         await on_command_error(interaction, "psycopg2.errors.DatabaseError")
-    
     return embed
 
 @bot.slash_command(name='vehicleinfo', description="Returns a bunch of info about a chosen GTA Online vehicle", guild_ids=testserverid)
@@ -382,7 +384,7 @@ async def find_top_vehicles(
             else:
                 vehicle_string += "**__#" + vehicle[0] + ":__** "
         
-            if vehicle[1] == "": # no manufacturer = don't include
+            if vehicle[1] == None: # no manufacturer = don't include
                 vehicle_string += "**" + vehicle[2] + ": **"
             else:
                 vehicle_string += "**" + vehicle[1] + " " + vehicle[2] + ": **"
@@ -893,13 +895,13 @@ async def upsert_vehicle(
                     print(query_str)
                     try:
                         cursor.execute(query_str)
+                        complete_embed = nextcord.Embed(
+                            title=":white_check_mark: Vehicle Updated!",
+                            color=0x03fc45,
+                            )
+                        await interaction.send(embed=complete_embed)
                     except:
                         await on_command_error(interaction, sys.exc_info()[0])
-                    complete_embed = nextcord.Embed(
-                        title=":white_check_mark: Vehicle Updated!",
-                        color=0x03fc45,
-                        )
-                    await interaction.send(embed=complete_embed)
                 else:
                     embed = nextcord.Embed(
                         title=":grey_exclamation: No Changes!",
@@ -920,13 +922,13 @@ async def upsert_vehicle(
                 values = tuple(value for value in input_dict.values())
                 try:
                     cursor.execute(query, [values])
+                    complete_embed = nextcord.Embed(
+                        title=":white_check_mark: Vehicle Added!",
+                        color=0x03fc45,
+                    )
+                    await interaction.send(embed=complete_embed)
                 except:
                     await on_command_error(interaction, sys.exc_info()[0])
-                complete_embed = nextcord.Embed(
-                    title=":white_check_mark: Vehicle Added!",
-                    color=0x03fc45,
-                    )
-                await interaction.send(embed=complete_embed)
 
 
 # INVITE BOT BACK TO TEST SERVER USING

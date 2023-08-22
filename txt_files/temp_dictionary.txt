@@ -1,7 +1,5 @@
 casco
 turismo classic
-9f
-9f cabrio
 blista
 asea
 asterope
@@ -9,7 +7,6 @@ airtug
 baller old
 beejay xl
 baller new
-banshee
 injection
 blazer
 blazer lifeguard
@@ -22,22 +19,19 @@ nightmare cerberus
 nightmare issi
 pr4
 boat trailer
+banshee
+9f
 bullet
 bugstars burrito
 cavalcade old
 cavalcade new
 camper
-carbonizzare
 cheetah
 caddy golf
-comet
 cognoscenti cabrio
-coquette
 gresley
 bodhi
 buccaneer
-buffalo
-buffalo s
 dilettante
 dubsta dubsta2
 dune buggy
@@ -49,13 +43,10 @@ nightmare slamvan
 future shock sasquatch
 nightmare sasquatch
 nightmare bruiser
-elegy rh8
 f620
 felon
 felon gt
-feltzer
 fq 2
-fusilade
 hotknife
 duneloader
 dubsta
@@ -64,7 +55,6 @@ emperor
 entity xf
 exemplar
 fugitive
-futo
 granger
 gauntlet
 habanero
@@ -72,13 +62,16 @@ infernus
 ingot
 future shock zr380
 nightmare zr380
+elegy rh8
+feltzer
+fusilade
+futo
 monroe
 mule civilian
 lawn mower
 oracle xs
 oracle
 patriot
-penumbra
 peyote
 phoenix
 picador
@@ -87,12 +80,10 @@ issi
 jackal
 journey
 jb 700
-khamelion
 landstalker
 manana
 dr1
 bus
-rapid gt convertiblecabrio
 cable car
 cargo plane
 fixter
@@ -118,7 +109,6 @@ park ranger
 premier
 primo
 rancher xl
-rapid gt
 radius
 ratloader
 rusty rebel
@@ -163,7 +153,6 @@ bati 801
 rebel
 sandking swb
 schafter
-schwartzer
 seminole
 roosevelt
 sentinel xs
@@ -177,9 +166,7 @@ stanier
 stinger
 stinger gt
 stratum
-sultan
 super diamond
-surano
 docktug
 lf22 starling
 b11 strikeforce
@@ -193,7 +180,6 @@ adder
 voltic
 vacca
 bati 801rr
-ruffian
 doublet
 pcj 600
 vader
@@ -202,15 +188,13 @@ faggio
 hexer
 annihilator
 buzzard attack chopper
-scorcher
-jester
-bmx
-cruiser
 rental shuttle bus
 towtruck large
 trailer car carrier pack man
-whippet race bike
-endurex race bike
+bmx
+cruiser
+jester
+ruffian
 vestra
 zentorno
 buzzard
@@ -230,23 +214,16 @@ squalo
 suntrap
 dukes
 duke odeath
-sprunk buffalo
 pisswasser dominator
 marshall
 redwood gauntlet
 stallion
 burger shot stallion
-blista compact
-go go monkey blista
-tricycles race bike
-utility truck cherry picker crane
 bifta
 speeder
 kalahari
 paradise
 turismo r
-alpha
-massacro
 huntley s
 thrust
 rhapsody
@@ -257,18 +234,13 @@ panto
 dubsta 6x6
 pigalle
 liberator
-sovereign
 innovation
 hakuchou
-furore gt
 miljet
 besra
 coquette classic
 swift
-jester racecar
 frnken stange
-schafter lwb
-massacro racecar
 rattruck
 slamvan
 hydra
@@ -279,13 +251,10 @@ enduro
 guardian
 supervolito carbon
 lectro
-kuruma
-kuruma armored
 valkyrie
 lost slamvan
 swift deluxe
 luxor deluxe
-stirling gt
 osiris
 virgo
 windsor
@@ -293,6 +262,7 @@ coquette blackfin
 vindicator
 fib suv
 savage
+kuruma
 t20
 brawler
 toro
@@ -306,11 +276,9 @@ chino custom
 buccaneer custom
 voodoo custom
 lurcher
-verlierer
 nightshade
 mamba
 turreted limo
-schafter v12
 schafter v12 armored
 schafter lwb armored
 cognoscenti 55
@@ -340,30 +308,29 @@ virgo classic
 nimbus
 xls
 xls armored
+volatol
 utility truck cargo truck
 utility truck van
-volatol
 ramp buggy spoilerless
 infernus classic
 gp1
-ruston
 xa21
-seven70
 fmj
-bestia gts
 811
 rumpo custom
 volatus
 x80 proto
 reaper
 windsor drop
-lynx
 gargoyle
 tyrus
 etr1
-omnis
 re7b
 contender
+omnis
+ruston
+bestia gts
+lynx
 rapid gt classic
 retinue
 trophy truck
@@ -371,13 +338,10 @@ desert raid
 dune
 cliffhanger
 bf400
-tropos rallye
 brioso ra
-drift tampa
 tornado rat rod
 faggio mod
 faggio sport
-raptor
 vortex
 avarus
 sanctus
@@ -386,6 +350,8 @@ hakuchou drag
 nightblade
 fire truck
 v65 molotok
+alpha
+banshee hsw
 entity xxr
 cheburek
 chimera
@@ -396,18 +362,17 @@ defiler
 shotaro
 manchez
 street blazer
-elegy retro custom
 tempesta
 itali gtb
 itali gtb custom
 nero
 nero custom
-specter
-specter custom
 apocalypse brutus
 future shock brutus
 apocalypse bruiser
 future shock bruiser
+blista compact
+go go monkey blista
 diabolus
 diabolus custom
 blazer aqua
@@ -435,7 +400,6 @@ armored boxville
 technical aqua
 fcr 1000
 fcr 1000 custom
-comet retro custom
 vagner
 nightshark
 cheetah classic
@@ -452,8 +416,8 @@ alphaz1
 seabreeze
 apocalypse zr380
 r88
+comet retro custom
 blista kanjo
-komoda
 outlaw
 tula
 havok
@@ -466,14 +430,16 @@ cyclone
 visione
 190z
 viseris
-comet sr
-raiden
 riata
 sc1
 autarch
 fh1 hunter
 br8
 p45 nokota
+boxville lsdwp
+buffalo
+buffalo s
+sprunk buffalo
 veto classic
 slamtruck
 weevil
@@ -481,9 +447,6 @@ brioso 300
 longfin
 savestra
 gt500
-comet safari
-neon
-sentinel classic
 barrage
 deluxo
 stromberg
@@ -491,22 +454,20 @@ thruster
 yosemite
 hermes
 hustler
-streiter
-revolter
 dashound
-pariah
+calico gtf
+carbonizzare
+comet
+comet safari
+neon
 kamacho
-jester classic
 caracara
-hotring sabre
-flash gt
 ellie
 michelli gt
 fagaloa
 dominator gtx
 tyrant
 tezeract
-gb200
 issi classic
 taipan
 mule custom
@@ -516,36 +477,31 @@ oppressor mk ii
 menacer
 scramjet
 flatbed
+flash gt
+gb200
 freecrawler
 stafford
 clique
 deveste eight
 deviant
 impaler
-itali gto
-schlagen gt
 toros
 tulip
 vamos
 caracara 4x4
-8f drafter
 dynasty
 emerus
 gauntlet classic
 gauntlet hellfire
 hellion
-issi sport
-jugular
 krieger
-locust
-paragon r
 paragon r armored
+8f drafter
 issi rally hsw
 sentinel xs hsw
 turismo classic hsw
 peyote gasser
 nebula turbo
-neo
 novak
 speedo custom personal
 rampant rocket
@@ -555,13 +511,15 @@ zion classic
 zorrusso
 asbo
 furia
-imorgon
 airport bus
 ambulance
 asea snow
 army trailer tanker
 army trailer military
 atomic blimp
+comet sr
+comet s2
+comet s2 cabrio
 burrito civilian
 burrito snow
 jb 700w
@@ -571,26 +529,23 @@ rebla gts
 dilettante security
 retinue mk ii
 stryder
-sugoi
-sultan classic
 emperor snow
 fib buffalo
 vagrant
-vstr
 drift yosemite
 zhaba
 club
-coquette d10
 beater dukes
 mesa snow
 gauntlet classic custom
 glendale custom
 landstalker xl
+coquette d10
+vstr
 police rancher snow
 rancher xl snow
 sadler snow
 manana custom
-penumbra ff
 peyote custom
 seminole frontier
 stockade bobcat securitysnow
@@ -599,7 +554,6 @@ yosemite rancher
 youga classic 4x4
 fieldmaster snow
 veto modern
-itali rsx
 verus
 winky
 forklift
@@ -608,52 +562,116 @@ baletrailer
 xero blimp
 freight train locomotive
 towtruck small
+itali rsx
 dinghy 4seater
 dinghy 2seater
+penumbra ff
 velum 5seater
 boxville post op
 valkyrie mod0
-comet s2
 dominator asp
 dominator gtt
-euros
 ruiner wrecked
-futo gtx
-rt3000
-sultan rs classic
 tailgater s
-growler
-vectre
-remus
-calico gtf
 draugur
+coquette
+corsita
+la coureuse hsw
 cypher
+daemon lost mc
+elegy retro custom
+euros
+everon
+hotring everon
+stirling gt
+stirling gt hsw
+furore gt
+futo gtx
+gang burrito standard
+growler
+hotring sabre
+imorgon
+issi sport
+itali gto
+jester racecar
+jester classic
 jester rr
+jugular
+khamelion
+komoda
+kuruma armored
+locust
+massacro
+massacro racecar
+neo
+9f cabrio
+omnis egt
+panthere
+paragon r
+pariah
+penumbra
+300r
+raiden
+rapid gt
+rapid gt convertiblecabrio
+raptor
+remus
+revolter
+rt3000
+s95
+s95 hsw
+schafter v12
+schafter lwb
+schlagen gt
+schwartzer
+scorcher
+sentinel classic
+sentinel classic widebody
+seven70
+sm722
+sovereign
+specter
+specter custom
+itali gto stinger tt
+itali gto stinger tt hsw
+streiter
+sugoi
+sultan
+sultan classic
+sultan rs classic
+surano
+drift tampa
+10f
+10f widebody
+tornado convertible
+whippet race bike
+endurex race bike
+tricycles race bike
+tropos rallye
+utility truck cherry picker crane
+vectre
+verlierer
 zr350
 previon
 warrener hkr
-shinobi
 reever
 champion
 cinquemila
 iwagen
 weaponized ignus
 weaponized ignus hsw
-s95
-s95 hsw
 cyclone ii
 cyclone ii hsw
 astron custom
 astron custom hsw
 arbiter gt
 arbiter gt hsw
-banshee hsw
 brioso ra hsw
 deveste eight hsw
 astron
+shinobi
 baller st
 buffalo stx
-comet s2 cabrio
 deity
 ignus
 jubilee
@@ -661,49 +679,37 @@ patriot milspec
 zeno
 granger 3600lx
 youga custom
-omnis egt
-sentinel classic widebody
 ruiner zz8
 brioso 300 widebody
-corsita
 kanjo sj
 postlude
 torero xo
 vigero zx
 lm87
-10f
-10f widebody
 rhinehart
 conada
 greenwood
-sm722
 weevil custom
 tulip m100
 surfer custom
 journey ii
 entity mt
-300r
 tahoma coupe
 powersurge
 issi rally
 broadway
-panthere
-hotring everon
 virtue
 eudora
 boor
 entity mt hsw
-stirling gt hsw
 hakuchou drag hsw
 vigero zx hsw
 buffalo evx hsw
 monstrociti hsw
-itali gto stinger tt hsw
 walton l35
 streamer216
 ratel
 monstrociti
-itali gto stinger tt
 f160 raiju
 clique wagon
 buffalo evx
@@ -712,7 +718,6 @@ barracks semi
 benson
 biff
 dozer
-la coureuse hsw
 police transporter
 cutter
 space docker
@@ -762,11 +767,11 @@ vetir
 avisa
 kosatka
 brickade 6x6
-la coureuse
 hotring hellfire
 brigham
-weaponized conada
 ro86 alkonost
+kurtz 31 patrol boat
+weaponized conada
+la coureuse
 inductor
 junk energy inductor
-kurtz 31 patrol boat
