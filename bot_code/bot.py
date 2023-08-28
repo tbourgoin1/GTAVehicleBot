@@ -898,6 +898,7 @@ async def upsert_vehicle(
                     are_changes = False
                     for col in columns: # set which fields to update and construct query
                         if input_dict[col] and input_dict[col] != vehicle[col]:
+                            input_dict[col] = input_dict[col].replace("'", "''") # escape single quotes to avoid errors
                             query_str += col + " = '" + input_dict[col] + "',"
                             are_changes = True
                     if are_changes:
