@@ -46,20 +46,24 @@ logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
 logger = logging.getLogger()
 logger.addHandler(smtp_handler)
 
-# connect to postgres DB
-dbc = urlparse(DB_URL)
-HOST_NAME = dbc.hostname # change between localhost and dbc.hostname depending on if dev or prod, respectively
-conn = psycopg2.connect(
-    dbname=dbc.path.lstrip('/'),
-    user=dbc.username,
-    password=dbc.password,
-    host=HOST_NAME,
-    port=dbc.port,
-    sslmode='disable',
-    cursor_factory=RealDictCursor
-)
-conn.autocommit = True
-cursor = conn.cursor()
+cursor = None # db cursor for executing queries
+
+def db_connect():
+    # connect to postgres DB
+    dbc = urlparse(DB_URL)
+    HOST_NAME = dbc.hostname # change between 'localhost' and dbc.hostname depending on if dev or prod, respectively
+    conn = psycopg2.connect(
+        dbname=dbc.path.lstrip('/'),
+        user=dbc.username,
+        password=dbc.password,
+        host=HOST_NAME,
+        port=dbc.port,
+        sslmode='disable',
+        cursor_factory=RealDictCursor
+    )
+    conn.autocommit = True
+    global cursor 
+    cursor = conn.cursor()
 
 def ping_db():
     print('pinging db...')
@@ -68,8 +72,9 @@ def ping_db():
 
 @bot.event 
 async def on_ready():
-    # pings DB every 50 seconds to keep connection alive. this is a fly.io problem, it closes after 60 idle seconds. can be changed to 1500 (25min) for local testing
-    KeepDBAlive(50, ping_db)
+    db_connect()
+    # pings DB every 30 seconds to keep connection alive. this is a fly.io problem, it closes after 60 idle seconds. can be changed to 1500 (25min) for local testing
+    KeepDBAlive(30, ping_db)
     print("Bot started!") # prints to the console when the bot starts
 
 @bot.event
@@ -145,6 +150,11 @@ async def help_func(interaction : Interaction):
 
 async def vehicleinfo_createvehicleembed(vehicle, was_guess, interaction):
     print('create embed vehicle: ', vehicle, 'guess: ', was_guess)
+    # detect closed DB connection and reconnect if closed
+    try:
+        cursor.execute('SELECT 1')
+    except:
+        db_connect()
     vehicle_id = vehicle[0]
     vehicle = re.sub(r"[^a-z0-9 ]","", vehicle[1].lower().strip()) # format vehicle again for use searching - if it's a guess it'll be unformatted
     # query for vehicle and return
@@ -238,6 +248,11 @@ async def vehicleinfo_createvehicleembed(vehicle, was_guess, interaction):
 
 @bot.slash_command(name='vehicleinfo', description="Returns a bunch of info about a chosen GTA Online vehicle", guild_ids=productionserverids)
 async def vehicleinfo_findvehicle(interaction: Interaction, input:str): # main function to get GTA vehicle info from the google sheet. on_command_error handles all errors
+    # detect closed DB connection and reconnect if closed
+    try:
+        cursor.execute('SELECT 1')
+    except:
+        db_connect()
     try:
         # pull names from DB -> remove everything but spaces and alphanumeric like the helper from whole list, make a list of strings
         cursor.execute("SELECT modelid, name FROM vehicleinfo")
@@ -354,6 +369,11 @@ async def find_top_vehicles(
     number_of_vehicles:int = SlashOption(required=False, default=10), 
     metric:str = SlashOption(required=False, default='Lap Time', choices=['Lap Time', 'Top Speed'])
 ):
+    # detect closed DB connection and reconnect if closed
+    try:
+        cursor.execute('SELECT 1')
+    except:
+        db_connect()
     try:
         print("INPUT TO TOPVEHICLES. Class: " + vehicle_class + ", number: " + str(number_of_vehicles) + ", metric: " + metric)
         # validate input
@@ -635,6 +655,11 @@ async def find_staff_vehicle(
 
 @bot.slash_command(name='updatevehicledata', description="Scrapes gtacars.net and puts all updated info in the bot DB", guild_ids=productionserverids)
 async def update_data(interaction : Interaction):
+    # detect closed DB connection and reconnect if closed
+    try:
+        cursor.execute('SELECT 1')
+    except:
+        db_connect()
     try:
         if(not interaction.user.guild_permissions.ban_members):
             await on_command_error(interaction, "Missing Permissions")
@@ -858,6 +883,11 @@ async def upsert_vehicle(
     dlc:str = SlashOption(description="DLC the vehicle was released in. DLC name + year in parenthesis, like Base Game (2013)", required=False),
     othernotes:str = SlashOption(description="Other notes section. This will overwrite them, so add the existing ones you want to keep as well", required=False)
 ):
+    # detect closed DB connection and reconnect if closed
+    try:
+        cursor.execute('SELECT 1')
+    except:
+        db_connect()
     try:
         if(not interaction.user.guild_permissions.ban_members):
             await on_command_error(interaction, "Missing Permissions")
