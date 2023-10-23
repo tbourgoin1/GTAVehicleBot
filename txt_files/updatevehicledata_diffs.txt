@@ -1,0 +1,547 @@
+DIFF COUNT: 182
+
+blista2, 105th out of 105 in Sports, 104th out of 105 in Sports
+blista2, 104th out of 104 in Sports, 103rd out of 104 in Sports
+
+blista3, 104th out of 105 in Sports, 103rd out of 105 in Sports
+blista3, 103rd out of 104 in Sports, 102nd out of 104 in Sports
+
+buffalo3, 82nd out of 105 in Sports, 76th out of 105 in Sports
+buffalo3, 82nd out of 104 in Sports, 75th out of 104 in Sports
+
+chino2, 66th out of 74 in Muscle, 72nd out of 74 in Muscle
+chino2, 65th out of 73 in Muscle, 71st out of 73 in Muscle
+
+comet4, 84th out of 105 in Sports, 44th out of 105 in Sports
+comet4, 83rd out of 104 in Sports, 43rd out of 104 in Sports
+
+coquette3, 23rd out of 74 in Muscle, 27th out of 74 in Muscle
+coquette3, 23rd out of 73 in Muscle, 27th out of 73 in Muscle
+
+coureur, 5th out of 105 in Sports, 83rd out of 105 in Sports
+coureur, 5th out of 104 in Sports, 82nd out of 104 in Sports
+
+dominator8, 14th out of 74 in Muscle, 14th out of 17 in Tuner, 25th out of 74 in Muscle, 14th out of 17 in Tuner
+dominator8, 14th out of 73 in Muscle, 14th out of 17 in Tuner, 25th out of 73 in Muscle, 14th out of 17 in Tuner
+
+dukes, 22nd out of 74 in Muscle, 37th out of 74 in Muscle
+dukes, 22nd out of 73 in Muscle, 37th out of 73 in Muscle
+
+dukes2, 27th out of 74 in Muscle, 28th out of 74 in Muscle
+dukes2, 27th out of 73 in Muscle, 28th out of 73 in Muscle
+
+ellie, 48th out of 74 in Muscle, 56th out of 74 in Muscle
+ellie, 48th out of 73 in Muscle, 56th out of 73 in Muscle
+
+euros, 60th out of 105 in Sports, 7th out of 17 in Tuner, 73rd out of 105 in Sports, 10th out of 17 in Tuner
+euros, 60th out of 104 in Sports, 7th out of 17 in Tuner, 72nd out of 104 in Sports, 10th out of 17 in Tuner
+
+everon2, 73rd out of 105 in Sports, 19th out of 105 in Sports
+everon2, 73rd out of 104 in Sports, 19th out of 104 in Sports
+
+blade, 20th out of 74 in Muscle, 46th out of 74 in Muscle
+blade, 20th out of 73 in Muscle, 46th out of 73 in Muscle
+
+dominator2, 9th out of 74 in Muscle, 5th out of 74 in Muscle
+dominator2, 9th out of 73 in Muscle, 5th out of 73 in Muscle
+
+faction, 58th out of 74 in Muscle, 44th out of 74 in Muscle
+faction, 57th out of 73 in Muscle, 44th out of 73 in Muscle
+
+faction2, 49th out of 74 in Muscle, 43rd out of 74 in Muscle
+faction2, 49th out of 73 in Muscle, 43rd out of 73 in Muscle
+
+feltzer2, 22nd out of 105 in Sports, 50th out of 105 in Sports
+feltzer2, 22nd out of 104 in Sports, 49th out of 104 in Sports
+
+banshee, 68th out of 105 in Sports, 65th out of 105 in Sports
+banshee, 68th out of 104 in Sports, 64th out of 104 in Sports
+
+buccaneer2, 44th out of 74 in Muscle, 33rd out of 74 in Muscle
+buccaneer2, 44th out of 73 in Muscle, 33rd out of 73 in Muscle
+
+chino, 67th out of 74 in Muscle, 73rd out of 74 in Muscle
+chino, 66th out of 73 in Muscle, 72nd out of 73 in Muscle
+
+feltzer3, 8th out of 42 in Sports Classics, 71st out of 105 in Sports, 22nd out of 42 in Sports Classics, 94th out of 105 in Sports
+feltzer3, 8th out of 42 in Sports Classics, 71st out of 104 in Sports, 22nd out of 42 in Sports Classics, 93rd out of 104 in Sports
+
+feltzer3_hsw, 2nd out of 42 in Sports Classics, 7th out of 105 in Sports, 1st out of 42 in Sports Classics, 2nd out of 105 in Sports
+feltzer3_hsw, 2nd out of 42 in Sports Classics, 7th out of 104 in Sports, 1st out of 42 in Sports Classics, 2nd out of 104 in Sports
+
+furoregt, 92nd out of 105 in Sports, 42nd out of 105 in Sports
+furoregt, 91st out of 104 in Sports, 41st out of 104 in Sports
+
+fusilade, 94th out of 105 in Sports, 66th out of 105 in Sports
+fusilade, 93rd out of 104 in Sports, 65th out of 104 in Sports
+
+futo, 102nd out of 105 in Sports, 60th out of 105 in Sports
+futo, 101st out of 104 in Sports, 59th out of 104 in Sports
+
+buccaneer, 45th out of 74 in Muscle, 34th out of 74 in Muscle
+buccaneer, 45th out of 73 in Muscle, 34th out of 73 in Muscle
+
+faction3, 57th out of 74 in Muscle, 69th out of 74 in Muscle
+faction3, 56th out of 73 in Muscle, 68th out of 73 in Muscle
+
+futo2, 119.75, 100th out of 105 in Sports, 16th out of 17 in Tuner, 49th out of 105 in Sports, 5th out of 17 in Tuner
+futo2, 119.8, 99th out of 104 in Sports, 16th out of 17 in Tuner, 44th out of 104 in Sports, 5th out of 17 in Tuner
+
+gauntlet2, 37th out of 74 in Muscle, 21st out of 74 in Muscle
+gauntlet2, 37th out of 73 in Muscle, 21st out of 73 in Muscle
+
+tampa, 39th out of 74 in Muscle, 57th out of 74 in Muscle
+tampa, 39th out of 73 in Muscle, 57th out of 73 in Muscle
+
+gauntlet5, 30th out of 74 in Muscle, 7th out of 74 in Muscle
+gauntlet5, 30th out of 73 in Muscle, 7th out of 73 in Muscle
+
+gauntlet6, 1:07.383, https://www.gtacars.net/images/19cf898d4caa13d8eb385f36eea30fd2, 83rd out of 105 in Sports, 22nd out of 105 in Sports
+gauntlet6, 1:06.266, https://static.wikia.nocookie.net/gtawiki/images/9/98/HotringHellfire-GTAOe-front.png/revision/latest?cb=20230613222523, 75th out of 104 in Sports, 22nd out of 104 in Sports
+
+gb200, 75th out of 105 in Sports, 85th out of 105 in Sports
+gb200, 75th out of 104 in Sports, 84th out of 104 in Sports
+
+growler, 42nd out of 105 in Sports, 4th out of 17 in Tuner, 35th out of 105 in Sports, 3rd out of 17 in Tuner
+growler, 42nd out of 104 in Sports, 4th out of 17 in Tuner, 34th out of 104 in Sports, 3rd out of 17 in Tuner
+
+bestiagts, 45th out of 105 in Sports, 62nd out of 105 in Sports
+bestiagts, 45th out of 104 in Sports, 61st out of 104 in Sports
+
+hermes, 34th out of 74 in Muscle, 18th out of 74 in Muscle
+hermes, 34th out of 73 in Muscle, 18th out of 73 in Muscle
+
+hotring, 79th out of 105 in Sports, 34th out of 105 in Sports
+hotring, 79th out of 104 in Sports, 33rd out of 104 in Sports
+
+hustler, 43rd out of 74 in Muscle, 11th out of 74 in Muscle
+hustler, 43rd out of 73 in Muscle, 11th out of 73 in Muscle
+
+imorgon, 11th out of 105 in Sports, 100th out of 105 in Sports
+imorgon, 11th out of 104 in Sports, 99th out of 104 in Sports
+
+lynx, 80th out of 105 in Sports, 36th out of 105 in Sports
+lynx, 80th out of 104 in Sports, 35th out of 104 in Sports
+
+alpha, 66th out of 105 in Sports, 64th out of 105 in Sports
+alpha, 66th out of 104 in Sports, 63rd out of 104 in Sports
+
+hotknife, 63rd out of 74 in Muscle, 48th out of 74 in Muscle
+hotknife, 62nd out of 73 in Muscle, 48th out of 73 in Muscle
+
+issi7, 13th out of 105 in Sports, 84th out of 105 in Sports
+issi7, 13th out of 104 in Sports, 83rd out of 104 in Sports
+
+banshee_hsw, 9th out of 105 in Sports, 4th out of 105 in Sports
+banshee_hsw, 9th out of 104 in Sports, 4th out of 104 in Sports
+
+dominator, 19th out of 74 in Muscle, 12th out of 74 in Muscle
+dominator, 19th out of 73 in Muscle, 12th out of 73 in Muscle
+
+italigto, 3rd out of 105 in Sports, 13th out of 105 in Sports
+italigto, 3rd out of 104 in Sports, 13th out of 104 in Sports
+
+jester, 32nd out of 105 in Sports, 61st out of 105 in Sports
+jester, 32nd out of 104 in Sports, 60th out of 104 in Sports
+
+jester2, 24th out of 105 in Sports, 56th out of 105 in Sports
+jester2, 24th out of 104 in Sports, 55th out of 104 in Sports
+
+jester3, 69th out of 105 in Sports, 48th out of 105 in Sports
+jester3, 69th out of 104 in Sports, 48th out of 104 in Sports
+
+gauntlet, 42nd out of 74 in Muscle, 31st out of 74 in Muscle
+gauntlet, 42nd out of 73 in Muscle, 31st out of 73 in Muscle
+
+jester4, 52nd out of 105 in Sports, 5th out of 17 in Tuner, 21st out of 105 in Sports, 1st out of 17 in Tuner
+jester4, 52nd out of 104 in Sports, 5th out of 17 in Tuner, 21st out of 104 in Sports, 1st out of 17 in Tuner
+
+jugular, 16th out of 105 in Sports, 15th out of 105 in Sports
+jugular, 16th out of 104 in Sports, 15th out of 104 in Sports
+
+comet3, 62nd out of 105 in Sports, 40th out of 105 in Sports
+comet3, 62nd out of 104 in Sports, 39th out of 104 in Sports
+
+elegy2, 17th out of 105 in Sports, 63rd out of 105 in Sports
+elegy2, 17th out of 104 in Sports, 62nd out of 104 in Sports
+
+khamelion, 88th out of 105 in Sports, 105th out of 105 in Sports
+khamelion, 87th out of 104 in Sports, 104th out of 104 in Sports
+
+brioso2, 1:23.950
+brioso2, 1:24.186
+
+buffalo, 93rd out of 105 in Sports, 93rd out of 105 in Sports
+buffalo, 92nd out of 104 in Sports, 92nd out of 104 in Sports
+
+buffalo2, 85th out of 105 in Sports, 92nd out of 105 in Sports
+buffalo2, 84th out of 104 in Sports, 91st out of 104 in Sports
+
+calico, 121.25, 30th out of 105 in Sports, 3rd out of 17 in Tuner, 37th out of 105 in Sports, 4th out of 17 in Tuner
+calico, 121.3, 30th out of 104 in Sports, 3rd out of 17 in Tuner, 36th out of 104 in Sports, 4th out of 17 in Tuner
+
+carbonizzare, 64th out of 105 in Sports, 52nd out of 105 in Sports
+carbonizzare, 64th out of 104 in Sports, 51st out of 104 in Sports
+
+comet2, 59th out of 105 in Sports, 51st out of 105 in Sports
+comet2, 59th out of 104 in Sports, 50th out of 104 in Sports
+
+clique, 12th out of 74 in Muscle, 19th out of 74 in Muscle
+clique, 12th out of 73 in Muscle, 19th out of 73 in Muscle
+
+dominator3, 18th out of 74 in Muscle, 51st out of 74 in Muscle
+dominator3, 18th out of 73 in Muscle, 51st out of 73 in Muscle
+
+flashgt, 35th out of 105 in Sports, 74th out of 105 in Sports
+flashgt, 35th out of 104 in Sports, 73rd out of 104 in Sports
+
+deviant, 33rd out of 74 in Muscle, 53rd out of 74 in Muscle
+deviant, 33rd out of 73 in Muscle, 53rd out of 73 in Muscle
+
+drafter, 29th out of 105 in Sports, 68th out of 105 in Sports
+drafter, 29th out of 104 in Sports, 67th out of 104 in Sports
+
+gauntlet3, 46th out of 74 in Muscle, 47th out of 74 in Muscle
+gauntlet3, 46th out of 73 in Muscle, 47th out of 73 in Muscle
+
+gauntlet4, 25th out of 74 in Muscle, 8th out of 74 in Muscle
+gauntlet4, 25th out of 73 in Muscle, 8th out of 73 in Muscle
+
+impaler, 16th out of 74 in Muscle, 26th out of 74 in Muscle
+impaler, 16th out of 73 in Muscle, 26th out of 73 in Muscle
+
+peyote2, 50th out of 74 in Muscle, 17th out of 74 in Muscle
+peyote2, 50th out of 73 in Muscle, 17th out of 73 in Muscle
+
+komoda, 43rd out of 105 in Sports, 27th out of 105 in Sports
+komoda, 43rd out of 104 in Sports, 26th out of 104 in Sports
+
+kuruma, 76th out of 105 in Sports, 95th out of 105 in Sports
+kuruma, 76th out of 104 in Sports, 94th out of 104 in Sports
+
+locust, 56th out of 105 in Sports, 47th out of 105 in Sports
+locust, 56th out of 104 in Sports, 47th out of 104 in Sports
+
+lurcher, 51st out of 74 in Muscle, 29th out of 74 in Muscle
+lurcher, 51st out of 73 in Muscle, 29th out of 73 in Muscle
+
+manana2, 56th out of 74 in Muscle, 52nd out of 74 in Muscle
+manana2, 55th out of 73 in Muscle, 52nd out of 73 in Muscle
+
+comet5, 12th out of 105 in Sports, 30th out of 105 in Sports
+comet5, 12th out of 104 in Sports, 29th out of 104 in Sports
+
+comet6, 61st out of 105 in Sports, 8th out of 17 in Tuner, 28th out of 105 in Sports, 2nd out of 17 in Tuner
+comet6, 61st out of 104 in Sports, 8th out of 17 in Tuner, 27th out of 104 in Sports, 2nd out of 17 in Tuner
+
+comet7, 55th out of 105 in Sports, 11th out of 105 in Sports
+comet7, 55th out of 104 in Sports, 11th out of 104 in Sports
+
+massacro, 34th out of 105 in Sports, 32nd out of 105 in Sports
+massacro, 34th out of 104 in Sports, 31st out of 104 in Sports
+
+massacro2, 33rd out of 105 in Sports, 31st out of 105 in Sports
+massacro2, 33rd out of 104 in Sports, 30th out of 104 in Sports
+
+moonbeam, 69th out of 74 in Muscle, 65th out of 74 in Muscle
+moonbeam, 68th out of 73 in Muscle, 64th out of 73 in Muscle
+
+ruiner, 26th out of 74 in Muscle, 15th out of 74 in Muscle
+ruiner, 26th out of 73 in Muscle, 15th out of 73 in Muscle
+
+coquette4, 37th out of 105 in Sports, 10th out of 105 in Sports
+coquette4, 37th out of 104 in Sports, 10th out of 104 in Sports
+
+dukes3, 29th out of 74 in Muscle, 38th out of 74 in Muscle
+dukes3, 29th out of 73 in Muscle, 38th out of 73 in Muscle
+
+italirsx, 8th out of 105 in Sports, 7th out of 105 in Sports
+italirsx, 8th out of 104 in Sports, 7th out of 104 in Sports
+
+moonbeam2, 60th out of 74 in Muscle, 64th out of 74 in Muscle
+moonbeam2, 59th out of 73 in Muscle, 63rd out of 73 in Muscle
+
+neo, 10th out of 105 in Sports, 18th out of 105 in Sports
+neo, 10th out of 104 in Sports, 18th out of 104 in Sports
+
+neon, 23rd out of 105 in Sports, 87th out of 105 in Sports
+neon, 23rd out of 104 in Sports, 86th out of 104 in Sports
+
+coquette, 72nd out of 105 in Sports, 57th out of 105 in Sports
+coquette, 72nd out of 104 in Sports, 56th out of 104 in Sports
+
+corsita, 15th out of 105 in Sports, 9th out of 105 in Sports
+corsita, 15th out of 104 in Sports, 9th out of 104 in Sports
+
+coureur_hsw, 1st out of 105 in Sports, 5th out of 105 in Sports
+coureur_hsw, 1st out of 104 in Sports, 5th out of 104 in Sports
+
+cypher, 57th out of 105 in Sports, 6th out of 17 in Tuner, 88th out of 105 in Sports, 16th out of 17 in Tuner
+cypher, 57th out of 104 in Sports, 6th out of 17 in Tuner, 87th out of 104 in Sports, 16th out of 17 in Tuner
+
+dominator7, 5th out of 74 in Muscle, 10th out of 17 in Tuner, 13th out of 74 in Muscle, 7th out of 17 in Tuner
+dominator7, 5th out of 73 in Muscle, 10th out of 17 in Tuner, 13th out of 73 in Muscle, 7th out of 17 in Tuner
+
+nightshade, 52nd out of 74 in Muscle, 60th out of 74 in Muscle
+nightshade, 52nd out of 73 in Muscle, 59th out of 73 in Muscle
+
+ninef, 38th out of 105 in Sports, 45th out of 105 in Sports
+ninef, 38th out of 104 in Sports, 45th out of 104 in Sports
+
+ninef2, 39th out of 105 in Sports, 46th out of 105 in Sports
+ninef2, 39th out of 104 in Sports, 46th out of 104 in Sports
+
+omnis, 81st out of 105 in Sports, 91st out of 105 in Sports
+omnis, 81st out of 104 in Sports, 90th out of 104 in Sports
+
+omnisegt, 47th out of 105 in Sports, 96th out of 105 in Sports
+omnisegt, 47th out of 104 in Sports, 95th out of 104 in Sports
+
+panthere, 70th out of 105 in Sports, 29th out of 105 in Sports
+panthere, 70th out of 104 in Sports, 28th out of 104 in Sports
+
+paragon, 14th out of 105 in Sports, 26th out of 105 in Sports
+paragon, 14th out of 104 in Sports, 25th out of 104 in Sports
+
+pariah, 6th out of 105 in Sports, 6th out of 105 in Sports
+pariah, 6th out of 104 in Sports, 6th out of 104 in Sports
+
+penumbra, 101st out of 105 in Sports, 101st out of 105 in Sports
+penumbra, 100th out of 104 in Sports, 100th out of 104 in Sports
+
+penumbra2, 48th out of 105 in Sports, 90th out of 105 in Sports
+penumbra2, 48th out of 104 in Sports, 89th out of 104 in Sports
+
+phoenix, 40th out of 74 in Muscle, 32nd out of 74 in Muscle
+phoenix, 40th out of 73 in Muscle, 32nd out of 73 in Muscle
+
+picador, 53rd out of 74 in Muscle, 63rd out of 74 in Muscle
+picador, 53rd out of 73 in Muscle, 62nd out of 73 in Muscle
+
+r300, 36th out of 105 in Sports, 43rd out of 105 in Sports
+r300, 36th out of 104 in Sports, 42nd out of 104 in Sports
+
+raiden, 50th out of 105 in Sports, 89th out of 105 in Sports
+raiden, 50th out of 104 in Sports, 88th out of 104 in Sports
+
+rapidgt, 90th out of 105 in Sports, 54th out of 105 in Sports
+rapidgt, 89th out of 104 in Sports, 53rd out of 104 in Sports
+
+rapidgt2, 91st out of 105 in Sports, 55th out of 105 in Sports
+rapidgt2, 90th out of 104 in Sports, 54th out of 104 in Sports
+
+raptor, 99th out of 105 in Sports, 102nd out of 105 in Sports
+raptor, 98th out of 104 in Sports, 101st out of 104 in Sports
+
+ratloader, 73rd out of 74 in Muscle, 62nd out of 74 in Muscle
+ratloader, 72nd out of 73 in Muscle, 61st out of 73 in Muscle
+
+ratloader2, 72nd out of 74 in Muscle, 59th out of 74 in Muscle
+ratloader2, 71st out of 73 in Muscle, 58th out of 73 in Muscle
+
+elegy, 27th out of 105 in Sports, 82nd out of 105 in Sports
+elegy, 27th out of 104 in Sports, 81st out of 104 in Sports
+
+kuruma2, 96th out of 105 in Sports, 98th out of 105 in Sports
+kuruma2, 95th out of 104 in Sports, 97th out of 104 in Sports
+
+schlagen, 28th out of 105 in Sports, 20th out of 105 in Sports
+schlagen, 28th out of 104 in Sports, 20th out of 104 in Sports
+
+remus, 74th out of 105 in Sports, 12th out of 17 in Tuner, 80th out of 105 in Sports, 13th out of 17 in Tuner
+remus, 74th out of 104 in Sports, 12th out of 17 in Tuner, 79th out of 104 in Sports, 13th out of 17 in Tuner
+
+revolter, 41st out of 105 in Sports, 78th out of 105 in Sports
+revolter, 41st out of 104 in Sports, 77th out of 104 in Sports
+
+rt3000, 78th out of 105 in Sports, 13th out of 17 in Tuner, 58th out of 105 in Sports, 6th out of 17 in Tuner
+rt3000, 78th out of 104 in Sports, 13th out of 17 in Tuner, 57th out of 104 in Sports, 6th out of 17 in Tuner
+
+ruston, 86th out of 105 in Sports, 75th out of 105 in Sports
+ruston, 85th out of 104 in Sports, 74th out of 104 in Sports
+
+s95, 65th out of 105 in Sports, 79th out of 105 in Sports
+s95, 65th out of 104 in Sports, 78th out of 104 in Sports
+
+s95_hsw, 4th out of 105 in Sports, 3rd out of 105 in Sports
+s95_hsw, 4th out of 104 in Sports, 3rd out of 104 in Sports
+
+sabregt, 28th out of 74 in Muscle, 42nd out of 74 in Muscle
+sabregt, 28th out of 73 in Muscle, 42nd out of 73 in Muscle
+
+sabregt2, 11th out of 74 in Muscle, 10th out of 74 in Muscle
+sabregt2, 11th out of 73 in Muscle, 10th out of 73 in Muscle
+
+schafter3, 58th out of 105 in Sports, 3rd out of 35 in Sedans, 23rd out of 105 in Sports, 1st out of 35 in Sedans
+schafter3, 58th out of 104 in Sports, 3rd out of 35 in Sedans, 22nd out of 104 in Sports, 1st out of 35 in Sedans
+
+schafter4, 97th out of 105 in Sports, 8th out of 35 in Sedans, 99th out of 105 in Sports, 14th out of 35 in Sedans
+schafter4, 96th out of 104 in Sports, 8th out of 35 in Sedans, 98th out of 104 in Sports, 14th out of 35 in Sedans
+
+schwarzer, 98th out of 105 in Sports, 71st out of 105 in Sports
+schwarzer, 97th out of 104 in Sports, 70th out of 104 in Sports
+
+sentinel3, 53rd out of 105 in Sports, 70th out of 105 in Sports
+sentinel3, 53rd out of 104 in Sports, 69th out of 104 in Sports
+
+sentinel4, 31st out of 105 in Sports, 14th out of 105 in Sports
+sentinel4, 31st out of 104 in Sports, 14th out of 104 in Sports
+
+seven70, 54th out of 105 in Sports, 25th out of 105 in Sports
+seven70, 54th out of 104 in Sports, 24th out of 104 in Sports
+
+slamvan, 74th out of 74 in Muscle, 55th out of 74 in Muscle
+slamvan, 73rd out of 73 in Muscle, 55th out of 73 in Muscle
+
+slamvan2, 65th out of 74 in Muscle, 50th out of 74 in Muscle
+slamvan2, 64th out of 73 in Muscle, 50th out of 73 in Muscle
+
+slamvan3, 38th out of 74 in Muscle, 20th out of 74 in Muscle
+slamvan3, 38th out of 73 in Muscle, 20th out of 73 in Muscle
+
+sm722, 49th out of 105 in Sports, 24th out of 105 in Sports
+sm722, 49th out of 104 in Sports, 23rd out of 104 in Sports
+
+specter, 46th out of 105 in Sports, 39th out of 105 in Sports
+specter, 46th out of 104 in Sports, 38th out of 104 in Sports
+
+specter2, 44th out of 105 in Sports, 38th out of 105 in Sports
+specter2, 44th out of 104 in Sports, 37th out of 104 in Sports
+
+stalion, 41st out of 74 in Muscle, 45th out of 74 in Muscle
+stalion, 41st out of 73 in Muscle, 45th out of 73 in Muscle
+
+stalion2, 35th out of 74 in Muscle, 30th out of 74 in Muscle
+stalion2, 35th out of 73 in Muscle, 30th out of 73 in Muscle
+
+stingertt, 20th out of 105 in Sports, 8th out of 105 in Sports
+stingertt, 20th out of 104 in Sports, 8th out of 104 in Sports
+
+stingertt_hsw, 2nd out of 105 in Sports, 1st out of 105 in Sports
+stingertt_hsw, 2nd out of 104 in Sports, 1st out of 104 in Sports
+
+streiter, 103rd out of 105 in Sports, 97th out of 105 in Sports
+streiter, 102nd out of 104 in Sports, 96th out of 104 in Sports
+
+sugoi, 95th out of 105 in Sports, 59th out of 105 in Sports
+sugoi, 94th out of 104 in Sports, 58th out of 104 in Sports
+
+sultan, 67th out of 105 in Sports, 77th out of 105 in Sports
+sultan, 67th out of 104 in Sports, 76th out of 104 in Sports
+
+sultan2, 19th out of 105 in Sports, 72nd out of 105 in Sports
+sultan2, 19th out of 104 in Sports, 71st out of 104 in Sports
+
+sultan3, 25th out of 105 in Sports, 1st out of 17 in Tuner, 67th out of 105 in Sports, 8th out of 17 in Tuner
+sultan3, 25th out of 104 in Sports, 1st out of 17 in Tuner, 66th out of 104 in Sports, 8th out of 17 in Tuner
+
+surano, 51st out of 105 in Sports, 41st out of 105 in Sports
+surano, 51st out of 104 in Sports, 40th out of 104 in Sports
+
+tailgater2, 115.75
+tailgater2, 115.8
+
+tampa2, 89th out of 105 in Sports, 86th out of 105 in Sports
+tampa2, 88th out of 104 in Sports, 85th out of 104 in Sports
+
+tenf, 21st out of 105 in Sports, 17th out of 105 in Sports
+tenf, 21st out of 104 in Sports, 17th out of 104 in Sports
+
+tenf2, 18th out of 105 in Sports, 12th out of 105 in Sports
+tenf2, 18th out of 104 in Sports, 12th out of 104 in Sports
+
+tulip, 21st out of 74 in Muscle, 35th out of 74 in Muscle
+tulip, 21st out of 73 in Muscle, 35th out of 73 in Muscle
+
+vamos, 24th out of 74 in Muscle, 39th out of 74 in Muscle
+vamos, 24th out of 73 in Muscle, 39th out of 73 in Muscle
+
+vigero, 47th out of 74 in Muscle, 41st out of 74 in Muscle
+vigero, 47th out of 73 in Muscle, 41st out of 73 in Muscle
+
+vigero2_hsw, 1st out of 74 in Muscle, 1st out of 74 in Muscle
+vigero2_hsw, 1st out of 73 in Muscle, 1st out of 73 in Muscle
+
+virgo, 62nd out of 74 in Muscle, 70th out of 74 in Muscle
+virgo, 61st out of 73 in Muscle, 69th out of 73 in Muscle
+
+virgo2, 54th out of 74 in Muscle, 61st out of 74 in Muscle
+virgo2, 54th out of 73 in Muscle, 60th out of 73 in Muscle
+
+virgo3, 68th out of 74 in Muscle, 71st out of 74 in Muscle
+virgo3, 67th out of 73 in Muscle, 70th out of 73 in Muscle
+
+voodoo, 70th out of 74 in Muscle, 66th out of 74 in Muscle
+voodoo, 69th out of 73 in Muscle, 65th out of 73 in Muscle
+
+voodoo2, 71st out of 74 in Muscle, 68th out of 74 in Muscle
+voodoo2, 70th out of 73 in Muscle, 67th out of 73 in Muscle
+
+vstr, 40th out of 105 in Sports, 16th out of 105 in Sports
+vstr, 40th out of 104 in Sports, 16th out of 104 in Sports
+
+yosemite, 8th out of 74 in Muscle, 22nd out of 74 in Muscle
+yosemite, 8th out of 73 in Muscle, 22nd out of 73 in Muscle
+
+yosemite2, 15th out of 74 in Muscle, 54th out of 74 in Muscle
+yosemite2, 15th out of 73 in Muscle, 54th out of 73 in Muscle
+
+tropos, 77th out of 105 in Sports, 53rd out of 105 in Sports
+tropos, 77th out of 104 in Sports, 52nd out of 104 in Sports
+
+vectre, 26th out of 105 in Sports, 2nd out of 17 in Tuner, 81st out of 105 in Sports, 15th out of 17 in Tuner
+vectre, 26th out of 104 in Sports, 2nd out of 17 in Tuner, 80th out of 104 in Sports, 15th out of 17 in Tuner
+
+arbitergt, 31st out of 74 in Muscle, 36th out of 74 in Muscle
+arbitergt, 31st out of 73 in Muscle, 36th out of 73 in Muscle
+
+verlierer2, 63rd out of 105 in Sports, 33rd out of 105 in Sports
+verlierer2, 63rd out of 104 in Sports, 32nd out of 104 in Sports
+
+zr350, 87th out of 105 in Sports, 15th out of 17 in Tuner, 69th out of 105 in Sports, 9th out of 17 in Tuner
+zr350, 86th out of 104 in Sports, 15th out of 17 in Tuner, 68th out of 104 in Sports, 9th out of 17 in Tuner
+
+arbitergt_hsw, 10th out of 74 in Muscle, 3rd out of 74 in Muscle
+arbitergt_hsw, 10th out of 73 in Muscle, 3rd out of 73 in Muscle
+
+buffalo4, 3rd out of 74 in Muscle, 6th out of 74 in Muscle
+buffalo4, 3rd out of 73 in Muscle, 6th out of 73 in Muscle
+
+ruiner4, 13th out of 74 in Muscle, 24th out of 74 in Muscle
+ruiner4, 13th out of 73 in Muscle, 24th out of 73 in Muscle
+
+greenwood, 17th out of 74 in Muscle, 16th out of 74 in Muscle
+greenwood, 17th out of 73 in Muscle, 16th out of 73 in Muscle
+
+tahoma, 32nd out of 74 in Muscle, 40th out of 74 in Muscle
+tahoma, 32nd out of 73 in Muscle, 40th out of 73 in Muscle
+
+tulip2, 36th out of 74 in Muscle, 23rd out of 74 in Muscle
+tulip2, 36th out of 73 in Muscle, 23rd out of 73 in Muscle
+
+vigero2, 6th out of 74 in Muscle, 9th out of 74 in Muscle
+vigero2, 6th out of 73 in Muscle, 9th out of 73 in Muscle
+
+weevil2, 4th out of 74 in Muscle, 4th out of 74 in Muscle
+weevil2, 4th out of 73 in Muscle, 4th out of 73 in Muscle
+
+broadway, 61st out of 74 in Muscle, 67th out of 74 in Muscle
+broadway, 60th out of 73 in Muscle, 66th out of 73 in Muscle
+
+buffalo5_hsw, 2nd out of 74 in Muscle, 2nd out of 74 in Muscle
+buffalo5_hsw, 2nd out of 73 in Muscle, 2nd out of 73 in Muscle
+
+eudora, 59th out of 74 in Muscle, 49th out of 74 in Muscle
+eudora, 58th out of 73 in Muscle, 49th out of 73 in Muscle
+
+buffalo5, 7th out of 74 in Muscle, 14th out of 74 in Muscle
+buffalo5, 7th out of 73 in Muscle, 14th out of 73 in Muscle
+
+clique2, 64th out of 74 in Muscle, 74th out of 74 in Muscle
+clique2, 63rd out of 73 in Muscle, 73rd out of 73 in Muscle
+
+brigham, https://www.gtacars.net/images/81029c1e7e9a2cbf7c87bec78bb0035d, 55th out of 74 in Muscle, 58th out of 74 in Muscle
+brigham, https://static.wikia.nocookie.net/gtawiki/images/3/3f/Brigham-GTAOe-front.png/revision/latest?cb=20230613215650, 55th out of 73 in Muscle, 58th out of 73 in Muscle
+
+conada2, , , , 
+conada2, 0:53.762, 151, 2nd out of 17 in Helicopters, 9th out of 17 in Helicopters

@@ -16,8 +16,12 @@ def validate_input(input_dict, cursor):
         if not re.match("[0-9][:][0-9][0-9][.][0-9][0-9][0-9]$", input_dict['laptime']):
             bad_fields.append('Lap Time: Not formatted correctly. Must look like: 0:59.233')
     
-    if input_dict['topspeed'] and not input_dict['topspeed'].isnumeric():
-        bad_fields.append('Top Speed: You most only enter a number')
+    if input_dict['topspeed']:
+        topspeed = input_dict['topspeed'].replace('mph', '')
+        if not topspeed.replace('.', '').isnumeric():
+            bad_fields.append('Top Speed: Incorrect format, must only be a number. You may optionally include "." or "mph"')
+        else:
+            input_dict['topspeed'] = topspeed
     
     if input_dict['image'] and 'https://' not in input_dict['image']:
         bad_fields.append('Image: Not a valid URL')
