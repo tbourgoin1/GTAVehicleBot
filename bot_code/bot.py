@@ -559,7 +559,7 @@ async def staffvehicle_multiple_exacts(car_array, staff_member, interaction):
 async def find_staff_vehicle(
     interaction : Interaction, 
     vehicle:str,
-    staff_member:str = SlashOption(choices=["Emperor", "Rad", "Alex", "Dornier"], required=True),
+    staff_member:str = SlashOption(choices=["Emperor", "Rad", "Alex", "Dornier", "Ritz"], required=True),
     ):
     try:
         print("INPUT TO STAFFVEHICLE. Vehicle: " + vehicle + ", staff_member: " + staff_member)
