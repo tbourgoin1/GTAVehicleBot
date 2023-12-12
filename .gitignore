@@ -11,3 +11,4 @@ fly.toml
 Dockerfile
 .dockerignore
 requirements.txt
+.vscode
