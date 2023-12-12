@@ -51,7 +51,7 @@ cursor = None # db cursor for executing queries
 def db_connect():
     # connect to postgres DB
     dbc = urlparse(DB_URL)
-    HOST_NAME = dbc.hostname # change between 'localhost' and dbc.hostname depending on if dev or prod, respectively
+    HOST_NAME = 'localhost' #dbc.hostname # change between 'localhost' and dbc.hostname depending on if dev or prod, respectively
     conn = psycopg2.connect(
         dbname=dbc.path.lstrip('/'),
         user=dbc.username,
@@ -74,7 +74,7 @@ def ping_db():
 async def on_ready():
     db_connect()
     # pings DB every 30 seconds to keep connection alive. this is a fly.io problem, it closes after 60 idle seconds. can be changed to 1500 (25min) for local testing
-    KeepDBAlive(30, ping_db)
+    #KeepDBAlive(30, ping_db)
     print("Bot started!") # prints to the console when the bot starts
 
 @bot.event
@@ -130,7 +130,7 @@ async def on_command_error(interaction, error): # provides error embeds when thi
         embed.set_footer(text="Bot created by Emperor (MrThankUvryMuch#9854)")
     await interaction.send(embed=embed)
 
-@bot.slash_command(name='help', description="General help command. Use me if you're confused!", guild_ids=productionserverids) # general help embed
+@bot.slash_command(name='help', description="General help command. Use me if you're confused!", guild_ids=testserverid) # general help embed
 async def help_func(interaction : Interaction):
     try:
         embed = nextcord.Embed(
@@ -246,7 +246,7 @@ async def vehicleinfo_createvehicleembed(vehicle, was_guess, interaction):
         await on_command_error(interaction, "psycopg2.errors.DatabaseError")
     return embed
 
-@bot.slash_command(name='vehicleinfo', description="Returns a bunch of info about a chosen GTA Online vehicle", guild_ids=productionserverids)
+@bot.slash_command(name='vehicleinfo', description="Returns a bunch of info about a chosen GTA Online vehicle", guild_ids=testserverid)
 async def vehicleinfo_findvehicle(interaction: Interaction, input:str): # main function to get GTA vehicle info from the google sheet. on_command_error handles all errors
     # detect closed DB connection and reconnect if closed
     try:
@@ -340,7 +340,7 @@ async def vehicleinfo_findvehicle(interaction: Interaction, input:str): # main f
         print(sys.exc_info())
         await on_command_error(interaction, sys.exc_info()[0])
 
-@bot.slash_command(name='flags', description="Returns a guide on handling flags in GTA Online.", guild_ids=productionserverids)
+@bot.slash_command(name='flags', description="Returns a guide on handling flags in GTA Online.", guild_ids=testserverid)
 async def explain_handling_flags(interaction : Interaction):
     try:
         embed = nextcord.Embed( 
@@ -358,7 +358,7 @@ async def explain_handling_flags(interaction : Interaction):
         await on_command_error(interaction, sys.exc_info()[0])
 
 # example: str = SlashOption(required=False, default=None)
-@bot.slash_command(name='topvehicles', description="Gets a list of vehicles and their stats. Only shows raceable classes", guild_ids=productionserverids)
+@bot.slash_command(name='topvehicles', description="Gets a list of vehicles and their stats. Only shows raceable classes", guild_ids=testserverid)
 async def find_top_vehicles(
     interaction: Interaction,
     vehicle_class:str = SlashOption(required=True, choices=['Arena', 'Boats', 'Compacts', 'Coupes', 'Cycles', 'Fighter Jets', 'Go-Kart',
@@ -555,7 +555,7 @@ async def staffvehicle_multiple_exacts(car_array, staff_member, interaction):
     await second_wait_message.delete()
 
 
-@bot.slash_command(name='staffvehicle', description="Returns a vehicle from a staff members' garage", guild_ids=productionserverids)
+@bot.slash_command(name='staffvehicle', description="Returns a vehicle from a staff members' garage", guild_ids=testserverid)
 async def find_staff_vehicle(
     interaction : Interaction, 
     vehicle:str,
@@ -653,7 +653,7 @@ async def find_staff_vehicle(
         await on_command_error(interaction, sys.exc_info()[0])
 
 
-@bot.slash_command(name='updatevehicledata', description="Scrapes gtacars.net and puts all updated info in the bot DB", guild_ids=productionserverids)
+@bot.slash_command(name='updatevehicledata', description="Scrapes gtacars.net and puts all updated info in the bot DB", guild_ids=testserverid)
 async def update_data(interaction : Interaction):
     # detect closed DB connection and reconnect if closed
     try:
@@ -862,7 +862,7 @@ async def update_data(interaction : Interaction):
         await on_command_error(interaction, sys.exc_info()[0])
     
 
-@bot.slash_command(name='upsertvehicle', description="Update or insert a single vehicle. Only modelid is required", guild_ids=productionserverids)
+@bot.slash_command(name='upsertvehicle', description="Update or insert a single vehicle. Only modelid is required", guild_ids=testserverid)
 async def upsert_vehicle(
     interaction: Interaction,
     insert_or_update:str = SlashOption(description="Updating an existing vehicle or inserting a new vehicle?", choices=["Update", "Insert"], required=True),
@@ -932,7 +932,27 @@ async def upsert_vehicle(
                             query_str += col + " = '" + input_dict[col] + "',"
                             are_changes = True
                     if are_changes:
-                        query_str = query_str.rstrip(',') + " WHERE modelid = '" + vehicle['modelid'] + "'"
+                        byclass_updates = False # need handling for new lap time/top speed by class?
+                        ltbc = None
+                        tsbc = None
+                        # position in class updates take very different handling
+                        if 'laptime_byclass' in query_str:
+                            byclass_updates = True
+                            ltbc = input_dict['laptime_byclass']
+                        if 'topspeed_byclass' in query_str: 
+                            byclass_updates = True
+                            tsbc = input_dict['topspeed_byclass']
+                        if byclass_updates:
+                            veh_class = None
+                            if not vehicle['class']:
+                                veh_class = input_dict['class']
+                            else:
+                                veh_class = vehicle['class']
+                            res = upsertvehicle_helper.handle_new_position_in_class(input_dict['modelid'], veh_class, ltbc, tsbc, cursor)
+                        # take res and combine the input vehicle ltbc/tsbc stuff into whatever other changes it has
+                        # update vehicleinfo table with the brand new ltbc/tsbc stuff + input vehicle stuff
+                        
+                        egg = ''' query_str = query_str.rstrip(',') + " WHERE modelid = '" + vehicle['modelid'] + "'"
                         print('upsertvehicle update query: ', query_str)
                         cursor.execute(query_str)
                         complete_embed = nextcord.Embed(
@@ -955,6 +975,7 @@ async def upsert_vehicle(
                         )
                     await interaction.send(embed=in_progress_embed)
 
+                    res = upsertvehicle_helper.handle_new_position_in_class()
                     query = "INSERT INTO vehicleinfo ({}) VALUES %s".format(','.join(columns))
                     # puts dict values (car info) into a list of lists as a list
                     values = tuple(value for value in input_dict.values())
@@ -964,7 +985,7 @@ async def upsert_vehicle(
                         title=":white_check_mark: Vehicle Added!",
                         color=0x03fc45,
                     )
-                    await interaction.send(embed=complete_embed)
+                    await interaction.send(embed=complete_embed)'''
     except:
         print(sys.exc_info())
         await on_command_error(interaction, sys.exc_info()[0])
@@ -974,4 +995,4 @@ async def upsert_vehicle(
 # MAIN BOT: https://discord.com/api/oauth2/authorize?client_id=800779921814323290&permissions=0&scope=bot%20applications.commands
 # DEV: https://discord.com/oauth2/authorize?client_id=1136704389780873359&permissions=0&scope=bot%20applications.commands
 
-bot.run(TOKEN)
+bot.run(DEV_TOKEN)
