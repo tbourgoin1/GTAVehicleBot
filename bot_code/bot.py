@@ -589,19 +589,19 @@ async def find_staff_vehicle(
             vehicle_suggestions = sorted(car_array[1], key=lambda x: x[1], reverse=True) # sorts suggestions, using this from now on
             print("NOT FOUND, SUGGESTIONS SORTED: ", vehicle_suggestions)
             # check, if our highest ratio is decent then send off the suggestion list
-            vehicle_suggestions = []
+            vehicle_suggestions_updated = []
             for i in range(0, len(vehicle_suggestions)): # remove all really bad suggestions
                 if not(vehicle_suggestions[i][1] < 0.5 and vehicle_suggestions[i][2] != "EP"):
-                    vehicle_suggestions.append(vehicle_suggestions[i])
-            if(len(vehicle_suggestions) == 0): # no suggestions left, they were all bad :/ send stock vehicle not found embed
+                    vehicle_suggestions_updated.append(vehicle_suggestions[i])
+            if(len(vehicle_suggestions_updated) == 0): # no suggestions left, they were all bad :/ send stock vehicle not found embed
                 await interaction.send(embed=embed)
             else: # still at least one good suggestion left, so show it/them
                 suggestions_string = ""
                 emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
                 iterator = 0
-                for i in range(0, len(vehicle_suggestions)): # put together the suggestions for the embed
+                for i in range(0, len(vehicle_suggestions_updated)): # put together the suggestions for the embed
                     if(iterator < 5):
-                        suggestions_string += emojis[i] + ": " + str(vehicle_suggestions[i][0]) + "\n"
+                        suggestions_string += emojis[i] + ": " + str(vehicle_suggestions_updated[i][0]) + "\n"
                         iterator += 1
                     else:
                         break
@@ -616,15 +616,15 @@ async def find_staff_vehicle(
                 confirmation = await bot.wait_for("reaction_add", check=check)
                 car_to_use = '' # set below, used in call to sheetparser for newfound vehicle
                 if "1️⃣" in str(confirmation):
-                    car_to_use = vehicle_suggestions[0][0]
+                    car_to_use = vehicle_suggestions_updated[0][0]
                 elif "2️⃣" in str(confirmation):
-                    car_to_use = vehicle_suggestions[1][0]
+                    car_to_use = vehicle_suggestions_updated[1][0]
                 elif "3️⃣" in str(confirmation):
-                    car_to_use = vehicle_suggestions[2][0]
+                    car_to_use = vehicle_suggestions_updated[2][0]
                 elif "4️⃣" in str(confirmation):
-                    car_to_use = vehicle_suggestions[3][0]
+                    car_to_use = vehicle_suggestions_updated[3][0]
                 elif "5️⃣" in str(confirmation):
-                    car_to_use = vehicle_suggestions[4][0]
+                    car_to_use = vehicle_suggestions_updated[4][0]
                 # send second wait embed, this one gets deleted.
                 embed_wait_2 = nextcord.Embed(
                 title=":mag: Searching for " + staff_member + "'s " + car_to_use + "...",  
