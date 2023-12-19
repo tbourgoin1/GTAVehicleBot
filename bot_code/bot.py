@@ -917,6 +917,16 @@ async def upsert_vehicle(
                 input_dict.pop('customization_video')
                 columns = list(input_dict.keys())
 
+                # create backup table
+                cursor.execute('''SELECT EXISTS (
+                        SELECT FROM pg_tables
+                        WHERE tablename = 'vehicleinfo_upsertbak'
+                );''')
+                if cursor.fetchone()['exists']:
+                    cursor.execute("DROP TABLE vehicleinfo_upsertbak")
+                print('creating backup table...')
+                cursor.execute("CREATE TABLE vehicleinfo_upsertbak AS TABLE vehicleinfo;")
+                
                 if insert_or_update == 'Update':
                     in_progress_embed = nextcord.Embed(
                         title=":jigsaw: Updating vehicle...",
@@ -924,7 +934,7 @@ async def upsert_vehicle(
                         )
                     await interaction.send(embed=in_progress_embed)
 
-                    query_str = "UPDATE vehicleinfo SET "
+                    query_str = "UPDATE test SET "
                     are_changes = False
                     for col in columns: # set which fields to update and construct query
                         if input_dict[col] and input_dict[col] != vehicle[col]:
@@ -936,31 +946,59 @@ async def upsert_vehicle(
                         ltbc = None
                         tsbc = None
                         # position in class updates take very different handling
-                        if 'laptime_byclass' in query_str:
+                        if 'laptime_byclass' in query_str and vehicle['laptime_byclass'] != input_dict['laptime_byclass']:
                             byclass_updates = True
                             ltbc = input_dict['laptime_byclass']
-                        if 'topspeed_byclass' in query_str: 
+                        if 'topspeed_byclass' in query_str and vehicle['topspeed_byclass'] != input_dict['topspeed_byclass']: 
                             byclass_updates = True
                             tsbc = input_dict['topspeed_byclass']
                         if byclass_updates:
                             veh_class = None
-                            if not vehicle['class']:
+                            if input_dict['class']:
                                 veh_class = input_dict['class']
                             else:
                                 veh_class = vehicle['class']
-                            res = upsertvehicle_helper.handle_new_position_in_class(input_dict['modelid'], veh_class, ltbc, tsbc, cursor)
-                        # take res and combine the input vehicle ltbc/tsbc stuff into whatever other changes it has
-                        # update vehicleinfo table with the brand new ltbc/tsbc stuff + input vehicle stuff
+
+                            
+                            res, input_data = upsertvehicle_helper.handle_new_position_in_class(input_dict['modelid'], veh_class, ltbc, tsbc, cursor, vehicle['laptime_byclass'], vehicle['topspeed_byclass'])
                         
-                        egg = ''' query_str = query_str.rstrip(',') + " WHERE modelid = '" + vehicle['modelid'] + "'"
-                        print('upsertvehicle update query: ', query_str)
-                        cursor.execute(query_str)
-                        complete_embed = nextcord.Embed(
-                            title=":white_check_mark: Vehicle Updated!",
-                            color=0x03fc45,
-                            )
-                        await interaction.send(embed=complete_embed)
-                    else:
+                            # replace input data blanks with what exists in db just in case one was passed in blank but exists - if blank in db too it won't matter
+                            if input_data[1] == '':
+                                input_data[1] = vehicle['laptime_byclass']
+                            if input_data[2] == '':
+                                input_data[2] = vehicle['topspeed_byclass']
+
+                            # update vehicleinfo table with the brand new ltbc/tsbc stuff for other cars before anything else
+                            other_vehicles_query_str = """UPDATE test AS t
+                                                        SET laptime_byclass = r.laptime_byclass,
+                                                            topspeed_byclass = r.topspeed_byclass
+                                                        FROM (VALUES %s) AS r(modelid, laptime_byclass, topspeed_byclass)
+                                                        WHERE t.modelid = r.modelid;"""
+                            #print("upsertvehicle multi car byclass update query:\n" + other_vehicles_query_str)
+                            execute_values(cursor, other_vehicles_query_str, res)
+                                           
+                            # update vehicleinfo w/ the input vehicle stuff by itself - this is replacing the ltbc/tsbc with the updated stuff
+                            #print(query_str)
+                            query_str_arr = query_str.split("',")
+                            query_str = ""
+                            for col in query_str_arr:
+                                if 'laptime_byclass' in col:
+                                    query_str += 'laptime_byclass' + " = '" + input_data[1] + "',"
+                                elif 'topspeed_byclass' in col:
+                                    query_str += 'topspeed_byclass' + " = '" + input_data[2] + "',"
+                                elif col:
+                                    query_str += col + "',"
+                                            
+                            # no matter by class updates or not, continue down this path
+                            query_str = query_str.rstrip("',") + "' WHERE modelid = '" + vehicle['modelid'] + "';"
+                            print('upsertvehicle update query: ', query_str)
+                            cursor.execute(query_str)
+                            complete_embed = nextcord.Embed(
+                                title=":white_check_mark: Vehicle Updated!",
+                                color=0x03fc45,
+                                )
+                            await interaction.send(embed=complete_embed)
+                    else: # no changes at all
                         embed = nextcord.Embed(
                             title=":grey_exclamation: No Changes!",
                             color=0xffdd00,
@@ -975,7 +1013,6 @@ async def upsert_vehicle(
                         )
                     await interaction.send(embed=in_progress_embed)
 
-                    res = upsertvehicle_helper.handle_new_position_in_class()
                     query = "INSERT INTO vehicleinfo ({}) VALUES %s".format(','.join(columns))
                     # puts dict values (car info) into a list of lists as a list
                     values = tuple(value for value in input_dict.values())
@@ -985,7 +1022,7 @@ async def upsert_vehicle(
                         title=":white_check_mark: Vehicle Added!",
                         color=0x03fc45,
                     )
-                    await interaction.send(embed=complete_embed)'''
+                    await interaction.send(embed=complete_embed)
     except:
         print(sys.exc_info())
         await on_command_error(interaction, sys.exc_info()[0])
