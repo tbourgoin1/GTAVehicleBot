@@ -977,10 +977,11 @@ async def upsert_vehicle(
                             #print("upsertvehicle multi car byclass update query:\n" + other_vehicles_query_str)
                             execute_values(cursor, other_vehicles_query_str, res)
                                            
+                            print("query str before any modification: " + query_str)
                             # update vehicleinfo w/ the input vehicle stuff by itself - this is replacing the ltbc/tsbc with the updated stuff
                             #print(query_str)
-                            query_str_arr = query_str.split("',")
-                            query_str = ""
+                            query_str_arr = query_str.split("SET ")[1].split("',")
+                            query_str = "UPDATE test SET "
                             for col in query_str_arr:
                                 if 'laptime_byclass' in col:
                                     query_str += 'laptime_byclass' + " = '" + input_data[1] + "',"

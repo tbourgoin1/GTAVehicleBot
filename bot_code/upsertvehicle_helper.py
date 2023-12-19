@@ -108,14 +108,34 @@ def make_ordinal(num): # attach an ordinal ("st" "nd", "rd", "th") to the end of
         res = str(num) + "th"
     return res
 
-def update_pos_in_class_str(v, input_veh_positions, new_class_totals, lt_ts_index, db_ltbc, db_tsbc): # returns new position in class string for existing vehicle. pic = position in class
+def find_cur_veh_pos_update(input_vehicle_exists, db_bc, cur_class, input_pos, cur_pos):
+    if input_vehicle_exists:
+        for bc_str in db_bc.split(","):
+            if cur_class in bc_str and not ('Sports Classics' in bc_str and cur_class == 'Sports'):
+                # input vehicle's current database position in class
+                db_bc_pos = int(re.sub("[^0-9]", "", bc_str.split('out of',1)[0]))
+                # if this is equal it's an edge case that shouldn't happen - don't change anything
+                if db_bc_pos < input_pos: # input vehicle moved down the order
+                    if db_bc_pos < cur_pos <= input_pos: # if cur pos is between the db and input pos, decrease
+                        cur_pos -= 1
+                        break
+                elif db_bc_pos > input_pos: # moved up the order
+                    if input_pos <= cur_pos < db_bc_pos:
+                        cur_pos += 1
+                        break
+    else: # input vehicle doesn't exist in db
+        if cur_pos >= input_pos: # increase by 1 if the current vehicle's position is more than input's
+            cur_pos += 1
+    return cur_pos
+
+def update_pos_in_class_str(v, input_veh_positions, new_class_totals, lt_ts_index, db_ltbc, db_tsbc, input_vehicle_exists_lt, input_vehicle_exists_ts): # returns new position in class string for existing vehicle. pic = position in class
     #print("new v: " + str(v))
     curveh_pic_arr = v[lt_ts_index] # -> 1 for ltbc, 2 for tsbc
     final_pic_str = "" # new ltbc we will construct
     class_suffix = "_lt"
     if lt_ts_index == 2:
         class_suffix = "_ts"
-    for i in range(0, len(curveh_pic_arr)):
+    for i in range(0, len(curveh_pic_arr)): # array of each position in class for the current vehicle
         cur_pic_str = curveh_pic_arr[i].strip()
         if cur_pic_str == '': # not raceable vehicle, don't modify
             break
@@ -128,29 +148,38 @@ def update_pos_in_class_str(v, input_veh_positions, new_class_totals, lt_ts_inde
             #print("input_pos: " + str(input_pos))
             cur_pos = int(re.sub("[^0-9]", "", cur_pic_str.split('out of',1)[0]))
             #print("cur pos: " + str(cur_pos))
-            if cur_pos >= input_pos: # if the cur veh's position is higher than input, it needs to be increased by 1
-                cur_pos += 1
+            
+            # move existing vehicles' positions depending on several factors
+                # if input vehicle already exists, only move vehicles between its new and old positions
+                # otherwise, increase all vehicles' positions below the input's by 1
+            if class_suffix == "_lt":
+                cur_pos = find_cur_veh_pos_update(input_vehicle_exists_lt, db_ltbc, cur_class, input_pos, cur_pos)
+            else:
+                cur_pos = find_cur_veh_pos_update(input_vehicle_exists_ts, db_tsbc, cur_class, input_pos, cur_pos)
+                              
             
             # increase total in class by 1 depending on if the input vehicle already had a ltbc/tsbc or not
             cur_total_in_class = (int(re.sub("[^0-9]", "", cur_pic_str.split('out of',1)[1].split('in',1)[0]))) + 1
-            if class_suffix == "_lt": # lap time by class, use ltbc to see if it already exists. if not, increase total
+            # lap time by class, use ltbc to see if it already exists. if not, increase total
+            # if the input vehicle is already in the DB, also don't increase the total
+            if class_suffix == "_lt":
                 ltbc_arr = db_ltbc.split(",")
                 for ltbc_str in ltbc_arr:
-                    if cur_class in ltbc_str and not ('Sports Classics' in ltbc_str and cur_class == 'Sports'):
+                    if (cur_class in ltbc_str and not ('Sports Classics' in ltbc_str and cur_class == 'Sports')) or input_vehicle_exists_lt:
                         cur_total_in_class -= 1
                         break
 
             elif class_suffix == "_ts":
                 tsbc_arr = db_tsbc.split(",")
                 for tsbc_str in tsbc_arr:
-                    if cur_class in tsbc_str and not ('Sports Classics' in tsbc_str and cur_class == 'Sports'):
+                    if cur_class in tsbc_str and not ('Sports Classics' in tsbc_str and cur_class == 'Sports') or input_vehicle_exists_ts:
                         cur_total_in_class -= 1
                         break
             
             
             #print("cur_total_in_class: " + str(cur_total_in_class))
-            if cur_class not in new_class_totals.keys(): # save new total in class if it's not there
-                new_class_totals[cur_class] = cur_total_in_class
+            if (cur_class + class_suffix) not in new_class_totals.keys(): # save new total in class if it's not there
+                new_class_totals[cur_class + class_suffix] = cur_total_in_class
                 # print("new_class_totals: " + str(new_class_totals))
             cur_pos = make_ordinal(cur_pos) # add 'st', 'nd', 'rd' etc to the cur veh's position in class
             if i == len(curveh_pic_arr) - 1: # last in loop = no comma or space afterwards
@@ -181,43 +210,57 @@ def handle_new_position_in_class(modelid, race_classes, ltbc, tsbc, cursor, db_l
         queried_vehicles = cursor.fetchall()
         vehicles = [] # every vehicle that shares a class with the input -> [modelid, ltbc, tsbc]
         # add retrieved vehs into an array with their modelid, ltbc and tsbc as comma separated arrays in case of multiple classes
+        input_vehicle_exists_lt = False
+        input_vehicle_exists_ts = False
         for v in queried_vehicles:
-            vehicles.append([v['modelid'], v['laptime_byclass'].split(","), v['topspeed_byclass'].split(",")])
+            if v['modelid'] == modelid: # do not append to array of vehicles to update if it has a ltbc/tsbc already
+                if v['laptime_byclass']:
+                    input_vehicle_exists_lt = True
+                if v['topspeed_byclass']:
+                    input_vehicle_exists_ts = True
+            else:
+                if v['laptime_byclass'] == None:
+                    v['laptime_byclass'] = ''
+                if v['topspeed_byclass'] == None:
+                    v['topspeed_byclass'] = ''
+                vehicles.append([v['modelid'], v['laptime_byclass'].split(","), v['topspeed_byclass'].split(",")])
         update_arr = [] # array of existing vehicles that need to be updated
         new_class_totals = {} # (class, total # in class) dict - used to update input vehicle totals in class
         
         if ltbc:
             print('ltbc')
             for v in vehicles:
-                final_ltbc_str = update_pos_in_class_str(v, input_veh_positions, new_class_totals, 1, db_ltbc, db_tsbc)
-                #print("new ltbc string: " + final_pic_str)
-                tsbc_str = "" 
-                if not tsbc: # no tsbc means no updates to existing vehicles' tsbc, reinstate original tsbc in update_arr. if it exists, blank and handled later
-                    for i in range(0, len(v[2])):
-                        if i == len(v[2]) - 1:
-                            tsbc_str += v[2][i].strip()
-                        else:
-                            tsbc_str += v[2][i].strip() + ", "
-                update_arr.append([v[0], final_ltbc_str, tsbc_str]) # [modelid, ltbc, tsbc]
+                if v[0] != modelid:
+                    final_ltbc_str = update_pos_in_class_str(v, input_veh_positions, new_class_totals, 1, db_ltbc, db_tsbc, input_vehicle_exists_lt, input_vehicle_exists_ts)
+                    #print("new ltbc string: " + final_pic_str)
+                    tsbc_str = "" 
+                    if not tsbc: # no tsbc means no updates to existing vehicles' tsbc, reinstate original tsbc in update_arr. if it exists, blank and handled later
+                        for i in range(0, len(v[2])):
+                            if i == len(v[2]) - 1:
+                                tsbc_str += v[2][i].strip()
+                            else:
+                                tsbc_str += v[2][i].strip() + ", "
+                    update_arr.append([v[0], final_ltbc_str, tsbc_str]) # [modelid, ltbc, tsbc]
             #print("update arr: " + str(update_arr))
 
         if tsbc:
             print('tsbc')
             for v in vehicles:
-                final_tsbc_str = update_pos_in_class_str(v, input_veh_positions, new_class_totals, 2, db_ltbc, db_tsbc)
-                ltbc_str = ""
-                if not ltbc: # create the array with [modelid, ORIGINAL LTBC, new tsbc]
-                    for i in range(0, len(v[1])):
-                        if i == len(v[1]) - 1:
-                            ltbc_str += v[1][i].strip()
-                        else:
-                            ltbc_str += v[1][i].strip() + ", "
-                    update_arr.append([v[0], ltbc_str, final_tsbc_str]) # [modelid, ltbc, tsbc]
-                else: # if ltbc, replace the string to the array where this modelid is, at position [2] to replace its tsbc blank string
-                    for i in range(0, len(update_arr)):
-                        if update_arr[i][0] == v[0]:
-                            update_arr[i][2] = final_tsbc_str
-                            break
+                if v[0] != modelid:
+                    final_tsbc_str = update_pos_in_class_str(v, input_veh_positions, new_class_totals, 2, db_ltbc, db_tsbc, input_vehicle_exists_lt, input_vehicle_exists_ts)
+                    ltbc_str = ""
+                    if not ltbc: # create the array with [modelid, ORIGINAL LTBC, new tsbc]
+                        for i in range(0, len(v[1])):
+                            if i == len(v[1]) - 1:
+                                ltbc_str += v[1][i].strip()
+                            else:
+                                ltbc_str += v[1][i].strip() + ", "
+                        update_arr.append([v[0], ltbc_str, final_tsbc_str]) # [modelid, ltbc, tsbc]
+                    else: # if ltbc, replace the string to the array where this modelid is, at position [2] to replace its tsbc blank string
+                        for i in range(0, len(update_arr)):
+                            if update_arr[i][0] == v[0]:
+                                update_arr[i][2] = final_tsbc_str
+                                break
         print("class totals: " + str(new_class_totals))
 
         # replace the total vehicle count to what we updated to for the input vehicle's classes - just in case the input total was wrong
@@ -237,7 +280,7 @@ def handle_new_position_in_class(modelid, race_classes, ltbc, tsbc, cursor, db_l
                     if not new_class_totals: # no members with ltbc/tsbc in the class - input is first entry
                         new_input_ltbc += '1st out of 1 in ' + c + ", " # input [class, input vehicle place in class] tuple
                     else:
-                        new_input_ltbc += pos + ' out of ' + str(new_class_totals[c]) + ' in ' + c + ", " # input [class, input vehicle place in class] tuple
+                        new_input_ltbc += pos + ' out of ' + str(new_class_totals[c + "_lt"]) + ' in ' + c + ", " # input [class, input vehicle place in class] tuple
                     break
             for string in tsbc_arr:
                 if c in string and not ('Sports Classics' in string and c == 'Sports'):
@@ -245,7 +288,7 @@ def handle_new_position_in_class(modelid, race_classes, ltbc, tsbc, cursor, db_l
                     if not new_class_totals: # no members with ltbc/tsbc in the class - input is first entry
                         new_input_tsbc += '1st out of 1 in ' + c + ", " # input [class, input vehicle place in class] tuple
                     else:
-                        new_input_tsbc += pos + ' out of ' + str(new_class_totals[c]) + ' in ' + c + ", " # input [class, input vehicle place in class] tuple
+                        new_input_tsbc += pos + ' out of ' + str(new_class_totals[c + "_ts"]) + ' in ' + c + ", " # input [class, input vehicle place in class] tuple
                     break
         new_input_ltbc = new_input_ltbc.rstrip(", ")
         new_input_tsbc = new_input_tsbc.rstrip(", ")
