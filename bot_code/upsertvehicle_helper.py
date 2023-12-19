@@ -6,7 +6,7 @@ def validate_input(input_dict, cursor):
     bad_fields = []
     vehicle = None # only set on Update
     if input_dict['insert_or_update'] == 'Update': 
-        sql = "SELECT * FROM test WHERE modelid = %s LIMIT 1"
+        sql = "SELECT * FROM vehicleinfo WHERE modelid = %s LIMIT 1"
         cursor.execute(sql, [input_dict['modelid']])
         vehicle = cursor.fetchone()
         if not vehicle:
@@ -16,8 +16,13 @@ def validate_input(input_dict, cursor):
         if not re.match("[0-9][:][0-9][0-9][.][0-9][0-9][0-9]$", input_dict['laptime']):
             bad_fields.append('Lap Time: Not formatted correctly. Must look like: 0:59.233')
         # if raceable, it must have a ltbc if it has a lap time
-        if (not input_dict['laptime_byclass'] and not vehicle['laptime_byclass']) and ("(Not Raceable)" not in input_dict['class'] and "(Not Raceable)" not in vehicle['class']):
-            bad_fields.append('Lap Time: Must have a Lap Time Position In Class filled in to add a Lap Time')
+        if not input_dict['laptime_byclass'] and not vehicle['laptime_byclass']:
+            if vehicle['class']:
+                if "(Not Raceable)" not in vehicle['class']:
+                    bad_fields.append('Lap Time: Must have a Lap Time Position In Class filled in to add a Lap Time')
+            elif input_dict['race_class']:
+                if "(Not Raceable)" not in input_dict['race_class']:
+                    bad_fields.append('Lap Time: Must have a Lap Time Position In Class filled in to add a Lap Time')
     
     if input_dict['topspeed']:
         topspeed = input_dict['topspeed'].replace('mph', '')
@@ -26,8 +31,13 @@ def validate_input(input_dict, cursor):
         else:
             input_dict['topspeed'] = topspeed
         # if raceable, it must have a tsbc if it has a top speed
-        if (not input_dict['topspeed_byclass'] and not vehicle['topspeed_byclass']) and ("(Not Raceable)" not in input_dict['class'] and "(Not Raceable)" not in vehicle['class']):
-            bad_fields.append('Top Speed: Must have a Top Speed Position In Class filled in to add a Top Speed')            
+        if not input_dict['topspeed_byclass'] and not vehicle['topspeed_byclass']:
+            if vehicle['class']:
+                if "(Not Raceable)" not in vehicle['class']:
+                    bad_fields.append('Top Speed: Must have a Top Speed Position In Class filled in to add a Top Speed')
+            elif input_dict['race_class']:
+                if "(Not Raceable)" not in input_dict['race_class']:
+                    bad_fields.append(bad_fields.append('Top Speed: Must have a Top Speed Position In Class filled in to add a Top Speed'))
     
     if input_dict['image'] and 'https://' not in input_dict['image']:
         bad_fields.append('Image: Not a valid URL')
@@ -96,16 +106,23 @@ def find_input_veh_pos_in_class(class_arr, ltbc, tsbc): # return all classes the
     return input_veh_positions
 
 def make_ordinal(num): # attach an ordinal ("st" "nd", "rd", "th") to the end of a number
-    last_digit = num % 10
+    was_special = False # 11th, 12th, or 13th being the last 2 digits
+    num_str = str(num)
     res = ""
-    if last_digit == 1:
-        res = str(num) + "st"
-    elif last_digit == 2:
-        res = str(num) + "nd"
-    elif last_digit == 3:
-        res = str(num) + "rd"
-    else:
-        res = str(num) + "th"
+    if len(num_str) >= 2: # if ends in 11, 12, 13, override to 'th'
+        if num_str[-2:] == "11" or num_str[-2:] == "12" or num_str[-2:] == "13":
+            res = num_str + "th"
+            was_special = True
+    if not was_special:
+        last_digit = num % 10
+        if last_digit == 1:
+            res = str(num) + "st"
+        elif last_digit == 2:
+            res = str(num) + "nd"
+        elif last_digit == 3:
+            res = str(num) + "rd"
+        else:
+            res = str(num) + "th"
     return res
 
 def find_cur_veh_pos_update(input_vehicle_exists, db_bc, cur_class, input_pos, cur_pos):
@@ -205,7 +222,7 @@ def handle_new_position_in_class(modelid, race_classes, ltbc, tsbc, cursor, db_l
         for c in class_arr:
             c = "%" + c + "%"
             formatted_class_arr.append(c)
-        sql = "SELECT modelid, laptime_byclass, topspeed_byclass FROM test WHERE class ~~* any(array{classes})".format(classes=list(formatted_class_arr)) # all vehicles in all classes belonging to the input
+        sql = "SELECT modelid, laptime_byclass, topspeed_byclass FROM vehicleinfo WHERE class ~~* any(array{classes})".format(classes=list(formatted_class_arr)) # all vehicles in all classes belonging to the input
         cursor.execute(sql)
         queried_vehicles = cursor.fetchall()
         vehicles = [] # every vehicle that shares a class with the input -> [modelid, ltbc, tsbc]
