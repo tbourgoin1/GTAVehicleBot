@@ -969,11 +969,11 @@ async def upsert_vehicle(
                                 input_data[2] = vehicle['topspeed_byclass']
 
                             # update vehicleinfo table with the brand new ltbc/tsbc stuff for other cars before anything else
-                            other_vehicles_query_str = """UPDATE vehicleinfo AS t
+                            other_vehicles_query_str = """UPDATE vehicleinfo AS v
                                                         SET laptime_byclass = r.laptime_byclass,
                                                             topspeed_byclass = r.topspeed_byclass
                                                         FROM (VALUES %s) AS r(modelid, laptime_byclass, topspeed_byclass)
-                                                        WHERE t.modelid = r.modelid;"""
+                                                        WHERE v.modelid = r.modelid;"""
                             #print("upsertvehicle multi car byclass update query:\n" + other_vehicles_query_str)
                             execute_values(cursor, other_vehicles_query_str, res)
                                            
@@ -990,15 +990,15 @@ async def upsert_vehicle(
                                 elif col:
                                     query_str += col + "',"
                                             
-                            # no matter by class updates or not, continue down this path
-                            query_str = query_str.rstrip("',") + "' WHERE modelid = '" + vehicle['modelid'] + "';"
-                            print('upsertvehicle update query: ', query_str)
-                            cursor.execute(query_str)
-                            complete_embed = nextcord.Embed(
-                                title=":white_check_mark: Vehicle Updated!",
-                                color=0x03fc45,
-                                )
-                            await interaction.send(embed=complete_embed)
+                        # no matter by class updates or not, continue down this path
+                        query_str = query_str.rstrip("',") + "' WHERE modelid = '" + vehicle['modelid'] + "';"
+                        print('upsertvehicle update query: ', query_str)
+                        cursor.execute(query_str)
+                        complete_embed = nextcord.Embed(
+                            title=":white_check_mark: Vehicle Updated!",
+                            color=0x03fc45,
+                            )
+                        await interaction.send(embed=complete_embed)
                     else: # no changes at all
                         embed = nextcord.Embed(
                             title=":grey_exclamation: No Changes!",
