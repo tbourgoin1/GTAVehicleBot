@@ -1,12 +1,19 @@
 from bs4 import BeautifulSoup # beautiful soup 4
 import urllib
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 import re
+
+
+# CAUTION - HAVENT TESTED THIS YET ALL THE WAY THRROUGH. USED THE CHECK SCRAPE SCRIPT AND FIXED IT, LOOKS GOOD, BUT HAVENT USED WITH BOT
+# CAN'T RUN THIS UNTIL GTACARS.NET HAS ALL UPDATED LAP TIME AND TOP SPEED INFO
+# BUGGED FOR flags and price - sometimes price is 0 sometimes it's the trade price if it has one
 
 def get_new_vehicle_data(url, modelid):
     try:
-        page = urlopen(url)
-    except urllib.error.HTTPError: # 404, in case there's a vehicle we've inserted into the DB that the site doesn't have yet
+        req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        page = urlopen(req)
+    except urllib.error.HTTPError as e: # 404, in case there's a vehicle we've inserted into the DB that the site doesn't have yet
+        print(e)
         return
 
     html = page.read().decode("utf-8")
@@ -45,13 +52,17 @@ def get_new_vehicle_data(url, modelid):
     
 
     # GETTING CLASS
-    classes = soup.findAll('a', href=re.compile(r'1&filter_race_class='))
+    classes = soup.findAll('a', href=re.compile(r'filter_race_class='))
+    print(classes)
     if classes:
-        classes_string = classes[0].text
-        classes.remove(classes[0])
-        if len(classes) > 0:
-            for clas in classes:
-                classes_string += ", " + clas.text
+        classes_string = ""
+        for c in classes:
+            c = c.text
+            if "Tier" not in c and "out of" not in c:
+                if not classes_string:
+                    classes_string += c
+                else:
+                    classes_string += (", " + c)
         vehicle_info["class"] = classes_string
     else:
         no_race_class = soup.find('a', href=re.compile(r'filter_class='))
@@ -73,6 +84,9 @@ def get_new_vehicle_data(url, modelid):
                 top_speed = lt_ts_arr[i+2].text
             else:
                 top_speed = lt_ts_arr[i+1].text
+            
+            top_speed = (float(top_speed.replace('km/h', '').replace("*","").strip()) / 1.609) * 4 # convert to mph + round to nearest .25
+            top_speed = str(int((top_speed / 4)))
             break
     
     # None or set by site, accomodate
@@ -80,17 +94,14 @@ def get_new_vehicle_data(url, modelid):
         vehicle_info["laptime"] = lap_time.replace("*", "")
     else:
         vehicle_info["laptime"] = lap_time
-    if top_speed:
-        vehicle_info["topspeed"] = top_speed.replace('mph', '').replace("*","").strip()
-    else:
-        vehicle_info["topspeed"] = top_speed
+    vehicle_info["topspeed"] = top_speed
     
     # GETTING IMAGE
     # will always be the 1st image that appears when you open the car page
     # ...which is the best image and the one we want to use
-    image = soup.find('meta', {"name":"og:image"})
+    image = soup.find('meta', {"property":"og:image"})
     if image["content"]:
-        vehicle_info["image"] = "https://www.gtacars.net" + image["content"] # this format will display in the bot correctly
+        vehicle_info["image"] = "https://gtacars.net" + image["content"] # this format will display in the bot correctly
 
     # GETTING HANDLING FLAGS
     flags = soup.findAll('a', href=re.compile(r'&filter_tag_a=')) # tag 'a' only gets the advanced flags

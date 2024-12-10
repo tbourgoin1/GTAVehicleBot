@@ -9,7 +9,7 @@ import re
 
 DB_URL = "postgres://gtabot:XuLAyg71nAMVHSF@gtabot-db.flycast:5432/gtabot?sslmode=disable"
 
-PROCESS_UPDATES = False # UPDATE TO TRUE WHEN YOU WANT TO UPDATE VEHICLEINFO, FALSE TO JUST PRINT EVERYTHING OUT AS-IS TO UPDATE
+PROCESS_UPDATES = True # UPDATE TO TRUE WHEN YOU WANT TO UPDATE VEHICLEINFO, FALSE TO JUST PRINT EVERYTHING OUT AS-IS TO UPDATE
 
 dbc = urlparse(DB_URL)
 HOST_NAME = 'localhost' # change between 'localhost' and dbc.hostname depending on if dev or prod, respectively
@@ -29,7 +29,7 @@ cursor = conn.cursor()
 # use the above printed 2darray to update the data manually, then put it in broughy_updated_car_classes.txt for it to then process here
 if not PROCESS_UPDATES:
     # change class to the one Broughy made a video on
-    cursor.execute("SELECT modelid, laptime, topspeed, laptime_byclass, topspeed_byclass from vehicleinfo where class like '%Sports Classics%' ORDER BY topspeed")
+    cursor.execute("SELECT modelid, laptime, topspeed, laptime_byclass, topspeed_byclass from vehicleinfo where class like '%Open%' ORDER BY topspeed desc")
     vehicleinfo = cursor.fetchall()
 
     for v in vehicleinfo:
@@ -39,7 +39,8 @@ else:
     update_arr = []
     updated_cars = open("txt_files/broughy_updated_car_classes.txt", "r")
     for car in updated_cars:
-        car = re.sub(r"[^A-Za-z0-9 .:,_]","", car.strip())
+        # CAUTION: without -, it strips the '-' in classes Off-Road and Go-Kart making them unfindable in topvehicles
+        car = re.sub(r"[^A-Za-z0-9 .:,_-]","", car.strip())
         car_arr = car.split(",")
         for i in range(0, len(car_arr)):
             car_arr[i] = car_arr[i].lstrip()

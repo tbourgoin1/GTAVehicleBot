@@ -1,0 +1,20 @@
+# check for update temp table in case, delete if so
+cursor.execute('''SELECT EXISTS (
+            SELECT FROM pg_tables
+            WHERE tablename = 'vehicleinfo_imgupdate'
+);''')
+var = cursor.fetchone()['exists']
+if var:
+    cursor.execute("DROP TABLE vehicleinfo_imgupdate;")
+
+temp_table = '''CREATE TABLE vehicleinfo_imgupdate (
+                    modelid varchar(50),
+                    image varchar(150));'''
+print("creating temp img update table...")
+cursor.execute(temp_table)
+
+for val in final_updated_img_urls:
+    cursor.execute("INSERT into vehicleinfo_imgupdate VALUES (%s, %s)", val)
+
+cursor.execute('SELECT * FROM vehicleinfo_imgupdate')
+print(cursor.fetchall())
