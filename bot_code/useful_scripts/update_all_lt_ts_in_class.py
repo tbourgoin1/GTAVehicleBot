@@ -6,8 +6,9 @@ import psycopg2 # db connection
 from psycopg2.extras import RealDictCursor, execute_values
 from urllib.parse import urlparse
 import re
+import os
 
-DB_URL = "postgres://gtabot:XuLAyg71nAMVHSF@gtabot-db.flycast:5432/gtabot?sslmode=disable"
+DB_URL = dbc = urlparse(os.getenv('DATABASE_URL'))
 
 PROCESS_UPDATES = True # UPDATE TO TRUE WHEN YOU WANT TO UPDATE VEHICLEINFO, FALSE TO JUST PRINT EVERYTHING OUT AS-IS TO UPDATE
 

@@ -6,6 +6,7 @@ import re
 
 # CAUTION - HAVENT TESTED THIS YET ALL THE WAY THRROUGH. USED THE CHECK SCRAPE SCRIPT AND FIXED IT, LOOKS GOOD, BUT HAVENT USED WITH BOT
 # CAN'T RUN THIS UNTIL GTACARS.NET HAS ALL UPDATED LAP TIME AND TOP SPEED INFO
+# NOTE IMAGES NO LONGER SHOULD COME FROM GTACARS.NET - USE GTAWIKI. ADAPT move_images_to_gtawiki.py INTO HERE
 # BUGGED FOR flags and price - sometimes price is 0 sometimes it's the trade price if it has one
 
 def get_new_vehicle_data(url, modelid):
