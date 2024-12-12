@@ -7,12 +7,12 @@ from psycopg2.extras import RealDictCursor, execute_values
 from urllib.parse import urlparse
 import re
 import os
+from dotenv import load_dotenv
 
-DB_URL = dbc = urlparse(os.getenv('DATABASE_URL'))
+load_dotenv()
+dbc = urlparse(os.getenv('DATABASE_URL'))
 
 PROCESS_UPDATES = True # UPDATE TO TRUE WHEN YOU WANT TO UPDATE VEHICLEINFO, FALSE TO JUST PRINT EVERYTHING OUT AS-IS TO UPDATE
-
-dbc = urlparse(DB_URL)
 HOST_NAME = 'localhost' # change between 'localhost' and dbc.hostname depending on if dev or prod, respectively
 conn = psycopg2.connect(
     dbname=dbc.path.lstrip('/'),
@@ -30,7 +30,7 @@ cursor = conn.cursor()
 # use the above printed 2darray to update the data manually, then put it in broughy_updated_car_classes.txt for it to then process here
 if not PROCESS_UPDATES:
     # change class to the one Broughy made a video on
-    cursor.execute("SELECT modelid, laptime, topspeed, laptime_byclass, topspeed_byclass from vehicleinfo where class like '%Open%' ORDER BY topspeed desc")
+    cursor.execute("SELECT modelid, laptime, topspeed, laptime_byclass, topspeed_byclass from vehicleinfo where class like '%%Special%' ORDER BY topspeed desc")
     vehicleinfo = cursor.fetchall()
 
     for v in vehicleinfo:

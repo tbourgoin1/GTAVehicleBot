@@ -179,14 +179,14 @@ def update_pos_in_class_str(v, input_veh_positions, new_class_totals, lt_ts_inde
             cur_total_in_class = (int(re.sub("[^0-9]", "", cur_pic_str.split('out of',1)[1].split('in',1)[0]))) + 1
             # lap time by class, use ltbc to see if it already exists. if not, increase total
             # if the input vehicle is already in the DB, also don't increase the total
-            if class_suffix == "_lt":
+            if class_suffix == "_lt" and db_ltbc:
                 ltbc_arr = db_ltbc.split(",")
                 for ltbc_str in ltbc_arr:
                     if (cur_class in ltbc_str and not ('Sports Classics' in ltbc_str and cur_class == 'Sports')) or input_vehicle_exists_lt:
                         cur_total_in_class -= 1
                         break
 
-            elif class_suffix == "_ts":
+            elif class_suffix == "_ts" and db_tsbc:
                 tsbc_arr = db_tsbc.split(",")
                 for tsbc_str in tsbc_arr:
                     if cur_class in tsbc_str and not ('Sports Classics' in tsbc_str and cur_class == 'Sports') or input_vehicle_exists_ts:
