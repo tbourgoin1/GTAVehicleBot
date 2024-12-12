@@ -15,3 +15,4 @@ polfaction2
 polterminus
 uranus
 titan2
+firebolt_hsw

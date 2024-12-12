@@ -106,7 +106,7 @@ savestra, https://static.wikia.nocookie.net/gtawiki/images/d/d6/Savestra-GTAO-fr
 fagaloa, https://static.wikia.nocookie.net/gtawiki/images/1/14/Fagaloa-GTAO-front.png/revision/latest?cb=20241114211125
 michelli, https://static.wikia.nocookie.net/gtawiki/images/e/e0/MichelliGT-GTAO-front.png/revision/latest?cb=20241114211305
 italirsx, https://static.wikia.nocookie.net/gtawiki/images/a/af/ItaliRSX-GTAO-front.png/revision/latest?cb=20201216100232
-coquette, https://static.wikia.nocookie.net/gtawiki/images/6/65/Coquette-GTAIV-front.png/revision/latest?cb=20160826201855
+coquette, https://static.wikia.nocookie.net/gtawiki/images/0/08/Coquette-GTAV-front.png/revision/latest/scale-to-width-down/1000?cb=20190818142055
 coureur_hsw, https://static.wikia.nocookie.net/gtawiki/images/e/ea/LaCoureuse-GTAOe-front.png/revision/latest?cb=20230613215714
 tug, https://static.wikia.nocookie.net/gtawiki/images/b/be/Tug-GTASA-front.jpg/revision/latest?cb=20240109132427
 comet4, https://static.wikia.nocookie.net/gtawiki/images/a/aa/CometSafari-GTAO-front.png/revision/latest?cb=20171218202452
@@ -271,7 +271,7 @@ glendale2, https://static.wikia.nocookie.net/gtawiki/images/5/50/GlendaleCustom-
 caddy2, https://static.wikia.nocookie.net/gtawiki/images/0/0e/Caddy-GTAV-front.png/revision/latest?cb=20161018175900
 sadler, https://static.wikia.nocookie.net/gtawiki/images/0/07/Sadler-GTAV-front.png/revision/latest?cb=20161018180756
 sandking, https://static.wikia.nocookie.net/gtawiki/images/f/f0/SandkingXL-GTAVe-front.png/revision/latest?cb=20240123172315
-mesa3, https://static.wikia.nocookie.net/gtawiki/images/7/70/Mesa-GTAVe-front.png/revision/latest?cb=20240213231928
+mesa3, https://static.wikia.nocookie.net/gtawiki/images/3/3c/Mesa3-GTAVe-front.png/revision/latest/scale-to-width-down/1000?cb=20240213231916
 crusader, https://static.wikia.nocookie.net/gtawiki/images/3/37/Crusader-GTAV-front.png/revision/latest?cb=20151214201316
 pranger, https://static.wikia.nocookie.net/gtawiki/images/9/92/ParkRanger-GTAV-front.png/revision/latest?cb=20190823173801
 minivan, https://static.wikia.nocookie.net/gtawiki/images/1/16/Minivan-GTAV-front.png/revision/latest?cb=20190513111721
