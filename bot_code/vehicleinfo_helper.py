@@ -92,5 +92,5 @@ def find_vehicle(input, vehicles_list):
             # reformat the suggestions array to be 'correct looking' for the suggestions embed the user will see
             return [misspell_suggestions, False, False]
     else: # exact match
-        return [result, True, False] # [modelid, formatted car name], was exact match, was guess
+        return [result, True, False] # [modelid, formatted car name], was exact match, was not a guess
    

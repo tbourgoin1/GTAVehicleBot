@@ -30,7 +30,7 @@ cursor = conn.cursor()
 # use the above printed 2darray to update the data manually, then put it in broughy_updated_car_classes.txt for it to then process here
 if not PROCESS_UPDATES:
     # change class to the one Broughy made a video on
-    cursor.execute("SELECT modelid, laptime, topspeed, laptime_byclass, topspeed_byclass from vehicleinfo where class like '%%Special%' ORDER BY topspeed desc")
+    cursor.execute("SELECT modelid, laptime, topspeed, laptime_byclass, topspeed_byclass from vehicleinfo where class like '%%Industrial%' ORDER BY laptime")
     vehicleinfo = cursor.fetchall()
 
     for v in vehicleinfo:

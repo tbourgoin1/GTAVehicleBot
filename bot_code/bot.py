@@ -22,14 +22,22 @@ import updatevehicledata_helper
 import upsertvehicle_helper
 import topvehicles_helper
 from keep_db_alive import KeepDBAlive
+import aiohttp
+import pickle
+import os.path
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 DEV_TOKEN = os.getenv("DEV_DISCORD_TOKEN")
 DB_URL = os.getenv("DATABASE_URL")
+# If modifying these scopes, delete the file token.pickle.
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
-testserverid = [851239396689707078] # testing only
+testserverids = [851239396689707078] # testing only
 productionserverids = [715583253289107588, 696800707919085638]
 
 bot = commands.Bot(command_prefix=',', case_insensitive=True)
@@ -47,6 +55,7 @@ logger = logging.getLogger()
 logger.addHandler(smtp_handler)
 
 cursor = None # db cursor for executing queries
+service = None # google sheets serivce to access the sheet
 
 def db_connect():
     # connect to postgres DB
@@ -70,11 +79,34 @@ def ping_db():
     cursor.execute('SELECT 1')
     print(cursor.fetchall())
 
+def sheet_connect():
+    creds = None
+    # The file token.pickle stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            creds = pickle.load(token)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
+    global service
+    service = build('sheets', 'v4', credentials=creds)
+
 @bot.event 
 async def on_ready():
     db_connect()
     # pings DB every 30 seconds to keep connection alive. this is a fly.io problem, it closes after 60 idle seconds. can be changed to 1500 (25min) for local testing
     KeepDBAlive(30, ping_db)
+    sheet_connect()
     print("Bot started!") # prints to the console when the bot starts
 
 @bot.event
@@ -551,103 +583,166 @@ async def staffvehicle_multiple_exacts(car_array, staff_member, interaction):
     )
     second_wait_message = await interaction.send(embed=embed_wait_2)
     # send message
-    await interaction.send(embed=await staffvehicle_send_data(sheetparser_searchstaffvehicles.main(staff_member, car_to_use, final_range)))
+    await interaction.send(embed=await staffvehicle_send_data(sheetparser_searchstaffvehicles.main(staff_member, car_to_use, final_range, service)))
     await second_wait_message.delete()
 
 
-@bot.slash_command(name='staffvehicle', description="Returns a vehicle from a staff members' garage", guild_ids=productionserverids)
+async def staffvehicle_single(interaction, vehicle, staff_member): # find 1 staff member's vehicle - unchanged from before
+    car_array = sheetparser_searchstaffvehicles.main(staff_member, vehicle, "N/A", service) # find the staff members' car, name - pri color
+    if("MULTIPLE EXACT MATCHES" in car_array):
+        await staffvehicle_multiple_exacts(car_array, staff_member, interaction) # handle multiple exact matches
+    elif("VEHICLE DATA INCOMPLETE!" in car_array):
+        embed = nextcord.Embed(
+            title=":grey_exclamation: Vehicle Data Incomplete!",
+            color=0x6911cf,
+            description="Some of this vehicle's info hasn't been completed yet. Check back later."
+        )
+        await interaction.send(embed=embed)
+    elif("ERROR: Vehicle not found" in car_array): # if not found and no suggestions, say person doesn't own the vehicle
+        embed = nextcord.Embed(
+            title=":grey_exclamation: Staff Vehicle Not Found!",
+            color=0xffdd00,
+            description="Couldn't find that in " + str(staff_member) + "'s garages."
+        )
+        await interaction.send(embed=embed)
+    elif("TRY AGAIN: I have suggestions" in car_array): # didn't find singular vehicle but has multiple suggestions
+        embed = nextcord.Embed(
+            title=":grey_exclamation: Staff Vehicle Not Found!",
+            color=0xffdd00,
+            description="Couldn't find that exact vehicle in " + str(staff_member) + "'s garages, but I have some suggestions:"
+        )
+        vehicle_suggestions = sorted(car_array[1], key=lambda x: x[1], reverse=True) # sorts suggestions, using this from now on
+        print("NOT FOUND, SUGGESTIONS SORTED: ", vehicle_suggestions)
+        # check, if our highest ratio is decent then send off the suggestion list
+        vehicle_suggestions_updated = []
+        for i in range(0, len(vehicle_suggestions)): # remove all really bad suggestions
+            if not(vehicle_suggestions[i][1] < 0.5 and vehicle_suggestions[i][2] != "EP"):
+                vehicle_suggestions_updated.append(vehicle_suggestions[i])
+        if(len(vehicle_suggestions_updated) == 0): # no suggestions left, they were all bad :/ send stock vehicle not found embed
+            await interaction.send(embed=embed)
+        else: # still at least one good suggestion left, so show it/them
+            suggestions_string = ""
+            emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
+            iterator = 0
+            for i in range(0, len(vehicle_suggestions_updated)): # put together the suggestions for the embed
+                if(iterator < 5):
+                    suggestions_string += emojis[i] + ": " + str(vehicle_suggestions_updated[i][0]) + "\n"
+                    iterator += 1
+                else:
+                    break
+            embed.add_field(name="Did You Mean...", value=suggestions_string, inline=False) # add it to the embed and send it
+            await interaction.send(embed=embed)
+            message = await interaction.original_message() # grab message we just sent to add reactions to it
+            for i in range(0, iterator):
+                await message.add_reaction(emojis[i])
+            
+            def check(reaction, user):
+                return str(reaction.emoji) in emojis and user == interaction.user
+            confirmation = await bot.wait_for("reaction_add", check=check)
+            car_to_use = '' # set below, used in call to sheetparser for newfound vehicle
+            if "1️⃣" in str(confirmation):
+                car_to_use = vehicle_suggestions_updated[0][0]
+            elif "2️⃣" in str(confirmation):
+                car_to_use = vehicle_suggestions_updated[1][0]
+            elif "3️⃣" in str(confirmation):
+                car_to_use = vehicle_suggestions_updated[2][0]
+            elif "4️⃣" in str(confirmation):
+                car_to_use = vehicle_suggestions_updated[3][0]
+            elif "5️⃣" in str(confirmation):
+                car_to_use = vehicle_suggestions_updated[4][0]
+            # send second wait embed, this one gets deleted.
+            embed_wait_2 = nextcord.Embed(
+            title=":mag: Searching for " + staff_member + "'s " + car_to_use + "...",  
+            color=0x7d7d7d
+            )
+            second_wait_message = await interaction.send(embed=embed_wait_2)
+            
+            # take precautions with multiple exact matches
+            car_array = sheetparser_searchstaffvehicles.main(staff_member, car_to_use, "N/A", service)
+            if "MULTIPLE EXACT MATCHES" not in car_array:
+                await interaction.send(embed=await staffvehicle_send_data(car_array)) # send with good data
+                await second_wait_message.delete()
+            else:
+                await second_wait_message.delete()
+                await staffvehicle_multiple_exacts(car_array, staff_member, interaction) # handle multiple exact matches
+    elif car_array[len(car_array)-1] == "MAY BE MULTIPLE EXACTS": # none of the above + not a singular exact match = is an inferred misspell. need to check for multiples.
+        car_array = sheetparser_searchstaffvehicles.main(staff_member, car_array[1], "N/A", service)
+        if "MULTIPLE EXACT MATCHES" not in car_array:
+            await interaction.send(embed=await staffvehicle_send_data(car_array)) # send with good data
+        else:
+            await staffvehicle_multiple_exacts(car_array, staff_member, interaction) # handle multiple exact matches
+    else: # otherwise, it found it normally. So display the data
+        await interaction.send(embed=await staffvehicle_send_data(car_array))
+
+async def staffvehicle_ALL_exact_match(first_embed_desc, member, first_embed, car_array, embed_arr, is_first_embed):
+    first_embed_desc += member + ', '
+    if is_first_embed:
+        first_embed.set_image(url=car_array[7])
+        is_first_embed = False
+        embed_arr.append(first_embed)
+    else:
+        embed = nextcord.Embed(
+            url='https://www.google.com/'
+        )
+        embed.set_image(url=car_array[7])
+        embed_arr.append(embed)
+    return first_embed_desc, embed_arr, first_embed, is_first_embed
+
+@bot.slash_command(name='staffvehicle', description="Returns a vehicle from a staff members' garage.", guild_ids=productionserverids)
 async def find_staff_vehicle(
     interaction : Interaction, 
     vehicle:str,
-    staff_member:str = SlashOption(choices=["Emperor", "Rad", "Alex", "Dornier", "Ritz"], required=True),
+    staff_member:str = SlashOption(choices=["ALL", "Emperor", "Rad", "Alex", "Dornier", "Ritz"], required=True),
     ):
-    try:
+    try:        
         print("INPUT TO STAFFVEHICLE. Vehicle: " + vehicle + ", staff_member: " + staff_member)
-        car_array = sheetparser_searchstaffvehicles.main(staff_member, vehicle, "N/A") # find the staff members' car, name - pri color
-        if("MULTIPLE EXACT MATCHES" in car_array):
-            await staffvehicle_multiple_exacts(car_array, staff_member, interaction) # handle multiple exact matches
-        elif("VEHICLE DATA INCOMPLETE!" in car_array):
-            embed = nextcord.Embed(
-                title=":grey_exclamation: Vehicle Data Incomplete!",
-                color=0x6911cf,
-                description="Some of this vehicle's info hasn't been completed yet. Check back later."
+        if staff_member == "ALL": # show every member of staff's vehicle if findable - default to the first one if multiple
+            in_progress_embed = nextcord.Embed(
+                title=":jigsaw: Searching...",
+                color=0x7d7d7d,
             )
-            await interaction.send(embed=embed)
-        elif("ERROR: Vehicle not found" in car_array): # if not found and no suggestions, say person doesn't own the vehicle
-            embed = nextcord.Embed(
-                title=":grey_exclamation: Staff Vehicle Not Found!",
-                color=0xffdd00,
-                description="Couldn't find that in " + str(staff_member) + "'s garages."
-            )
-            await interaction.send(embed=embed)
-        elif("TRY AGAIN: I have suggestions" in car_array): # didn't find singular vehicle but has multiple suggestions
-            embed = nextcord.Embed(
-                title=":grey_exclamation: Staff Vehicle Not Found!",
-                color=0xffdd00,
-                description="Couldn't find that exact vehicle in " + str(staff_member) + "'s garages, but I have some suggestions:"
-            )
-            vehicle_suggestions = sorted(car_array[1], key=lambda x: x[1], reverse=True) # sorts suggestions, using this from now on
-            print("NOT FOUND, SUGGESTIONS SORTED: ", vehicle_suggestions)
-            # check, if our highest ratio is decent then send off the suggestion list
-            vehicle_suggestions_updated = []
-            for i in range(0, len(vehicle_suggestions)): # remove all really bad suggestions
-                if not(vehicle_suggestions[i][1] < 0.5 and vehicle_suggestions[i][2] != "EP"):
-                    vehicle_suggestions_updated.append(vehicle_suggestions[i])
-            if(len(vehicle_suggestions_updated) == 0): # no suggestions left, they were all bad :/ send stock vehicle not found embed
-                await interaction.send(embed=embed)
-            else: # still at least one good suggestion left, so show it/them
-                suggestions_string = ""
-                emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
-                iterator = 0
-                for i in range(0, len(vehicle_suggestions_updated)): # put together the suggestions for the embed
-                    if(iterator < 5):
-                        suggestions_string += emojis[i] + ": " + str(vehicle_suggestions_updated[i][0]) + "\n"
-                        iterator += 1
-                    else:
-                        break
-                embed.add_field(name="Did You Mean...", value=suggestions_string, inline=False) # add it to the embed and send it
-                await interaction.send(embed=embed)
-                message = await interaction.original_message() # grab message we just sent to add reactions to it
-                for i in range(0, iterator):
-                    await message.add_reaction(emojis[i])
-                
-                def check(reaction, user):
-                    return str(reaction.emoji) in emojis and user == interaction.user
-                confirmation = await bot.wait_for("reaction_add", check=check)
-                car_to_use = '' # set below, used in call to sheetparser for newfound vehicle
-                if "1️⃣" in str(confirmation):
-                    car_to_use = vehicle_suggestions_updated[0][0]
-                elif "2️⃣" in str(confirmation):
-                    car_to_use = vehicle_suggestions_updated[1][0]
-                elif "3️⃣" in str(confirmation):
-                    car_to_use = vehicle_suggestions_updated[2][0]
-                elif "4️⃣" in str(confirmation):
-                    car_to_use = vehicle_suggestions_updated[3][0]
-                elif "5️⃣" in str(confirmation):
-                    car_to_use = vehicle_suggestions_updated[4][0]
-                # send second wait embed, this one gets deleted.
-                embed_wait_2 = nextcord.Embed(
-                title=":mag: Searching for " + staff_member + "'s " + car_to_use + "...",  
-                color=0x7d7d7d
+            await interaction.send(embed=in_progress_embed)
+            is_first_embed = True
+            staff = ["Emperor", "Rad", "Alex", "Dornier", "Ritz"]
+            embed_arr = []
+            were_multiple_exacts = False
+            multiple_exacts_staff = ""
+            first_embed_desc = 'Owners in order: '
+            first_embed = nextcord.Embed(
+                url='https://www.google.com/',
+                color=0x03fc45)
+            for member in staff:
+                car_array = sheetparser_searchstaffvehicles.main(member, vehicle, "N/A", service) # find the staff members' car, name - pri color
+                if("MULTIPLE EXACT MATCHES" in car_array): # just take the first one from the multiple the staff member has
+                    were_multiple_exacts = True
+                    multiple_exacts_staff += member + ", "
+                    car_array = sheetparser_searchstaffvehicles.main(member, vehicle, car_array[1][0][2], service)
+                    first_embed_desc, embed_arr, first_embed, is_first_embed = await staffvehicle_ALL_exact_match(first_embed_desc, member, first_embed, car_array, embed_arr, is_first_embed) # prep embeds when we find a car
+                # ignore incomplete data, not found vehicles, try again with suggestions and possible multiple exact cases
+                # must be spelled correctly and found as that spelling in the sheet to work - at least for now until migration to postgres
+                elif("VEHICLE DATA INCOMPLETE!" in car_array or "ERROR: Vehicle not found" in car_array or "TRY AGAIN: I have suggestions" in car_array):
+                    continue
+                else: # found the vehicle normally
+                    first_embed_desc, embed_arr, first_embed, is_first_embed = await staffvehicle_ALL_exact_match(first_embed_desc, member, first_embed, car_array, embed_arr, is_first_embed) # prep embeds when we find a car
+            if len(embed_arr) == 0: # nothing found
+                embed = nextcord.Embed(
+                        title=":grey_exclamation: Vehicle Not Found!",
+                        color=0xffdd00,
+                        description="No staff members own that! Please try another search."
                 )
-                second_wait_message = await interaction.send(embed=embed_wait_2)
-                
-                # take precautions with multiple exact matches
-                car_array = sheetparser_searchstaffvehicles.main(staff_member, car_to_use, "N/A")
-                if "MULTIPLE EXACT MATCHES" not in car_array:
-                    await interaction.send(embed=await staffvehicle_send_data(car_array)) # send with good data
-                    await second_wait_message.delete()
-                else:
-                    await second_wait_message.delete()
-                    await staffvehicle_multiple_exacts(car_array, staff_member, interaction) # handle multiple exact matches
-        elif car_array[len(car_array)-1] == "MAY BE MULTIPLE EXACTS": # none of the above + not a singular exact match = is an inferred misspell. need to check for multiples.
-            car_array = sheetparser_searchstaffvehicles.main(staff_member, car_array[1], "N/A")
-            if "MULTIPLE EXACT MATCHES" not in car_array:
-                await interaction.send(embed=await staffvehicle_send_data(car_array)) # send with good data
+                await interaction.send(embed=embed)
             else:
-                await staffvehicle_multiple_exacts(car_array, staff_member, interaction) # handle multiple exact matches
-        else: # otherwise, it found it normally. So display the data
-            await interaction.send(embed=await staffvehicle_send_data(car_array))
+                if len(embed_arr) > 4:
+                    embed_arr[0].set_author(name=first_embed_desc.rstrip(', ') + ". \nClick the image(s) to view in full.\n\nMore than 4 staff members are included, please scroll through the images to see all vehicles.")
+                else:
+                    embed_arr[0].set_author(name=first_embed_desc.rstrip(', ') + ". \nClick the image(s) to view in full.")
+                if were_multiple_exacts:
+                    embed_arr[0].set_footer(text="NOTE iOS users can only see one image in this message currently due to a Discord bug. Some staff member(s) have multiple of this vehicle - " + multiple_exacts_staff.rstrip(", ") + ". This message shows one of them. Query their garages specifically to view all.")
+                else:
+                    embed_arr[0].set_footer(text="NOTE iOS users can only see one image in this message currently due to a Discord bug.")
+                await interaction.send(embeds=embed_arr)
+        else: # normal staffvehicle, 1 person
+            await staffvehicle_single(interaction, vehicle, staff_member)
     except:
         print(sys.exc_info())
         await on_command_error(interaction, sys.exc_info()[0])

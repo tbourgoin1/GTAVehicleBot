@@ -833,3 +833,4 @@ fbi2, https://static.wikia.nocookie.net/gtawiki/images/c/cf/FIB2-GTAV-front.png/
 tvtrailer2, https://static.wikia.nocookie.net/gtawiki/images/6/6f/TrailerSContainer-GTAV-front.png/revision/latest/scale-to-width-down/1000?cb=20170513150459
 tiptruck, https://static.wikia.nocookie.net/gtawiki/images/1/11/Tipper-GTAV-front.png/revision/latest/scale-to-width-down/1000?cb=20161018181108
 tiptruck2, https://static.wikia.nocookie.net/gtawiki/images/0/07/Tipper2-GTAV-front.png/revision/latest/scale-to-width-down/1000?cb=20161018181106
+uranus, https://static.wikia.nocookie.net/gtawiki/images/1/18/UranusLozSpeed-GTAOe-FrontQuarter.png/revision/latest?cb=20241210204958
