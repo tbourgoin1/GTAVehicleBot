@@ -106,7 +106,6 @@ async def on_ready():
     db_connect()
     # pings DB every 30 seconds to keep connection alive. this is a fly.io problem, it closes after 60 idle seconds. can be changed to 1500 (25min) for local testing
     KeepDBAlive(30, ping_db)
-    sheet_connect()
     print("Bot started!") # prints to the console when the bot starts
 
 @bot.event
@@ -696,6 +695,7 @@ async def find_staff_vehicle(
     ):
     try:        
         print("INPUT TO STAFFVEHICLE. Vehicle: " + vehicle + ", staff_member: " + staff_member)
+        sheet_connect()
         if staff_member == "ALL": # show every member of staff's vehicle if findable - default to the first one if multiple
             in_progress_embed = nextcord.Embed(
                 title=":jigsaw: Searching...",

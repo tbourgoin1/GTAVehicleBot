@@ -85,7 +85,7 @@ if user_input == '1':
     original_veh_list = cursor.fetchall()
 
     success_file = open("txt_files\gta_wiki_images_files\good_cars.txt", 'w')
-    fail_file = open("txt_files\gta_wiki_images_files\gbad_cars.txt", 'w')
+    fail_file = open("txt_files\gta_wiki_images_files\%%bad_cars.txt", 'w')
 
     for veh in original_veh_list:
         veh_name = veh['name']
