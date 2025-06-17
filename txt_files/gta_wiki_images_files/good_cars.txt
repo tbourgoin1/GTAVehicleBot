@@ -446,7 +446,7 @@ ruffian, https://static.wikia.nocookie.net/gtawiki/images/b/b5/Ruffian-GTAV-fron
 miljet, https://static.wikia.nocookie.net/gtawiki/images/b/bb/Miljet-GTAV-front.png/revision/latest?cb=20160117181440
 insurgent, https://static.wikia.nocookie.net/gtawiki/images/1/12/InsurgentPickUp-GTAO-front.png/revision/latest?cb=20160929162614
 besra, https://static.wikia.nocookie.net/gtawiki/images/2/2a/Besra-GTAV-front.png/revision/latest?cb=20160927163752
-feltzer2, https://static.wikia.nocookie.net/gtawiki/images/d/d0/Feltzer-GTAIV-front.png/revision/latest?cb=20160826201502
+feltzer2, https://static.wikia.nocookie.net/gtawiki/images/8/8f/Feltzer-GTAVPC-Front.png
 dominator2, https://static.wikia.nocookie.net/gtawiki/images/c/cf/PisswasserDominator-GTAVPC-front.png/revision/latest?cb=20150529175704
 coquette2, https://static.wikia.nocookie.net/gtawiki/images/0/0b/CoquetteClassic-GTAV-front.png/revision/latest?cb=20160117175931
 hakuchou, https://static.wikia.nocookie.net/gtawiki/images/a/ab/Hakuchou-GTAV-front.png/revision/latest?cb=20160302173513
@@ -834,3 +834,5 @@ tvtrailer2, https://static.wikia.nocookie.net/gtawiki/images/6/6f/TrailerSContai
 tiptruck, https://static.wikia.nocookie.net/gtawiki/images/1/11/Tipper-GTAV-front.png/revision/latest/scale-to-width-down/1000?cb=20161018181108
 tiptruck2, https://static.wikia.nocookie.net/gtawiki/images/0/07/Tipper2-GTAV-front.png/revision/latest/scale-to-width-down/1000?cb=20161018181106
 uranus, https://static.wikia.nocookie.net/gtawiki/images/1/18/UranusLozSpeed-GTAOe-FrontQuarter.png/revision/latest?cb=20241210204958
+polterminus, https://static.wikia.nocookie.net/gtawiki/images/b/ba/TerminusPatrol-GTAOe-FrontQuarter.png/revision/latest/scale-to-width-down/1000?cb=20241210205845
+polcoquette4, https://static.wikia.nocookie.net/gtawiki/images/c/c3/CoquetteD10Pursuit-GTAOe-FrontQuarter.png/revision/latest/scale-to-width-down/1000?cb=20241210211247
