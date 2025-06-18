@@ -836,3 +836,4 @@ tiptruck2, https://static.wikia.nocookie.net/gtawiki/images/0/07/Tipper2-GTAV-fr
 uranus, https://static.wikia.nocookie.net/gtawiki/images/1/18/UranusLozSpeed-GTAOe-FrontQuarter.png/revision/latest?cb=20241210204958
 polterminus, https://static.wikia.nocookie.net/gtawiki/images/b/ba/TerminusPatrol-GTAOe-FrontQuarter.png/revision/latest/scale-to-width-down/1000?cb=20241210205845
 polcoquette4, https://static.wikia.nocookie.net/gtawiki/images/c/c3/CoquetteD10Pursuit-GTAOe-FrontQuarter.png/revision/latest/scale-to-width-down/1000?cb=20241210211247
+flatbed, https://static.wikia.nocookie.net/gtawiki/images/7/71/Flatbed-GTAV-front.png
