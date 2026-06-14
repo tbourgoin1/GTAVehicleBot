@@ -12,3 +12,7 @@ Dockerfile
 .dockerignore
 requirements.txt
 .vscode
+txt_files\gta_wiki_images_files
+txt_files\broughy_updated_car_classes.txt
+bot_code\useful_scripts
+txt_files\price_changes.txt

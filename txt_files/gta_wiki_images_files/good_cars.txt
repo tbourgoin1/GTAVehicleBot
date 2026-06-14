@@ -450,7 +450,7 @@ feltzer2, https://static.wikia.nocookie.net/gtawiki/images/8/8f/Feltzer-GTAVPC-F
 dominator2, https://static.wikia.nocookie.net/gtawiki/images/c/cf/PisswasserDominator-GTAVPC-front.png/revision/latest?cb=20150529175704
 coquette2, https://static.wikia.nocookie.net/gtawiki/images/0/0b/CoquetteClassic-GTAV-front.png/revision/latest?cb=20160117175931
 hakuchou, https://static.wikia.nocookie.net/gtawiki/images/a/ab/Hakuchou-GTAV-front.png/revision/latest?cb=20160302173513
-schafter2, https://static.wikia.nocookie.net/gtawiki/images/6/6d/Schafter-GTAIV-front.png/revision/latest?cb=20170122142823
+schafter2, https://static.wikia.nocookie.net/gtawiki/images/5/57/Schafter-GTAV-front.png/revision/latest
 tailgater, https://static.wikia.nocookie.net/gtawiki/images/e/e1/Tailgater-GTAV-front.png/revision/latest?cb=20160917232330
 technical, https://static.wikia.nocookie.net/gtawiki/images/4/41/Technical-GTAO-front.png/revision/latest?cb=20150530113418
 thrust, https://static.wikia.nocookie.net/gtawiki/images/4/4e/Thrust-GTAV-front.png/revision/latest?cb=20160917232329
@@ -608,7 +608,7 @@ yosemite2, https://static.wikia.nocookie.net/gtawiki/images/7/7f/DriftYosemite-G
 oracle, https://static.wikia.nocookie.net/gtawiki/images/2/22/OracleXS-GTAV-front.png/revision/latest?cb=20160409181541
 deveste, https://static.wikia.nocookie.net/gtawiki/images/7/7b/Deveste-GTAO-front.png/revision/latest?cb=20230402201556
 clique, https://static.wikia.nocookie.net/gtawiki/images/c/c6/Clique-GTAO-front.png/revision/latest?cb=20181214181626
-paragon2, https://static.wikia.nocookie.net/gtawiki/images/c/cb/ParagonR-GTAO-front.png/revision/latest?cb=20190723230236
+paragon2, https://static.wikia.nocookie.net/gtawiki/images/f/fa/ParagonRArmored-GTAO-front.png/revision/latest/
 caracara2, https://static.wikia.nocookie.net/gtawiki/images/a/a4/Caracara4x4-GTAO-front.png/revision/latest?cb=20190723230638
 deviant, https://static.wikia.nocookie.net/gtawiki/images/0/01/Deviant-GTAO-front.png/revision/latest?cb=20181214181627
 s80, https://static.wikia.nocookie.net/gtawiki/images/4/4d/S80RR-GTAO-front.png/revision/latest?cb=20190723230559
